@@ -4,16 +4,21 @@ require 'json'
 require_relative '../extension/su_pipe_probe/win_pipe'
 require_relative '../extension/su_pipe_probe/session'
 require_relative '../extension/su_pipe_probe/version'
+require_relative '../extension/su_pipe_probe/model_reader'
+require_relative 'support/sketchup_double'
 $stdout.sync = true
 control_path = ARGV.fetch(0)
 clients, sessions, metadata = [], [], []
 clock = 0.0
 2.times do |index|
   client = SUPipeProbe::PipeClient.new
+  model = SketchupDouble::Model.new
+  model.selection.add([model.add(1000 + index)])
   data = {'pid' => Process.pid, 'model_id' => SecureRandom.uuid,
     'title' => "인스턴스 #{index}", 'path' => '', 'extension_version' => SUPipeProbe::VERSION}
   session = SUPipeProbe::Session.new(lambda { |m| client.send_message(m) }, lambda { data },
-    lambda { clock }, lambda { |method, args| {'instance_index' => index, 'method' => method, 'offset' => args.fetch('offset', 0)} })
+    lambda { clock }, lambda { |method, args| SUPipeProbe::ModelReader.new(model).call(method, args).merge('instance_index'=>index, 'method'=>method) },
+    lambda { |method, args| SUPipeProbe::CommandExecutor.new(model).call(method, args) })
   deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 5
   begin
     client.connect

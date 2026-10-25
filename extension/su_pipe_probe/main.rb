@@ -19,7 +19,8 @@ module SUPipeProbe
       @last_retry = 0
       @last_status = 0
       @session = Session.new(lambda { |m| send_message(m) }, lambda { metadata }, nil,
-        lambda { |method, args| ModelReader.new(Sketchup.active_model).call(method, args) })
+        lambda { |method, args| ModelReader.new(Sketchup.active_model).call(method, args) },
+        lambda { |method, args| CommandExecutor.new(Sketchup.active_model).call(method, args) })
       @timer = UI.start_timer(0.05, true) { tick }
     end
 

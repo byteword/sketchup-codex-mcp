@@ -57,7 +57,8 @@ class StdioTests(unittest.TestCase):
         try:
             line = self.lines.get(timeout=timeout)
         except queue.Empty:
-            self.fail("No JSON-RPC response within deadline")
+            detail = self.process.stderr.read().decode('utf-8', errors='replace') if self.process.poll() is not None else ''
+            self.fail("No JSON-RPC response within deadline. " + detail)
         value = json.loads(line.decode("utf-8"))
         self.assertEqual("2.0", value["jsonrpc"])
         return value
@@ -79,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(9, len(tools))
-        self.assertEqual(9, len({tool["name"] for tool in tools}))
+        self.assertEqual(15, len(tools))
+        self.assertEqual(15, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
         self.assertTrue(next(t for t in tools if t["name"] == "sketchup_ping")["annotations"]["readOnlyHint"])
@@ -107,6 +108,57 @@ class StdioTests(unittest.TestCase):
 
     def test_protocol_negotiation(self):
         self.assertEqual("2025-11-25", self.initialize("unsupported-future-version")["protocolVersion"])
+
+    def test_command_validation_and_nested_input(self):
+        self.initialize()
+        common = dict(session_id=SESSION, model_id=SESSION, command_id=SESSION + ':1', expected_context=[])
+        valid = {
+            'sketchup_set_selection': dict(entity_ids=['101'], mode='replace'),
+            'sketchup_set_view': dict(preset='isometric'),
+            'sketchup_zoom': dict(scope='model', entity_ids=[]),
+            'sketchup_update_entity_properties': dict(entity_ids=['101'], properties={'name': '🙂' * 256, 'material': None, 'hidden': False}),
+            'sketchup_move_entities': dict(entity_ids=['101'], delta_mm=[1.25, -2, 0]),
+        }
+        for number, (name, fields) in enumerate(valid.items(), 20):
+            args = dict(common, **fields)
+            self.send('tools/call', {'name': name, 'arguments': args}, number)
+            payload = self.response()['result']
+            self.assertFalse(payload['isError'])
+            self.assertEqual(args, json.loads(payload['content'][0]['text'])['arguments'])
+        invalid = [
+            ('sketchup_set_selection', dict(entity_ids=['101'], mode='clear')),
+            ('sketchup_set_selection', dict(entity_ids=[], mode='replace')),
+            ('sketchup_set_view', dict(preset='eval_ruby')),
+            ('sketchup_zoom', dict(scope='model', entity_ids=['101'])),
+            ('sketchup_move_entities', dict(entity_ids=['101','101'], delta_mm=[1,0,0])),
+            ('sketchup_move_entities', dict(entity_ids=['0'], delta_mm=[1,0,0])),
+            ('sketchup_move_entities', dict(entity_ids=['101'], delta_mm=[True,0,0])),
+            ('sketchup_move_entities', dict(entity_ids=['101'], delta_mm=[1e10,0,0])),
+            ('sketchup_move_entities', dict(entity_ids=['101'], delta_mm=[1,0])),
+            ('sketchup_move_entities', dict(entity_ids=['101'], delta_mm=[1,0,0], dry_run='true')),
+            ('sketchup_update_entity_properties', dict(entity_ids=['101'], properties={})),
+            ('sketchup_update_entity_properties', dict(entity_ids=['101'], properties={'hidden':'yes'})),
+            ('sketchup_update_entity_properties', dict(entity_ids=['101'], properties={'ruby':'anything'})),
+            ('sketchup_update_entity_properties', dict(entity_ids=['101'], properties={'name':'🙂'*257})),
+            ('sketchup_update_entity_properties', dict(entity_ids=['101'], properties={'name':'invalid\x00name'})),
+        ]
+        for number, (name, fields) in enumerate(invalid, 50):
+            self.raw(json.dumps({'jsonrpc':'2.0','id':number,'method':'tools/call',
+                'params':{'name':name,'arguments':dict(common, **fields)}}, ensure_ascii=True).encode('utf-8') + b'\n')
+            response = self.response()
+            self.assertIn('error', response, (name, fields))
+            self.assertEqual(-32602, response['error']['code'], (name, fields))
+
+    def test_command_tool_annotations_and_result_schema(self):
+        self.initialize()
+        self.send('tools/list', {}, 2)
+        tools = {t['name']: t for t in self.response()['result']['tools']}
+        for name in ['sketchup_set_selection','sketchup_set_view','sketchup_zoom','sketchup_update_entity_properties','sketchup_move_entities']:
+            self.assertFalse(tools[name]['annotations']['readOnlyHint'])
+            self.assertTrue(tools[name]['annotations']['idempotentHint'])
+            self.assertIn('command_id', tools[name]['inputSchema']['required'])
+            self.assertIn('expected_context', tools[name]['inputSchema']['required'])
+        self.assertTrue(tools['sketchup_get_command_result']['annotations']['readOnlyHint'])
 
     def test_requires_initialized_notification(self):
         self.send("tools/list", {}, 1)

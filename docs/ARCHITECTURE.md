@@ -1,5 +1,13 @@
 # 연결 구조 및 후속 설계
 
+## 0.4.0 기초 명령 전달
+
+`shared/CommandCatalog.cs`가 변경 도구 5개와 결과 조회 도구를 선언하고 입력을 검증합니다. GUI는 기존 파이프를 통해 Ruby Session으로 라우팅하며, `CommandExecutor`는 패널의 메인 스레드 타이머에서 선택·카메라·객체 속성·이동을 동기 실행합니다. 기존 조회 도구의 권한 규칙은 유지합니다.
+
+변경에는 현재 모델·로컬 실행 허가·lease·편집 경로·유효 기한을 확인합니다. Session의 `next_command_id`는 세션 UUID와 증가하는 번호로 구성됩니다. 최근 결과 32개와 입력 서명을 보관하고, 동일 ID의 같은 내용은 결과만 반환하며 다른 내용이나 만료된 번호는 실행하지 않습니다. 미리보기도 번호를 소비합니다. 모델 전환·GUI 재연결·권한 회수 때 이력을 유지하고 새 Ruby Session은 새 UUID를 사용합니다.
+
+속성·이동은 요청당 한 `start_operation`/`commit_operation`으로 묶고 실패 시 `abort_operation`으로 되돌립니다. 선택·카메라는 모델 Undo 밖에서 이전 상태 복원을 시도합니다. 복원을 확인하지 못하거나 제출 후 통신이 끊겨 결과가 불명확하면 `outcome_unknown`을 반환하며 자동 재시도하지 않습니다. 상세 계약과 실제 앱 검증 상태는 [COMMAND_SCOPE.md](COMMAND_SCOPE.md), [VALIDATION.md](VALIDATION.md)에 있습니다.
+
 ## 0.3.0 읽기 전용 조회
 
 공개 MCP 도구 `sketchup_get_model_summary`, `sketchup_get_selection_info`를 추가했습니다. 도구 카탈로그에서 입력과 읽기 전용 특성을 선언하고, GUI가 각각 `get_model_summary`, `get_selection_info`로 라우팅합니다. Ruby Session은 요청 직전 모델 변경을 확인하고 현재 `model_id`와 일치할 때만 ModelReader를 호출합니다. 조회에는 lease나 MCP 작업 허가가 필요하지 않습니다.
@@ -40,12 +48,12 @@ GUI는 사용자가 실행하고 유지하는 단일 중개 프로세스입니�
 
 초기 상태는 사용자 제어입니다. SketchUp 패널에서만 원격 권한을 허용할 수 있으며, AI나 GUI 요청으로 권한을 자체 획득하지 못하게 합니다. 실제 변경은 Ruby 쪽에서 대상 모델과 권한을 다시 확인합니다.
 
-1. 사용자: 연결 상태/Ping만 가능. 변경 작업 거부.
+1. 사용자: 연결 상태/Ping·모델/선택 조회·보관 결과 조회 가능. 변경 작업 거부.
 2. MCP 허용: 명시한 모델·유효한 lease로 등록된 작업만 시작.
 3. 작업 중: 진행률·현재 단계·취소 버튼 표시. 같은 인스턴스에서 다른 변경 작업 거부.
 4. 사용자 회수/연결 해제/모델 전환: 진행 중인 협력적 작업 취소, 대기 작업 폐기, lease 폐기.
 
-현재 시험판은 1~4의 프로토콜 동작만 확인합니다. 실제 SketchUp 편집 도구 잠금은 구현하지 않았습니다. 운영판에서는 커스텀 Tool을 통한 입력 가드, 모델 변경 감지, 명령 전후 모델 검증을 함께 검토해야 합니다. 선택 도구 교체만으로 메뉴·단축키·다른 확장의 편집까지 완벽히 막는다고 가정하지 않습니다.
+현재 시험판은 1~4의 프로토콜 및 변경 실행기를 자동 검사했습니다. 실제 SketchUp 편집 도구 잠금은 구현하지 않았습니다. 운영판에서는 커스텀 Tool을 통한 입력 가드, 모델 변경 감지, 명령 전후 모델 검증을 함께 검토해야 합니다. 선택 도구 교체만으로 메뉴·단축키·다른 확장의 편집까지 완벽히 막는다고 가정하지 않습니다.
 
 실제 모델 편집은 `start_operation`/`commit_operation`/`abort_operation`의 Undo 경계를 설계합니다. 긴 작업은 작은 단위로 나누고, 중단 시 완료된 부분/롤백 여부를 명확히 반환합니다. 타이머 여러 번에 걸친 단일 operation은 다른 사용자/확장 편집이 끼어들 수 있으므로 별도 검증 없이 사용하지 않습니다.
 
@@ -66,7 +74,7 @@ SketchUp API 호출은 `UI.start_timer`가 호출하는 메인 스레드에 한�
 | hello / welcome | 버전·세션·PID 등록 / 수락 |
 | state | 모델·제어권·진행률·오류 보고 |
 | bridge_state | GUI에서 Ruby로 MCP 클라이언트 연결 상태 전달 |
-| request | ping, get_state, demo, get_job, cancel, release_owner, test_error |
+| request | ping, get_state, get_model_summary, get_selection_info, demo, get_job, cancel, release_owner, test_error, set_selection, set_view, zoom, update_entity_properties, move_entities, get_command_result |
 | result | 요청 ID에 대응하는 수락/오류/응답 |
 | event | 작업 완료/취소 |
 
@@ -92,9 +100,9 @@ SketchUp API 호출은 `UI.start_timer`가 호출하는 메인 스레드에 한�
 
 ## 다음 단계
 
-1. 0.3.0 RBZ를 실제 SketchUp 모델에서 설치하고 조회 값·중첩 편집 치수를 검증.
+1. 0.4.0 RBZ를 실제 SketchUp 시험 모델에 설치하고 조회 회귀·명령·중첩 편집 이동·Undo를 검증.
 2. 필요에 따른 객체 검색·구조 탐색·화면 캡처.
-3. 제한된 모델 생성·이동·재질 도구와 Undo, 편집 충돌 처리.
+3. 모델 생성·회전·축척 도구와 편집 충돌 처리의 후속 범위 설계.
 4. 설치 프로그램·서명·공개 GitHub Release. 필요할 때 .NET LTS 자체 포함 배포로 이전.
 
 플러그인에서 ChatGPT에 먼저 AI 요청을 보내는 역방향 대화 시작은 이번 범위에서 제외했습니다.

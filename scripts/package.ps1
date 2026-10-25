@@ -1,3 +1,4 @@
+param([switch]$TestRelease)
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path $PSScriptRoot -Parent)
 $releaseVersion = [regex]::Match([IO.File]::ReadAllText((Join-Path $PWD 'shared\BuildInfo.cs')), 'public const string Version = "([^"]+)"').Groups[1].Value
@@ -26,7 +27,8 @@ $checksumLines = foreach ($releaseFile in $releaseFiles) {
     '{0}  dist/{1}' -f $hash.Hash.ToLowerInvariant(), $releaseFile
 }
 [IO.File]::WriteAllLines((Join-Path $PWD 'SHA256SUMS.txt'), $checksumLines, (New-Object Text.UTF8Encoding($false)))
-$releaseZip = Join-Path $PWD ('dist\sketchup-codex-mcp-' + $releaseVersion + '.zip')
+$packageSuffix = if ($TestRelease) { '-test' } else { '' }
+$releaseZip = Join-Path $PWD ('dist\sketchup-codex-mcp-' + $releaseVersion + $packageSuffix + '.zip')
 if (Test-Path -LiteralPath $releaseZip) { Remove-Item -LiteralPath $releaseZip }
 $archive = [IO.Compression.ZipFile]::Open($releaseZip, [IO.Compression.ZipArchiveMode]::Create)
 try {

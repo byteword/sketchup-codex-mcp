@@ -29,7 +29,7 @@ namespace SketchUpPipeProbe
 
         public static object[] List()
         {
-            return new[] {
+            var result = new List<object> {
                 Tool("sketchup_bridge_status", "Read local GUI bridge/MCP connection status. No SketchUp model edits.", new string[0], true),
                 Tool("sketchup_list_instances", "List connected SketchUp processes with session_id, model_id, PID, model path, authority and heartbeat age. Cached state; do not select a target by title alone.", new string[0], true),
                 Tool("sketchup_get_instance", "Get fresh state from one SketchUp instance. May time out while SketchUp is in a modal dialog.", new[] { "session_id" }, true),
@@ -40,10 +40,13 @@ namespace SketchUpPipeProbe
                 Tool("sketchup_get_job", "Get progress or terminal state of a demo job. The last 32 finished jobs are retained in this SketchUp session.", new[] { "session_id", "job_id" }, true),
                 Tool("sketchup_cancel_job", "Cooperatively cancel exactly this job. Does not cancel a newer job and does not grant authority.", new[] { "session_id", "job_id" }, false)
             };
+            result.AddRange(CommandCatalog.List());
+            return result.ToArray();
         }
 
         public static void Validate(string name, Dictionary<string, object> args)
         {
+            if (CommandCatalog.Contains(name)) { CommandCatalog.Validate(name, args); return; }
             string[] required;
             switch (name)
             {

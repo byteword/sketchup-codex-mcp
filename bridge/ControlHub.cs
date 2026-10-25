@@ -168,12 +168,16 @@ namespace SketchUpPipeProbe
                 {
                     result = await ExecuteAsync(client, tool, JsonLines.Object(message, "arguments"), cancellation.Token).ConfigureAwait(false);
                 }
-                catch (OperationCanceledException) { result = ToolCatalog.Error("canceled", "Request canceled; any accepted demo is being stopped."); }
+                catch (OperationCanceledException) { result = ToolCatalog.Error(CommandCatalog.IsWrite(tool) ? "outcome_unknown" : "canceled",
+                    CommandCatalog.IsWrite(tool) ? "Command may have completed. Query sketchup_get_command_result with its command_id; do not automatically retry." : "Request canceled; any accepted demo is being stopped."); }
+                catch (TimeoutException error) { result = ToolCatalog.Error(CommandCatalog.IsWrite(tool) ? "outcome_unknown" : "bridge_error",
+                    error.Message + (CommandCatalog.IsWrite(tool) ? " Query sketchup_get_command_result; do not automatically retry." : "")); }
                 catch (Exception error)
                 {
                     LastError = error.Message;
                     log("MCP tool error: " + error.Message);
-                    result = ToolCatalog.Error("bridge_error", error.Message);
+                    result = ToolCatalog.Error(CommandCatalog.IsWrite(tool) ? "outcome_unknown" : "bridge_error",
+                        error.Message + (CommandCatalog.IsWrite(tool) ? " Query sketchup_get_command_result; do not automatically retry." : ""));
                 }
                 await channel.SendAsync(new { type = "result", id = id, result = result }).ConfigureAwait(false);
             }
@@ -214,7 +218,9 @@ namespace SketchUpPipeProbe
                 case "sketchup_start_demo": method = "demo"; break;
                 case "sketchup_get_job": method = "get_job"; break;
                 case "sketchup_cancel_job": method = "cancel"; break;
-                default: throw new ArgumentException("Unknown tool");
+                default:
+                    if (!CommandCatalog.Contains(name)) throw new ArgumentException("Unknown tool");
+                    method = CommandCatalog.Method(name); break;
             }
             var response = await peer.RequestAsync(method, fields, token).ConfigureAwait(false);
             return ToolCatalog.Result(response, JsonLines.Text(response, "ok") != "True");

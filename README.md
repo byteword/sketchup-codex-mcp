@@ -1,7 +1,18 @@
-# SketchUp Local MCP Bridge 0.3.1
+# SketchUp Local MCP Bridge 0.4.0 (시험 버전)
 
 Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는 GUI 중개 앱입니다.
-이번 버전은 **모델 요약·선택 객체 상세 조회**와 연결·상태 조회·Ping·시험 작업·중지를 제공합니다. 모델 편집은 하지 않습니다.
+이번 버전은 **모델 조회·선택 변경·화면 제어·객체 속성 변경·이동**을 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. 실제 SketchUp에서 새 변경 명령과 Undo 확인은 아직 진행하지 않은 시험 버전입니다.
+
+## 0.4.0: 기초 명령 전달
+
+- v0.3.1 이후 참조 작업본의 미커밋 변경을 가져왔습니다. MCP 도구는 기존 9개에서 15개로 늘었습니다.
+- 그룹/컴포넌트를 명시한 영구 ID로 선택하거나 선택 해제하고, 위·앞·오른쪽·등각 보기 및 모델/지정 객체 확대를 요청할 수 있습니다.
+- 현재 편집 위치의 그룹/컴포넌트 최대 25개에 이름·숨김·잠금·기존 태그/재질을 지정하거나 모델 축 기준 mm 상대 이동을 적용합니다. 속성·이동 명령은 요청당 하나의 Undo 작업으로 처리합니다.
+- `dry_run`은 변경 없이 검증과 미리보기를 수행합니다. 미리보기와 실행에는 각각 새 명령 ID가 필요합니다.
+- 명령 ID와 편집 경로를 확인하고 최근 결과 32개를 보관합니다. 중복 명령은 재실행하지 않으며, 시간 초과 시 결과를 조회합니다.
+- Windows 자동 검사 **84개 통과**. 실제 모델 API·Undo·카메라 동작은 [수동 시험](docs/MANUAL_TEST.md)으로 확인해야 합니다.
+
+인수·권한·결과 이력의 상세 계약은 [기초 명령 전달](docs/COMMAND_SCOPE.md), 검사 환경과 한계는 [검증 범위](docs/VALIDATION.md)에 있습니다.
 
 ## 0.3.1: 실행 파일 버전 정보와 치수 수정
 
@@ -49,15 +60,15 @@ ChatGPT에는 `SketchUpMcp.exe`를 등록합니다. GUI는 별도 프로세스�
 
 1. 이전 GUI와 모든 SketchUp을 종료합니다.
 2. ZIP을 한 폴더에 모두 압축 해제합니다.
-3. SketchUp 확장 관리자에서 `dist/su_pipe_probe-0.3.1.rbz`를 덮어 설치합니다.
-4. SketchUp을 완전히 종료하고 다시 실행합니다. 패널 버전이 **0.3.1**이어야 합니다.
+3. SketchUp 확장 관리자에서 `dist/su_pipe_probe-0.4.0.rbz`를 덮어 설치합니다.
+4. SketchUp을 완전히 종료하고 다시 실행합니다. 패널 버전이 **0.4.0**이어야 합니다.
 5. `dist/SketchUpPipeProbe.exe`를 실행합니다.
 6. 각 SketchUp에서 **확장 프로그램 → SketchUp Pipe Probe → 연결 / 자동 재연결**을 누릅니다.
 7. GUI에서 PID·세션·모델 경로가 서로 구분되는지 확인합니다.
 
 GUI와 RBZ를 함께 업데이트하세요. 소스 배포본에 EXE가 없으면 `start.cmd`가 먼저 빌드합니다.
 
-기존 MCP 등록 경로를 유지하려면 해당 폴더에 새 배포본을 덮어씁니다. GUI·SketchUp을 저장 후 종료한 상태에서 교체하고, MCP 서버도 다시 시작해 도구 9개를 불러오세요. 새 버전은 실행 중인 0.2.0 프로세스에 자동으로 주입되지 않습니다.
+기존 MCP 등록 경로를 유지하려면 해당 폴더에 새 배포본을 덮어씁니다. GUI·SketchUp을 저장 후 종료한 상태에서 교체하고, MCP 서버도 다시 시작해 도구 15개를 불러오세요. 새 버전은 실행 중인 이전 프로세스에 자동으로 주입되지 않습니다.
 
 ## ChatGPT 등록
 
@@ -90,7 +101,7 @@ tool_timeout_sec = 30
 
 1. ChatGPT: “연결된 SketchUp 인스턴스를 PID와 모델 경로로 보여줘.”
 2. ChatGPT: “PID가 ○○인 인스턴스에 ‘한글 연결 시험 🙂’로 Ping 해줘.”
-3. 해당 SketchUp 패널에서 **MCP 제어 허용 (시험)**을 누릅니다.
+3. 해당 SketchUp 패널에서 **MCP 명령 실행 허용**을 누릅니다.
 4. ChatGPT: “그 인스턴스에 20초 시험 작업을 시작하고 작업 ID를 알려줘.”
 5. ChatGPT: “그 작업의 진행률을 확인해줘.” 또는 “그 작업을 중지해줘.”
 
@@ -109,6 +120,14 @@ GUI에는 초기화된 MCP 클라이언트 이름·PID·진행 중 호출 수·�
 | `sketchup_start_demo` | `session_id`, `model_id` | 20초 시험 작업의 `job_id` |
 | `sketchup_get_job` | `session_id`, `job_id` | 실행·완료·취소 상태와 진행률 |
 | `sketchup_cancel_job` | `session_id`, `job_id` | 지정 작업만 협력적으로 취소 |
+| `sketchup_set_selection` | 공통 명령 인수, `entity_ids`, `mode` | 그룹/컴포넌트 선택 교체·추가·제거·해제 |
+| `sketchup_set_view` | 공통 명령 인수, `preset` | 위·앞·오른쪽·등각 보기와 모델 맞춤 |
+| `sketchup_zoom` | 공통 명령 인수, `scope`, `entity_ids` | 모델 전체 또는 지정 객체 확대 |
+| `sketchup_update_entity_properties` | 공통 명령 인수, `entity_ids`, `properties` | 이름·숨김·잠금·기존 태그/재질 변경 |
+| `sketchup_move_entities` | 공통 명령 인수, `entity_ids`, `delta_mm` | 모델 축 기준 mm 상대 이동 |
+| `sketchup_get_command_result` | `session_id`, 원래 `model_id`, `command_id` | 보관된 명령 결과 조회, 재실행 없음 |
+
+공통 명령 인수는 `session_id`, `model_id`, `command_id`, `expected_context`와 선택 `dry_run`입니다. `command_id`는 직전 `sketchup_get_instance`의 `state.next_command_id`를 사용합니다. `expected_context`는 직전 선택 상세 조회의 `data.edit_context.path`에서 `persistent_id` 문자열을 순서대로 모은 배열이며 루트는 `[]`입니다. 경로가 잘렸다면 명령을 실행하지 않습니다.
 
 목록은 마지막 수신 상태이며 `cached`와 `heartbeat_age_seconds`를 포함합니다. 대상에는 반환된 UUID를 사용합니다. 작업 권한은 SketchUp 패널에서만 허용할 수 있고, lease는 MCP에 노출하지 않습니다.
 
@@ -144,7 +163,7 @@ Windows 통합 검사는 `PROBE_TEST` 빌드와 `SUPIPE_TEST=1`로 별도 파이
 | `native/` | Win32 보조 DLL 소스 |
 | `tests/` | 상태 머신, 통신, MCP 프로토콜 및 통합 검사 |
 
-현재 범위에는 모델 편집, 임의 Ruby 실행, 플러그인에서 ChatGPT 대화 시작, API 기반 역방향 AI 요청, 설치 프로그램, 코드 서명이 포함되지 않습니다. 다음 단계의 [기초 명령 전달 범위 제안](docs/COMMAND_SCOPE.md)은 아직 구현되지 않았습니다.
+현재 범위에는 객체 생성·삭제·회전·축척, 임의 Ruby 실행, 플러그인에서 ChatGPT 대화 시작, API 기반 역방향 AI 요청, 설치 프로그램, 코드 서명이 포함되지 않습니다. [기초 명령 전달](docs/COMMAND_SCOPE.md)은 구현된 시험 기능이며 실제 SketchUp 검증이 남아 있습니다.
 
 [설계](docs/ARCHITECTURE.md) · [수동 시험](docs/MANUAL_TEST.md) · [검증 범위](docs/VALIDATION.md)
 

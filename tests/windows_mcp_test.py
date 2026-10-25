@@ -165,6 +165,44 @@ class WindowsMcpTests(unittest.TestCase):
         self.assertEqual('user', self.tool('sketchup_get_instance', self.target(0))['state']['authority'])
         self.assertEqual('authority_or_model_mismatch', self.tool('sketchup_start_demo', args, True)['status'])
 
+    def command_args(self, **fields):
+        state = self.tool('sketchup_get_instance', self.target(0))['state']
+        return dict(self.target(0, True), command_id=state['next_command_id'], expected_context=[], **fields)
+
+    def test_commands_round_trip_through_real_executor_without_duplicates(self):
+        args = self.command_args(entity_ids=['1000'], delta_mm=[1000,500,0])
+        self.assertEqual('authority_or_model_mismatch', self.tool('sketchup_move_entities', args, True)['status'])
+        self.command(grant=0)
+        preview = self.command_args(entity_ids=['1000'], properties={'name':'A동'}, dry_run=True)
+        result = self.tool('sketchup_update_entity_properties', preview)
+        self.assertEqual('preview', result['result']['state'])
+        self.assertEqual('block', self.tool('sketchup_get_selection_info', self.target(0, True))['data']['items'][0]['name'])
+        properties = self.command_args(entity_ids=['1000'], properties={'name':'A동','tag':'구조','material':'콘크리트'})
+        self.assertEqual('completed', self.tool('sketchup_update_entity_properties', properties)['result']['state'])
+        item = self.tool('sketchup_get_selection_info', self.target(0, True))['data']['items'][0]
+        self.assertEqual('A동', item['name'])
+        self.assertEqual('구조', item['tag']['name'])
+        self.tool('sketchup_set_selection', self.command_args(entity_ids=[], mode='clear'))
+        self.assertEqual(0, self.tool('sketchup_get_selection_info', self.target(0, True))['data']['total'])
+        self.tool('sketchup_set_selection', self.command_args(entity_ids=['1000'], mode='replace'))
+        self.tool('sketchup_set_view', self.command_args(preset='top'))
+        self.tool('sketchup_zoom', self.command_args(entity_ids=['1000'], scope='entities'))
+        move = self.command_args(entity_ids=['1000'], delta_mm=[1000,500,0])
+        moved = self.tool('sketchup_move_entities', move)
+        self.assertEqual([1000,500,0], moved['result']['data']['after'][0]['model_origin_mm'])
+        replay = self.tool('sketchup_move_entities', move)
+        self.assertTrue(replay['replayed'])
+        self.assertEqual(moved['result'], replay['result'])
+        item = self.tool('sketchup_get_selection_info', self.target(0, True))['data']['items'][0]
+        self.assertEqual([1000,500,0], item['model_bounds']['min'])
+        query = dict(self.target(0, True), command_id=move['command_id'])
+        self.assertEqual('completed', self.tool('sketchup_get_command_result', query)['result']['state'])
+        conflict = dict(move, delta_mm=[2,0,0])
+        self.assertEqual('command_id_conflict', self.tool('sketchup_move_entities', conflict, True)['status'])
+        wrong = self.command_args(entity_ids=['1000'], delta_mm=[1,0,0])
+        wrong['expected_context'] = ['999']
+        self.assertEqual('context_mismatch', self.tool('sketchup_move_entities', wrong, True)['status'])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

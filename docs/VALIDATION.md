@@ -1,5 +1,28 @@
 # 검증 범위
 
+## 0.4.0 참조 작업 반영 검사 — 2026-10-25, Windows
+
+v0.3.1 커밋 `c1d31ae04123b6749e5c3423321805fa602f477f`을 기준으로 OneDrive 참조 폴더의 미커밋 소스·빌드·검사 변경 21개 파일을 현재 `work/post-0.3.1` 브랜치에 반영했습니다. 참조 폴더의 Git 이력은 같은 v0.3.1이며 이보다 앞선 커밋은 없었습니다. 반영 후 MCP의 편집 경로 조회 안내와 문서를 실제 구현에 맞췄습니다.
+
+자동 검사 **84개 통과**, 실패·오류·건너뜀 0입니다. Ruby 문법 검사와 배포 GUI/MCP·테스트 실행 파일의 x64 빌드도 통과했습니다.
+
+| 검사 | 결과 |
+|---|---|
+| MCP STDIO 프로토콜·15개 도구·변경 인수 검증 | Python 15개 |
+| 기존 Session 회귀 | Ruby 17개 / 57 assertions |
+| 명령 권한·기한·ID 순서·중복·결과 이력·모델/연결 전환 | Ruby 11개 / 76 assertions |
+| 선택·뷰·속성·이동·변환·잠금·Undo/롤백 대역 검사 | Ruby 18개 / 100 assertions |
+| ModelReader 회귀 | Ruby 10개 / 52 assertions |
+| 네이티브 오류 보존 / 파이프 상태 머신 | Ruby 2개 / 4 assertions 및 5개 / 25 assertions |
+| 실제 Win32 Named Pipe | Ruby 3개 / 45 assertions |
+| 실제 MCP → 제어 허브 → Win32 파이프 → Ruby 명령 실행기 | Python 3개 |
+
+Ruby 합계는 66개 / 359 assertions입니다. 현재 설치된 SketchUp 2020의 Ruby 2.5.5 DLL을 별도 테스트 호스트로 실행했고, Minitest 5.15.0과 Python 3.13.17을 사용했습니다. .NET Framework x64 컴파일러와 기존 Win32 보조 DLL을 사용했습니다. 일반 GUI나 SketchUp 모델을 시험 대상으로 연결하지 않았습니다.
+
+**명령 실행기의 모델·카메라·Undo는 `tests/support/sketchup_double.rb` 대역입니다.** 실제 통신과 실행기 라우팅을 검증했지만 실제 SketchUp 모델의 수정·Undo·카메라 복원을 보장하는 결과는 아닙니다. 새 RBZ의 실제 설치, 중첩 편집에서 변환된 이동, 여러 실제 인스턴스, 사용자 편집과의 충돌, 모달 창 지연, 화면 배치는 [수동 시험](MANUAL_TEST.md)에 따라 추가 확인해야 합니다. GitHub Actions는 이 반영 작업에서 실행하지 않았습니다.
+
+아래 0.3.x 및 0.2.x 항목은 각 버전 당시의 검증 이력입니다.
+
 ## 0.3.1 검사 결과 — 2026-10-25, Windows
 
 전체 **52개 자동 검사 통과**, 실패·오류 0입니다. 기존 51개에 평면 객체의 X/Y/Z 순서 회귀 검사를 추가했습니다. ModelReader는 10개 / 52 assertions이며, Ruby 검사 합계는 37개 / 183 assertions입니다. STDIO 프로토콜 13개 및 실제 MCP/Win32/Ruby 통합 2개도 통과했습니다.

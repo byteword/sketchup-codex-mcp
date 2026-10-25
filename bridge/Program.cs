@@ -52,7 +52,7 @@ namespace SketchUpPipeProbe
             layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 34));
             layout.RowStyles.Add(new RowStyle(SizeType.Percent, 40));
             heading.Dock = DockStyle.Fill;
-            heading.Text = "MCP 연결 대기 · 모델 요약 / 선택 객체 조회";
+            heading.Text = "MCP 연결 대기 · 모델 조회 / 명령 전달 (시험)";
             layout.Controls.Add(heading, 0, 0);
             grid.Dock = DockStyle.Fill;
             grid.ReadOnly = true;
@@ -173,7 +173,7 @@ namespace SketchUpPipeProbe
             bool allowed = current != null && Wire.Text(current.State, "authority") == "mcp";
             demo.Enabled = errorButton.Enabled = allowed;
             var clients = control.Clients.Values.ToArray();
-            heading.Text = "SketchUp MCP Bridge " + BuildInfo.Version + " · 모델 요약 / 선택 객체 조회\n" +
+            heading.Text = "SketchUp MCP Bridge " + BuildInfo.Version + " · 모델 조회 / 명령 전달 (시험)\n" +
                 (clients.Length == 0 ? "MCP 연결 대기 — ChatGPT에 SketchUpMcp.exe를 STDIO로 등록하세요." :
                  "MCP 연결 " + clients.Length + "개: " + String.Join(" | ", clients.Select(c =>
                      c.Name + " " + c.Version + " / PID " + c.Pid + " / 작업 " + c.Active + " / " + c.LastTool))) +

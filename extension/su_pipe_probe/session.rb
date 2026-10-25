@@ -1,15 +1,21 @@
 # encoding: UTF-8
 require 'securerandom'
 require 'json'
+require 'digest'
+require 'time'
+require_relative 'command_executor'
 
 module SUPipeProbe
   # Protocol and authority state machine; independent of SketchUp and Win32.
   class Session
     attr_reader :session_id, :authority, :lease, :job, :last_error, :last_result
 
-    def initialize(sender, metadata, clock = nil, reader = nil)
+    def initialize(sender, metadata, clock = nil, reader = nil, executor = nil)
       @sender, @metadata = sender, metadata
       @reader = reader
+      @executor = executor
+      @command_sequence = 0
+      @commands = {}
       @clock = clock || lambda { Process.clock_gettime(Process::CLOCK_MONOTONIC) }
       @session_id = SecureRandom.uuid
       @authority = 'user'
@@ -27,6 +33,7 @@ module SUPipeProbe
 
     def snapshot
       @metadata.call.merge('authority' => @authority, 'lease' => @lease,
+        'next_command_id' => next_command_id,
         'mcp_clients' => @mcp_clients,
         'job_id' => @job && @job[:id], 'progress' => @job ? @job[:progress] : 0,
         'last_error' => @last_error, 'last_result' => @last_result)
@@ -117,6 +124,7 @@ module SUPipeProbe
       # Check model identity BEFORE authorizing any command, not after dispatch.
       tick
       method = message['method']
+      return execute_command(id, method, message) if CommandExecutor::METHODS.include?(method)
       case method
       when 'ping'
         reply(id, true, 'pong', 'text' => message['text'].to_s)
@@ -142,6 +150,13 @@ module SUPipeProbe
         job_id = message['job_id']
         state = @job && @job[:id] == job_id ? job_state('running') : @history[job_id]
         reply(id, !state.nil?, state ? 'job' : 'job_not_found', 'job' => state)
+      when 'get_command_result'
+        sequence = command_sequence(message['command_id'])
+        return reply(id, false, 'invalid_command_id') unless sequence
+        record = @commands[message['command_id']]
+        return reply(id, false, sequence <= @command_sequence ? 'command_expired' : 'command_not_found') unless record
+        return reply(id, false, 'model_mismatch') unless record['result']['model_id'] == message['model_id']
+        reply(id, true, 'command_result', 'result' => record['result'])
       when 'release_owner'
         revoke('MCP client disconnected; user control restored') if @controller_owner == message['owner_id'] && @controller_owner
         reply(id, true, 'owner_released')
@@ -160,6 +175,7 @@ module SUPipeProbe
         unless @authority == 'mcp' && message['lease'] == @lease && message['model_id'] == @model_id
           return reply(id, false, 'authority_or_model_mismatch')
         end
+        return reply(id, false, 'controller_busy') if @controller_owner && @controller_owner != message['owner_id']
         return reply(id, false, 'busy') if @job
         if method == 'test_error'
           @last_error = 'Intentional test error; model was not changed'
@@ -176,6 +192,86 @@ module SUPipeProbe
     end
 
     private
+
+    def next_command_id
+      @command_sequence < 1_000_000_000 ? "#{@session_id}:#{@command_sequence + 1}" : nil
+    end
+
+    def command_sequence(value)
+      return nil unless value.is_a?(String) && value.start_with?(@session_id + ':')
+      number = value[(@session_id.length + 1)..-1]
+      return nil unless number.match(/\A[1-9][0-9]{0,9}\z/)
+      sequence = number.to_i
+      sequence <= 1_000_000_000 ? sequence : nil
+    end
+
+    def canonical(value)
+      case value
+      when Hash then value.keys.sort.each_with_object({}) { |key, result| result[key] = canonical(value[key]) }
+      when Array then value.map { |item| canonical(item) }
+      else value
+      end
+    end
+
+    def execute_command(id, method, message)
+      return reply(id, false, 'model_mismatch', 'model_id' => @model_id) unless message['model_id'] == @model_id
+      command_id = message['command_id']
+      sequence = command_sequence(command_id)
+      return reply(id, false, 'invalid_command_id') unless sequence
+      ignored = %w[v type session_id id method lease expires_at_ms owner_id]
+      payload = message.reject { |key, _| ignored.include?(key) }.merge('command' => method)
+      begin
+        signature = Digest::SHA256.hexdigest(JSON.generate(canonical(payload)))
+      rescue StandardError
+        return reply(id, false, 'invalid_arguments')
+      end
+      record = @commands[command_id]
+      if record
+        return reply(id, false, 'command_id_conflict') unless record['signature'] == signature
+        result = record['result']
+        return reply(id, result['state'] != 'failed' && result['state'] != 'unknown',
+          result['error'] || 'command_replayed', 'replayed' => true, 'result' => result)
+      end
+      return reply(id, false, 'command_expired') if sequence <= @command_sequence
+      return reply(id, false, 'command_out_of_order', 'next_command_id' => next_command_id) unless sequence == @command_sequence + 1
+      unless @authority == 'mcp' && message['lease'] == @lease
+        return reply(id, false, 'authority_or_model_mismatch')
+      end
+      return reply(id, false, 'controller_busy') if @controller_owner && @controller_owner != message['owner_id']
+      return reply(id, false, 'busy') if @job
+      return reply(id, false, 'request_expired') unless message['expires_at_ms'].is_a?(Numeric) && Time.now.to_f * 1000 <= message['expires_at_ms']
+      return reply(id, false, 'command_unavailable') unless @executor
+      # Counter is never reset on model changes, grant/revoke, or bridge reconnect.
+      # It rejects evicted IDs without retaining an unbounded tombstone set.
+      @command_sequence = sequence
+      @controller_owner = message['owner_id']
+      result = {'command_id' => command_id, 'model_id' => @model_id,
+        'command' => method, 'expected_context' => message['expected_context'], 'finished_at' => Time.now.utc.iso8601(3)}
+      begin
+        data = @executor.call(method, message)
+        unless data.is_a?(Hash) && JSON.generate(data).bytesize <= CommandExecutor::RESULT_LIMIT
+          raise CommandError.new('outcome_unknown', 'Command result cannot be represented; inspect the model')
+        end
+        result['state'] = message['dry_run'] ? 'preview' : 'completed'
+        result['data'] = data
+      rescue StandardError => error
+        code = error.is_a?(CommandError) ? error.code : 'api_error'
+        result.merge!('state' => code == 'outcome_unknown' ? 'unknown' : 'failed',
+          'error' => code, 'message' => error.message.to_s[0, 256])
+      end
+      result['finished_at'] = Time.now.utc.iso8601(3)
+      result = JSON.parse(JSON.generate(result))
+      @commands[command_id] = {'signature' => signature, 'result' => result}
+      @commands.shift while @commands.length > 32
+      labels = {'set_selection'=>'선택 변경', 'set_view'=>'보기 변경', 'zoom'=>'화면 확대',
+        'update_entity_properties'=>'객체 속성 변경', 'move_entities'=>'객체 이동'}
+      states = {'preview'=>'미리보기 완료', 'completed'=>'완료', 'failed'=>'실패', 'unknown'=>'결과 확인 필요'}
+      @last_result = labels[method] + ': ' + states[result['state']]
+      @last_error = result['message'] || ''
+      reply(id, !result.key?('error'), result['error'] || 'command_' + result['state'],
+        'command_id' => command_id, 'model_id' => @model_id,
+        'next_command_id' => next_command_id, 'result' => result)
+    end
 
     def job_state(status, reason = '')
       {'job_id' => @job[:id], 'model_id' => @job[:model_id], 'status' => status,

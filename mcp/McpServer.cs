@@ -91,7 +91,7 @@ namespace SketchUpPipeProbe
                             protocolVersion = protocol,
                             capabilities = new { tools = new { listChanged = false } },
                             serverInfo = new { name = "sketchup-local", version = BuildInfo.Version },
-                            instructions = "Use list_instances first. Target exact session_id and current model_id. Demo requires permission in the SketchUp panel. No geometry edits are provided. A canceled/failed/timed-out start must not be automatically retried."
+                            instructions = "Use list_instances first and target exact session_id/model_id. Commands require local panel permission. Read expected_context as the ordered persistent_id strings in fresh get_selection_info data.edit_context.path (empty at model root; reject truncated paths). Obtain next_command_id from fresh get_instance state. Each execution or dry_run consumes a new ID. After timeout query get_command_result; never automatically retry. Property and move commands edit the model using one Undo operation. Selection/camera changes are separate from model Undo."
                         }).ConfigureAwait(false);
                         continue;
                     }
@@ -134,8 +134,8 @@ namespace SketchUpPipeProbe
             {
                 object result;
                 try { result = await bridge.CallAsync(name, args, source.Token).ConfigureAwait(false); }
-                catch (OperationCanceledException) { result = ToolCatalog.Error("canceled", "Request canceled."); }
-                catch (Exception error) { result = ToolCatalog.Error("bridge_unavailable", error.Message); }
+                catch (OperationCanceledException) { result = ToolCatalog.Error(CommandCatalog.IsWrite(name) ? "outcome_unknown" : "canceled", CommandCatalog.IsWrite(name) ? "Query sketchup_get_command_result; a submitted command may have completed. Do not automatically retry." : "Request canceled."); }
+                catch (Exception error) { result = ToolCatalog.Error(CommandCatalog.IsWrite(name) ? "outcome_unknown" : "bridge_unavailable", error.Message + (CommandCatalog.IsWrite(name) ? " Query sketchup_get_command_result; do not automatically retry." : "")); }
                 await ResultAsync(id, result).ConfigureAwait(false);
             }
             catch (Exception error) { Console.Error.WriteLine("MCP output: " + error.Message); }
