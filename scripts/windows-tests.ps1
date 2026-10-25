@@ -1,0 +1,51 @@
+param(
+    [string]$Python = 'python',
+    [string]$Ruby = 'ruby',
+    [string[]]$RubyArguments = @()
+)
+$ErrorActionPreference = 'Stop'
+Set-Location (Split-Path $PSScriptRoot -Parent)
+& .\build.cmd
+if ($LASTEXITCODE -ne 0) { throw 'GUI build failed' }
+$probeCompiler = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
+& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /define:PROBE_TEST /out:dist\HeadlessHub.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\JsonLines.cs shared\ToolCatalog.cs bridge\PipeHub.cs bridge\ControlHub.cs tests\HeadlessHub.cs
+if ($LASTEXITCODE -ne 0) { throw 'Headless hub build failed' }
+Copy-Item bridge\App.config dist\HeadlessHub.exe.config -Force
+& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /out:dist\McpHarness.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\JsonLines.cs shared\ToolCatalog.cs mcp\McpServer.cs tests\McpHarness.cs
+if ($LASTEXITCODE -ne 0) { throw 'MCP harness build failed' }
+Copy-Item bridge\App.config dist\McpHarness.exe.config -Force
+& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /define:PROBE_TEST /out:dist\SketchUpMcp.Test.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\JsonLines.cs shared\ToolCatalog.cs mcp\McpServer.cs mcp\BridgeConnection.cs mcp\Program.cs
+if ($LASTEXITCODE -ne 0) { throw 'Isolated MCP adapter build failed' }
+Copy-Item bridge\App.config dist\SketchUpMcp.Test.exe.config -Force
+& $Python tests/mcp_stdio_test.py dist/McpHarness.exe
+if ($LASTEXITCODE -ne 0) { throw 'MCP stdio tests failed' }
+& $Ruby @RubyArguments tests/session_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Session tests failed' }
+& $Ruby @RubyArguments tests/model_reader_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Model reader tests failed' }
+& $Ruby @RubyArguments tests/native_call_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Native error output tests failed' }
+& $Ruby @RubyArguments tests/transport_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Transport state tests failed' }
+$probeProcess = New-Object System.Diagnostics.Process
+$probeProcess.StartInfo.FileName = Join-Path (Get-Location) 'dist\HeadlessHub.exe'
+$probeProcess.StartInfo.Arguments = '"' + (Join-Path (Get-Location) 'dist\pipe-test.log') + '"'
+$probeProcess.StartInfo.UseShellExecute = $false
+$probeProcess.StartInfo.RedirectStandardInput = $true
+$probeProcess.StartInfo.CreateNoWindow = $true
+[void]$probeProcess.Start()
+$previousTestMode = $env:SUPIPE_TEST
+$env:SUPIPE_TEST = '1'
+try {
+    & $Ruby @RubyArguments tests/windows_pipe_test.rb
+    if ($LASTEXITCODE -ne 0) { throw 'Native pipe tests failed' }
+    & $Python tests/windows_mcp_test.py $Ruby @RubyArguments
+    if ($LASTEXITCODE -ne 0) { throw 'MCP / GUI / Ruby integration tests failed' }
+} finally {
+    $env:SUPIPE_TEST = $previousTestMode
+    if (!$probeProcess.HasExited) {
+        $probeProcess.StandardInput.WriteLine('stop')
+        if (!$probeProcess.WaitForExit(5000)) { $probeProcess.Kill() }
+    }
+    $probeProcess.Dispose()
+}

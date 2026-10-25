@@ -1,0 +1,38 @@
+name: Windows MCP bridge
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.5'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build plain Win32 error-capture helper (no Ruby ABI)
+        shell: cmd
+        run: scripts\build-native.cmd
+      - name: Syntax check Ruby
+        shell: pwsh
+        run: |
+          Get-ChildItem extension -Filter *.rb -Recurse | ForEach-Object {
+            ruby -c $_.FullName
+            if ($LASTEXITCODE -ne 0) { throw "Ruby syntax error" }
+          }
+      - name: Build GUI and test real Windows pipes
+        shell: powershell
+        run: ./scripts/windows-tests.ps1
+      - name: Verify executable versions and package runtime files
+        shell: pwsh
+        run: ./scripts/package.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sketchup-mcp-bridge-windows
+          path: dist/sketchup-codex-mcp-*.zip

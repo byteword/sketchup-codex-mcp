@@ -1,0 +1,170 @@
+"""Production MCP -> isolated production control hub -> actual Win32 Ruby peers.
+HeadlessHub must be running. Arguments: Ruby executable and optional host arguments.
+"""
+import json
+import pathlib
+import queue
+import re
+import subprocess
+import sys
+import threading
+import time
+import unittest
+import uuid
+
+RUBY = sys.argv[1:]
+sys.argv = sys.argv[:1]
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+VERSION = re.search(r'public const string Version = "([^"]+)"', (ROOT / 'shared/BuildInfo.cs').read_text(encoding='utf-8')).group(1)
+
+
+def capture(stream):
+    output = queue.Queue()
+    def read():
+        for line in stream:
+            output.put(json.loads(line.decode('utf-8')))
+    thread = threading.Thread(target=read, daemon=True)
+    thread.start()
+    return output, thread
+
+
+class WindowsMcpTests(unittest.TestCase):
+    def setUp(self):
+        self.control = ROOT / 'dist' / ('fixture-' + str(uuid.uuid4()) + '.json')
+        self.sequence = 0
+        self.write_control({})
+        self.fixture = subprocess.Popen(RUBY + ['tests/windows_session_fixture.rb', str(self.control)],
+                                        cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.fixture_lines, self.fixture_reader = capture(self.fixture.stdout)
+        self.instances = self.fixture_lines.get(timeout=10)['instances']
+        self.adapter = None
+        self.request_id = 0
+        self.start_adapter()
+        deadline = time.monotonic() + 5
+        while len(self.tool('sketchup_list_instances')['instances']) != 2:
+            if time.monotonic() > deadline:
+                self.fail('Ruby peers did not register')
+            time.sleep(.02)
+
+    def write_control(self, fields):
+        data = dict(fields, sequence=self.sequence)
+        temporary = self.control.with_suffix('.tmp')
+        temporary.write_text(json.dumps(data), encoding='utf-8')
+        temporary.replace(self.control)
+
+    def command(self, **fields):
+        self.sequence += 1
+        self.write_control(fields)
+        while True:
+            result = self.fixture_lines.get(timeout=5)
+            if result.get('ack') == self.sequence:
+                self.instances = result['instances']
+                return
+
+    def start_adapter(self):
+        self.adapter = subprocess.Popen([str(ROOT / 'dist/SketchUpMcp.Test.exe')],
+                                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.lines, self.reader = capture(self.adapter.stdout)
+        self.errors = []
+        self.error_reader = threading.Thread(target=lambda: self.errors.append(self.adapter.stderr.read()), daemon=True)
+        self.error_reader.start()
+        result = self.rpc('initialize', {'protocolVersion': '2025-11-25', 'capabilities': {},
+                                        'clientInfo': {'name': 'windows-integration', 'version': '1'}})
+        self.assertEqual(VERSION, result['result']['serverInfo']['version'])
+        self.send({'jsonrpc': '2.0', 'method': 'notifications/initialized'})
+
+    def stop_adapter(self):
+        if self.adapter is None:
+            return
+        self.adapter.stdin.close()
+        try:
+            self.adapter.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            self.adapter.kill()
+            self.adapter.wait()
+            self.fail('Adapter did not exit on EOF')
+        finally:
+            self.reader.join(timeout=2)
+            self.error_reader.join(timeout=2)
+            self.adapter.stdout.close()
+            self.adapter.stderr.close()
+            self.adapter = None
+
+    def tearDown(self):
+        try:
+            self.stop_adapter()
+        finally:
+            self.sequence += 1
+            self.write_control({'stop': True})
+            try:
+                self.fixture.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                self.fixture.kill()
+                self.fixture.wait()
+            errors = self.fixture.stderr.read().decode('utf-8', errors='replace')
+            self.fixture_reader.join(timeout=2)
+            self.fixture.stdout.close()
+            self.fixture.stderr.close()
+            self.control.unlink(missing_ok=True)
+            self.assertEqual(0, self.fixture.returncode, errors)
+
+    def send(self, message):
+        self.adapter.stdin.write(json.dumps(message, ensure_ascii=False).encode('utf-8') + b'\n')
+        self.adapter.stdin.flush()
+
+    def rpc(self, method, params):
+        self.request_id += 1
+        self.send({'jsonrpc': '2.0', 'id': self.request_id, 'method': method, 'params': params})
+        result = self.lines.get(timeout=12)
+        self.assertEqual(self.request_id, result['id'])
+        self.assertNotIn('error', result)
+        return result
+
+    def tool(self, name, args=None, error=False):
+        result = self.rpc('tools/call', {'name': name, 'arguments': args or {}})['result']
+        self.assertEqual(error, result['isError'], result)
+        return json.loads(result['content'][0]['text'])
+
+    def target(self, index, model=False):
+        keys = ['session_id', 'model_id'] if model else ['session_id']
+        return {key: self.instances[index][key] for key in keys}
+
+    def test_reads_route_to_exact_model_in_user_mode(self):
+        for index in range(2):
+            args = self.target(index, True)
+            result = self.tool('sketchup_get_model_summary', args)
+            self.assertEqual(args['session_id'], result['session_id'])
+            self.assertEqual(args['model_id'], result['model_id'])
+            self.assertEqual(index, result['data']['instance_index'])
+            result = self.tool('sketchup_get_selection_info', dict(args, offset=12, limit=3))
+            self.assertEqual(12, result['data']['offset'])
+            self.assertEqual('get_selection_info', result['data']['method'])
+            self.assertEqual('user', self.tool('sketchup_get_instance', self.target(index))['state']['authority'])
+        stale = self.target(0, True)
+        self.command(change_model=0)
+        for name in ['sketchup_get_model_summary', 'sketchup_get_selection_info']:
+            self.assertEqual('model_mismatch', self.tool(name, stale, True)['status'])
+        self.assertEqual('pong', self.tool('sketchup_ping', dict(self.target(0), text='한글🙂'))['status'])
+
+    def test_jobs_history_and_adapter_restart_still_work(self):
+        args = self.target(0, True)
+        self.assertEqual('authority_or_model_mismatch', self.tool('sketchup_start_demo', args, True)['status'])
+        self.command(grant=0)
+        self.assertEqual('mcp', self.tool('sketchup_get_instance', self.target(0))['state']['authority'])
+        job = self.tool('sketchup_start_demo', args)['job_id']
+        self.command(clock=10)
+        self.assertEqual(50, self.tool('sketchup_get_job', dict(self.target(0), job_id=job))['job']['progress'])
+        self.tool('sketchup_cancel_job', dict(self.target(0), job_id=job))
+        self.assertEqual('canceled', self.tool('sketchup_get_job', dict(self.target(0), job_id=job))['job']['status'])
+        fresh = self.tool('sketchup_start_demo', args)['job_id']
+        self.assertEqual('not_running', self.tool('sketchup_cancel_job', dict(self.target(0), job_id=job))['status'])
+        self.assertEqual('running', self.tool('sketchup_get_job', dict(self.target(0), job_id=fresh))['job']['status'])
+        self.stop_adapter()
+        self.start_adapter()
+        self.assertEqual(2, len(self.tool('sketchup_list_instances')['instances']))
+        self.assertEqual('user', self.tool('sketchup_get_instance', self.target(0))['state']['authority'])
+        self.assertEqual('authority_or_model_mismatch', self.tool('sketchup_start_demo', args, True)['status'])
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)

@@ -1,0 +1,12 @@
+* text=auto
+*.cs text eol=lf
+*.rb text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.ps1 text eol=lf
+*.yml text eol=lf
+*.cmd text eol=crlf
+*.dll binary
+*.exe binary
+*.rbz binary
+*.zip binary
