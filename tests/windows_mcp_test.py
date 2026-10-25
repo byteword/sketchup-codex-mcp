@@ -196,6 +196,35 @@ class WindowsMcpTests(unittest.TestCase):
         for name, fields in [('sketchup_find_entities', {}), ('sketchup_get_children', {'parent_path':[]})]:
             self.assertEqual('model_mismatch', self.tool(name, dict(stale, **fields), True)['status'])
 
+    def test_create_duplicate_and_replay_flow_returns_discoverable_ids(self):
+        fields = dict(name='새 박스🙂',origin_mm=[100,200,300],size_mm=[1000,2000,3000])
+        args = self.command_args(**fields)
+        self.assertEqual('authority_or_model_mismatch',self.tool('sketchup_create_box',args,True)['status'])
+        self.command(grant=0)
+        preview = self.tool('sketchup_create_box',self.command_args(dry_run=True,**fields))
+        self.assertEqual('preview',preview['result']['state'])
+        self.assertEqual([],self.tool('sketchup_find_entities',dict(self.target(0,True),name=fields['name']))['data']['items'])
+        args = self.command_args(**fields)
+        result = self.tool('sketchup_create_box',args)
+        box = result['result']['data']['created'][0]
+        self.assertEqual([100,200,300],box['model_bounds']['min'])
+        self.assertEqual([1100,2200,3300],box['model_bounds']['max'])
+        self.assertTrue(self.tool('sketchup_create_box',args)['replayed'])
+        self.assertEqual(1,len(self.tool('sketchup_find_entities',dict(self.target(0,True),name=fields['name']))['data']['items']))
+        duplicate = self.command_args(entity_ids=[box['persistent_id']],delta_mm=[2000,0,0])
+        copied = self.tool('sketchup_duplicate_entities',duplicate)['result']['data']['created'][0]
+        self.assertNotEqual(box['persistent_id'],copied['persistent_id'])
+        self.assertEqual([2100,200,300],copied['model_bounds']['min'])
+        self.assertTrue(self.tool('sketchup_duplicate_entities',duplicate)['replayed'])
+        found = self.tool('sketchup_find_entities',dict(self.target(0,True),name=fields['name']))['data']['items']
+        self.assertEqual({box['persistent_id'],copied['persistent_id']},{i['persistent_id'] for i in found})
+        self.assertEqual([],self.tool('sketchup_find_entities',dict(self.target(1,True),name=fields['name']))['data']['items'])
+        self.tool('sketchup_set_selection',self.command_args(entity_ids=[box['persistent_id'],copied['persistent_id']],mode='replace'))
+        items = self.tool('sketchup_get_selection_info',self.target(0,True))['data']['items']
+        self.assertEqual([[100,200,300],[2100,200,300]],[i['model_bounds']['min'] for i in items])
+        cached = self.tool('sketchup_get_command_result',dict(self.target(0,True),command_id=duplicate['command_id']))
+        self.assertEqual(copied,cached['result']['data']['created'][0])
+
     def command_args(self, **fields):
         state = self.tool('sketchup_get_instance', self.target(0))['state']
         args = dict(self.target(0, True), command_id=state['next_command_id'], expected_context=[])

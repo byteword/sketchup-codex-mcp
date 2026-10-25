@@ -5,7 +5,7 @@ require_relative 'su_pipe_probe/version'
 
 unless file_loaded?(__FILE__)
   extension = SketchupExtension.new('SketchUp Pipe Probe', 'su_pipe_probe/main')
-  extension.description = 'Local MCP bridge with model queries, object discovery and permission-controlled selection, view, properties and movement commands.'
+  extension.description = 'Local MCP bridge with model queries, object discovery and permission-controlled selection, view, properties, movement, box creation and duplication commands.'
   extension.version = SUPipeProbe::VERSION
   extension.creator = 'byteword'
   Sketchup.register_extension(extension, true)

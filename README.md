@@ -1,7 +1,15 @@
 # SketchUp Local MCP Bridge 0.4.0 (시험 버전)
 
 Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는 GUI 중개 앱입니다.
-이번 버전은 **모델 조회·객체 검색·구조 탐색·선택 변경·화면 제어·객체 속성 변경·이동**을 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. 실제 SketchUp에서 새 변경 명령과 Undo 확인은 아직 진행하지 않은 시험 버전입니다.
+이번 버전은 **모델 조회·객체 검색·구조 탐색·선택 변경·화면 제어·객체 속성 변경·이동·박스 생성·복제**을 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. 실제 SketchUp에서 새 변경 명령과 Undo 확인은 아직 진행하지 않은 시험 버전입니다.
+
+## 0.4.0: 객체 생성·복제 추가
+
+- `sketchup_create_box`: 모델 축 기준 원점과 X/Y/Z 치수를 mm로 지정해 독립 박스 그룹을 만듭니다. 변 길이는 1~1,000,000 mm입니다.
+- `sketchup_duplicate_entities`: 조회한 그룹/컴포넌트를 하나씩 복제하고 모델 축 기준 mm 상대 이동을 적용합니다. 한 번에 최대 25개입니다.
+- 그룹 복제본은 상위 정의를 독립화하고 컴포넌트는 원본 정의를 공유합니다. 원본을 이동하지 않으며 생성된 ID와 경로를 결과에 반환합니다.
+- 두 명령 모두 로컬 허가·현재 편집 경로·명령 ID 검증, `dry_run`, 중복 실행 방지와 요청당 한 번의 Undo를 적용합니다.
+- 현재 MCP 도구 **19개**, 전체 자동 검사 **124개 통과**. [인수·예시·복제 범위](docs/CREATION_COMMANDS.md)를 참고하세요.
 
 ## 0.4.0: 객체 검색·구조 탐색 추가
 
@@ -9,7 +17,7 @@ Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는
 - `sketchup_get_children`: 루트 또는 지정한 배치 경로의 바로 아래 그룹/컴포넌트를 읽습니다. 편집 위치를 열거나 선택을 바꾸지 않습니다.
 - 결과에는 영구 ID, 루트부터의 배치 경로, 현재 편집 위치 소속 여부를 포함합니다. 같은 정의의 여러 배치도 경로별로 구분합니다.
 - 두 도구는 실행 허가 없이 읽기 전용으로 사용합니다. 큰 모델은 `next_cursor`로 나눠 조회하고, 깊이 제한 등으로 빠진 범위는 별도로 표시합니다.
-- MCP 도구는 **17개**, Windows 자동 검사는 **104개 통과**입니다. [인수·예시·조회 한계](docs/ENTITY_DISCOVERY.md)를 참고하세요.
+- 검색·구조 탐색을 처음 추가했을 때 MCP 도구는 **17개**, Windows 자동 검사는 **104개 통과**였습니다. [인수·예시·조회 한계](docs/ENTITY_DISCOVERY.md)를 참고하세요.
 
 ## 0.4.0: 기초 명령 전달
 
@@ -76,7 +84,7 @@ ChatGPT에는 `SketchUpMcp.exe`를 등록합니다. GUI는 별도 프로세스�
 
 GUI와 RBZ를 함께 업데이트하세요. 소스 배포본에 EXE가 없으면 `start.cmd`가 먼저 빌드합니다.
 
-기존 MCP 등록 경로를 유지하려면 해당 폴더에 새 배포본을 덮어씁니다. GUI·SketchUp을 저장 후 종료한 상태에서 교체하고, MCP 서버도 다시 시작해 도구 17개를 불러오세요. 새 버전은 실행 중인 이전 프로세스에 자동으로 주입되지 않습니다.
+기존 MCP 등록 경로를 유지하려면 해당 폴더에 새 배포본을 덮어씁니다. GUI·SketchUp을 저장 후 종료한 상태에서 교체하고, MCP 서버도 다시 시작해 도구 19개를 불러오세요. 새 버전은 실행 중인 이전 프로세스에 자동으로 주입되지 않습니다.
 
 ## ChatGPT 등록
 
@@ -135,6 +143,8 @@ GUI에는 초기화된 MCP 클라이언트 이름·PID·진행 중 호출 수·�
 | `sketchup_zoom` | 공통 명령 인수, `scope`, `entity_ids` | 모델 전체 또는 지정 객체 확대 |
 | `sketchup_update_entity_properties` | 공통 명령 인수, `entity_ids`, `properties` | 이름·숨김·잠금·기존 태그/재질 변경 |
 | `sketchup_move_entities` | 공통 명령 인수, `entity_ids`, `delta_mm` | 모델 축 기준 mm 상대 이동 |
+| `sketchup_create_box` | 공통 명령 인수, `name`, `origin_mm`, `size_mm` | 모델 축 기준 독립 박스 그룹 생성 |
+| `sketchup_duplicate_entities` | 공통 명령 인수, `entity_ids`, `delta_mm` | 그룹/컴포넌트를 하나씩 복제하고 상대 이동 |
 | `sketchup_get_command_result` | `session_id`, 원래 `model_id`, `command_id` | 보관된 명령 결과 조회, 재실행 없음 |
 
 공통 명령 인수는 `session_id`, `model_id`, `command_id`, `expected_context`와 선택 `dry_run`입니다. `command_id`는 직전 `sketchup_get_instance`의 `state.next_command_id`를 사용합니다. `expected_context`는 직전 선택 상세 조회의 `data.edit_context.path`에서 `persistent_id` 문자열을 순서대로 모은 배열이며 루트는 `[]`입니다. 경로가 잘렸다면 명령을 실행하지 않습니다.
@@ -173,7 +183,7 @@ Windows 통합 검사는 `PROBE_TEST` 빌드와 `SUPIPE_TEST=1`로 별도 파이
 | `native/` | Win32 보조 DLL 소스 |
 | `tests/` | 상태 머신, 통신, MCP 프로토콜 및 통합 검사 |
 
-현재 범위에는 객체 생성·삭제·회전·축척, 임의 Ruby 실행, 플러그인에서 ChatGPT 대화 시작, API 기반 역방향 AI 요청, 설치 프로그램, 코드 서명이 포함되지 않습니다. [기초 명령 전달](docs/COMMAND_SCOPE.md)은 구현된 시험 기능이며 실제 SketchUp 검증이 남아 있습니다.
+현재 범위에는 박스 외 임의 형상 생성·객체 삭제·회전·축척, 임의 Ruby 실행, 플러그인에서 ChatGPT 대화 시작, API 기반 역방향 AI 요청, 설치 프로그램, 코드 서명이 포함되지 않습니다. [기초 명령 전달](docs/COMMAND_SCOPE.md)은 구현된 시험 기능이며 실제 SketchUp 검증이 남아 있습니다.
 
 [설계](docs/ARCHITECTURE.md) · [수동 시험](docs/MANUAL_TEST.md) · [검증 범위](docs/VALIDATION.md)
 

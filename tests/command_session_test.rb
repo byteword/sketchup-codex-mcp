@@ -119,4 +119,27 @@ class CommandSessionTest < Minitest::Test
     assert_equal original, @session.snapshot['next_command_id']
     assert_empty @calls
   end
+  def test_creation_and_duplication_require_permission_and_replay_without_new_objects
+    {'create_box'=>{'name'=>'A동', 'origin_mm'=>[0,0,0], 'size_mm'=>[1000,2000,3000]},
+     'duplicate_entities'=>{'entity_ids'=>['101'], 'delta_mm'=>[1000,0,0]}}.each do |method, fields|
+      @session.revoke
+      args = fields.merge('expected_context'=>[], 'command_id'=>@session.snapshot['next_command_id'])
+      before = @calls.length
+      assert_equal 'authority_or_model_mismatch', request(method,args)['status']
+      assert_equal before, @calls.length
+      @session.grant
+      preview = request(method,args.merge('dry_run'=>true))
+      assert_equal 'preview', preview['result']['state']
+      assert_equal 'command_id_conflict', request(method,args)['status']
+      args['command_id'] = @session.snapshot['next_command_id']
+      first = request(method,args)
+      assert_equal 'completed', first['result']['state']
+      replay = request(method,args)
+      assert replay['replayed']
+      assert_equal first['result'], replay['result']
+      assert_equal before + 2, @calls.length
+    end
+  end
+
+
 end

@@ -25,6 +25,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Session tests failed' }
 if ($LASTEXITCODE -ne 0) { throw 'Command session tests failed' }
 & $Ruby @RubyArguments tests/command_executor_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Command executor tests failed' }
+& $Ruby @RubyArguments tests/creation_commands_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Creation and duplication tests failed' }
 & $Ruby @RubyArguments tests/model_reader_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Model reader tests failed' }
 & $Ruby @RubyArguments tests/entity_browser_test.rb

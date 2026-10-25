@@ -266,7 +266,8 @@ module SUPipeProbe
       @commands[command_id] = {'signature' => signature, 'result' => result}
       @commands.shift while @commands.length > 32
       labels = {'set_selection'=>'선택 변경', 'set_view'=>'보기 변경', 'zoom'=>'화면 확대',
-        'update_entity_properties'=>'객체 속성 변경', 'move_entities'=>'객체 이동'}
+        'update_entity_properties'=>'객체 속성 변경', 'move_entities'=>'객체 이동',
+        'create_box'=>'박스 생성', 'duplicate_entities'=>'객체 복제'}
       states = {'preview'=>'미리보기 완료', 'completed'=>'완료', 'failed'=>'실패', 'unknown'=>'결과 확인 필요'}
       @last_result = labels[method] + ': ' + states[result['state']]
       @last_error = result['message'] || ''

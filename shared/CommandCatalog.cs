@@ -7,7 +7,7 @@ namespace SketchUpPipeProbe
 {
     public static class CommandCatalog
     {
-        static readonly string[] Names = { "sketchup_set_selection", "sketchup_set_view", "sketchup_zoom", "sketchup_update_entity_properties", "sketchup_move_entities", "sketchup_get_command_result" };
+        static readonly string[] Names = { "sketchup_set_selection", "sketchup_set_view", "sketchup_zoom", "sketchup_update_entity_properties", "sketchup_move_entities", "sketchup_create_box", "sketchup_duplicate_entities", "sketchup_get_command_result" };
         public static bool Contains(string name) { return Array.IndexOf(Names, name) >= 0; }
         public static bool IsWrite(string name) { return Contains(name) && name != "sketchup_get_command_result"; }
         public static string Method(string name) { return name.Substring("sketchup_".Length); }
@@ -29,9 +29,15 @@ namespace SketchUpPipeProbe
                 case "sketchup_set_selection": fields["entity_ids"] = Ids(25); fields["mode"] = Choice("replace", "add", "remove", "clear"); break;
                 case "sketchup_set_view": fields["preset"] = Choice("top", "front", "right", "isometric"); break;
                 case "sketchup_zoom": fields["scope"] = Choice("model", "entities"); fields["entity_ids"] = Ids(25); break;
+                case "sketchup_duplicate_entities":
                 case "sketchup_move_entities":
                     fields["entity_ids"] = Ids(25);
                     fields["delta_mm"] = new { type = "array", minItems = 3, maxItems = 3, items = new { type = "number", minimum = -1000000000, maximum = 1000000000 } };
+                    break;
+                case "sketchup_create_box":
+                    fields["name"] = Text(256);
+                    fields["origin_mm"] = new { type = "array", minItems = 3, maxItems = 3, items = new { type = "number", minimum = -1000000000, maximum = 1000000000 } };
+                    fields["size_mm"] = new { type = "array", minItems = 3, maxItems = 3, items = new { type = "number", minimum = 1, maximum = 1000000 } };
                     break;
                 case "sketchup_update_entity_properties":
                     fields["entity_ids"] = Ids(25);
@@ -54,13 +60,15 @@ namespace SketchUpPipeProbe
                 var required = new List<string>(fields.Keys);
                 required.Remove("dry_run");
                 string detail = name == "sketchup_get_command_result" ? "Read a cached command result without execution permission. Results retain their original model_id. Evicted IDs are expired and cannot execute again." :
-                    "Requires local permission in the SketchUp panel and current session/model/edit context. Use returned persistent IDs, at most 25 groups/components in the current context. A command ID is consumed once. No automatic retries. dry_run previews without changes. Selection/camera changes have no model Undo; property/move edits use one Undo operation. Shared edit ancestors and unsupported camera modes are rejected.";
+                    "Requires local permission in the SketchUp panel and current session/model/edit context. Existing targets require returned persistent IDs, at most 25 groups/components in the current context. A command ID is consumed once. No automatic retries. dry_run previews without changes. Selection/camera changes have no model Undo; property/move/create/duplicate edits use one Undo operation. Shared edit ancestors and unsupported camera modes are rejected.";
                 switch (name)
                 {
                     case "sketchup_set_selection": detail = "Replace, add, remove or clear selection. clear requires empty entity_ids. " + detail; break;
                     case "sketchup_set_view": detail = "Set an orthographic top/front/right/isometric view and fit the model. " + detail; break;
                     case "sketchup_zoom": detail = "Fit the whole model (empty entity_ids) or explicit objects; never infer targets from a changing selection. " + detail; break;
                     case "sketchup_update_entity_properties": detail = "Change only specified name/hidden/locked/tag/material properties. Tag/material names must already exist. material=null clears direct assignment. Unlock a locked object in a separate command. " + detail; break;
+                    case "sketchup_create_box": detail = "Create one independent box group with model-axis origin_mm and positive size_mm=[X,Y,Z], 1 to 1000000 mm per edge. Name is required. Uses Untagged/Layer0 for group and raw geometry. Returns new IDs only on execution. " + detail; break;
+                    case "sketchup_duplicate_entities": detail = "Copy each source once and translate by model-axis delta_mm. Groups become independent definitions; components share their source definition. Preserves instance properties and bounded component attributes. Glued and locked sources are rejected. Zero displacement creates overlapping copies. " + detail; break;
                     case "sketchup_move_entities": detail = "Translate instances by delta_mm=[dx,dy,dz] along MODEL axes, including through rotated/scaled edit ancestors. Maximum +/-1e9 mm per axis. " + detail; break;
                 }
                 result.Add(new { name = name, description = name + ": " + detail,
@@ -128,15 +136,21 @@ namespace SketchUpPipeProbe
                     case "mode": ValidateChoice(pair.Value, "replace", "add", "remove", "clear"); break;
                     case "preset": ValidateChoice(pair.Value, "top", "front", "right", "isometric"); break;
                     case "scope": ValidateChoice(pair.Value, "model", "entities"); break;
-                    case "delta_mm":
+                    case "origin_mm": case "size_mm": case "delta_mm":
                         var delta = ArrayField(pair.Value, 3);
-                        if (delta.Count != 3) throw new ArgumentException("delta_mm must have three numbers");
+                        if (delta.Count != 3) throw new ArgumentException(pair.Key + " must have three numbers");
                         foreach (object value in delta)
                         {
                             if (!(value is int || value is long || value is double || value is decimal)) throw new ArgumentException("Invalid delta number");
                             double number = Convert.ToDouble(value);
-                            if (Double.IsNaN(number) || Double.IsInfinity(number) || Math.Abs(number) > 1000000000) throw new ArgumentException("delta_mm is out of range");
+                            double minimum = pair.Key == "size_mm" ? 1 : -1000000000;
+                            double maximum = pair.Key == "size_mm" ? 1000000 : 1000000000;
+                            if (Double.IsNaN(number) || Double.IsInfinity(number) || number < minimum || number > maximum) throw new ArgumentException(pair.Key + " is out of range");
                         }
+                        break;
+                    case "name":
+                        string boxName = pair.Value as string;
+                        if (boxName == null || UnicodeLength(boxName) < 1 || UnicodeLength(boxName) > 256) throw new ArgumentException("Invalid box name");
                         break;
                     case "properties":
                         var properties = pair.Value as Dictionary<string, object>;

@@ -1,5 +1,13 @@
 # 연결 구조 및 후속 설계
 
+## 0.4.0 박스 생성·복제
+
+`CommandCatalog`에 `sketchup_create_box`, `sketchup_duplicate_entities`를 추가했습니다. 기존 실행기·권한·ID/결과 캐시·취소 시 결과 불명 처리 경로를 그대로 사용하며, 실행기 내부 `CreationCommands`가 실제 API 호출을 담당합니다.
+
+박스는 비어 있는 그룹 내부에 바깥쪽 법선의 여섯 면을 만들고 닫힌 솔리드 여부를 확인합니다. 원시 형상과 그룹은 기본 태그에 두며 활성 태그·선택을 바꾸지 않습니다. 그룹 변환은 `edit_transform.inverse * 모델 원점 이동`으로 계산해 중첩 편집의 회전·반전·비균등 축척에도 모델 축 기준 치수를 유지합니다. 생성 후 실제 정의 외곽을 모델 좌표로 변환해 요청과 비교합니다.
+
+그룹 복제는 `Group.copy`와 `make_unique`, 컴포넌트 복제는 현재 Entities의 `add_instance`를 사용합니다. 컴포넌트의 직접 인스턴스 속성 사전은 한도 내에서 복사하고 다시 읽어 보존을 확인합니다. 모델 축 상대 이동을 편집 좌표로 변환해 원본 변환 앞에 합성합니다. 생성된 새 ID·소속·속성·변환·위치를 확인하고 응답이 너무 크거나 일부 API가 실패하면 전체 Undo operation을 중단합니다. 상세 계약은 [CREATION_COMMANDS.md](CREATION_COMMANDS.md)에 있습니다.
+
 ## 0.4.0 객체 검색·구조 탐색
 
 `DiscoveryCatalog`가 읽기 전용 도구 두 개를 선언하고 인수를 검증합니다. 기존 GUI 라우팅·Session 조회 경로를 통해 ModelReader가 EntityBrowser를 호출합니다. 별도 실행 허가나 명령 ID를 소비하지 않으며 모델·선택·카메라·편집 경로를 변경하지 않습니다.
@@ -14,7 +22,7 @@
 
 변경에는 현재 모델·로컬 실행 허가·lease·편집 경로·유효 기한을 확인합니다. Session의 `next_command_id`는 세션 UUID와 증가하는 번호로 구성됩니다. 최근 결과 32개와 입력 서명을 보관하고, 동일 ID의 같은 내용은 결과만 반환하며 다른 내용이나 만료된 번호는 실행하지 않습니다. 미리보기도 번호를 소비합니다. 모델 전환·GUI 재연결·권한 회수 때 이력을 유지하고 새 Ruby Session은 새 UUID를 사용합니다.
 
-속성·이동은 요청당 한 `start_operation`/`commit_operation`으로 묶고 실패 시 `abort_operation`으로 되돌립니다. 선택·카메라는 모델 Undo 밖에서 이전 상태 복원을 시도합니다. 복원을 확인하지 못하거나 제출 후 통신이 끊겨 결과가 불명확하면 `outcome_unknown`을 반환하며 자동 재시도하지 않습니다. 상세 계약과 실제 앱 검증 상태는 [COMMAND_SCOPE.md](COMMAND_SCOPE.md), [VALIDATION.md](VALIDATION.md)에 있습니다.
+속성·이동·생성·복제는 요청당 한 `start_operation`/`commit_operation`으로 묶고 실패 시 `abort_operation`으로 되돌립니다. 선택·카메라는 모델 Undo 밖에서 이전 상태 복원을 시도합니다. 복원을 확인하지 못하거나 제출 후 통신이 끊겨 결과가 불명확하면 `outcome_unknown`을 반환하며 자동 재시도하지 않습니다. 상세 계약과 실제 앱 검증 상태는 [COMMAND_SCOPE.md](COMMAND_SCOPE.md), [VALIDATION.md](VALIDATION.md)에 있습니다.
 
 ## 0.3.0 읽기 전용 조회
 
@@ -82,7 +90,7 @@ SketchUp API 호출은 `UI.start_timer`가 호출하는 메인 스레드에 한�
 | hello / welcome | 버전·세션·PID 등록 / 수락 |
 | state | 모델·제어권·진행률·오류 보고 |
 | bridge_state | GUI에서 Ruby로 MCP 클라이언트 연결 상태 전달 |
-| request | ping, get_state, get_model_summary, get_selection_info, find_entities, get_children, demo, get_job, cancel, release_owner, test_error, set_selection, set_view, zoom, update_entity_properties, move_entities, get_command_result |
+| request | ping, get_state, get_model_summary, get_selection_info, find_entities, get_children, demo, get_job, cancel, release_owner, test_error, set_selection, set_view, zoom, update_entity_properties, move_entities, create_box, duplicate_entities, get_command_result |
 | result | 요청 ID에 대응하는 수락/오류/응답 |
 | event | 작업 완료/취소 |
 
@@ -110,7 +118,7 @@ SketchUp API 호출은 `UI.start_timer`가 호출하는 메인 스레드에 한�
 
 1. 0.4.0 RBZ를 실제 SketchUp 시험 모델에 설치하고 조회 회귀·명령·중첩 편집 이동·Undo를 검증.
 2. 객체 검색·구조 탐색의 실제 모델 확인과 필요에 따른 화면 캡처 기능.
-3. 모델 생성·회전·축척 도구와 편집 충돌 처리의 후속 범위 설계.
+3. 박스 외 형상 생성·회전·축척 도구와 편집 충돌 처리의 후속 범위 설계.
 4. 설치 프로그램·서명·공개 GitHub Release. 필요할 때 .NET LTS 자체 포함 배포로 이전.
 
 플러그인에서 ChatGPT에 먼저 AI 요청을 보내는 역방향 대화 시작은 이번 범위에서 제외했습니다.

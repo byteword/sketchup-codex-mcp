@@ -1,5 +1,6 @@
 # encoding: UTF-8
 require 'json'
+require_relative 'creation_commands'
 
 module SUPipeProbe
   class CommandError < StandardError
@@ -12,7 +13,8 @@ module SUPipeProbe
 
   # Every call runs synchronously on Panel's UI timer, never on a worker thread.
   class CommandExecutor
-    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities].freeze
+    include CreationCommands
+    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities].freeze
     RESULT_LIMIT = 44_000
     MAX_SELECTION = 1000
 
@@ -31,6 +33,8 @@ module SUPipeProbe
       when 'zoom' then camera_command(args, dry, false)
       when 'update_entity_properties' then update_properties(args, dry)
       when 'move_entities' then move(args, dry)
+      when 'create_box' then create_box(args, dry)
+      when 'duplicate_entities' then duplicate_entities(args, dry)
       end
     end
 

@@ -5,7 +5,7 @@ require_relative '../extension/su_pipe_probe/win_pipe'
 require_relative '../extension/su_pipe_probe/session'
 require_relative '../extension/su_pipe_probe/version'
 require_relative '../extension/su_pipe_probe/model_reader'
-require_relative 'support/sketchup_double'
+require_relative 'support/creation_double'
 $stdout.sync = true
 control_path = ARGV.fetch(0)
 clients, sessions, metadata = [], [], []

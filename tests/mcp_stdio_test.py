@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(17, len(tools))
-        self.assertEqual(17, len({tool["name"] for tool in tools}))
+        self.assertEqual(19, len(tools))
+        self.assertEqual(19, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
         self.assertTrue(next(t for t in tools if t["name"] == "sketchup_ping")["annotations"]["readOnlyHint"])
@@ -209,6 +209,46 @@ class StdioTests(unittest.TestCase):
             self.assertIn('command_id', tools[name]['inputSchema']['required'])
             self.assertIn('expected_context', tools[name]['inputSchema']['required'])
         self.assertTrue(tools['sketchup_get_command_result']['annotations']['readOnlyHint'])
+
+    def test_creation_and_duplication_contract_and_arguments(self):
+        self.initialize()
+        self.send('tools/list', {}, 2)
+        tools = {t['name']:t for t in self.response()['result']['tools']}
+        common = dict(session_id=SESSION, model_id=SESSION, command_id=SESSION+':1', expected_context=[])
+        cases = [
+            ('sketchup_create_box', dict(name='A동🙂', origin_mm=[0,-200,300], size_mm=[1,2000,1000000], dry_run=True)),
+            ('sketchup_create_box', dict(name='🙂'*256, origin_mm=[0,0,0], size_mm=[1,1,1])),
+            ('sketchup_duplicate_entities', dict(entity_ids=['101','102'], delta_mm=[0,0,0])),
+        ]
+        for number, (name, fields) in enumerate(cases, 10):
+            self.assertFalse(tools[name]['annotations']['readOnlyHint'])
+            self.assertTrue(tools[name]['annotations']['idempotentHint'])
+            self.assertIn('command_id',tools[name]['inputSchema']['required'])
+            self.send('tools/call',{'name':name,'arguments':dict(common,**fields)},number)
+            result = self.response()['result']
+            self.assertFalse(result['isError'])
+            self.assertEqual(dict(common,**fields),json.loads(result['content'][0]['text'])['arguments'])
+
+    def test_creation_and_duplication_reject_invalid_geometry_and_targets(self):
+        self.initialize()
+        common = dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        box = dict(name='box',origin_mm=[0,0,0],size_mm=[1000,2000,3000])
+        invalid_boxes = [
+            dict(box,size_mm=[0,1,1]),dict(box,size_mm=[-1,1,1]),dict(box,size_mm=[.5,1,1]),
+            dict(box,size_mm=[1000001,1,1]),dict(box,size_mm=[True,1,1]),dict(box,size_mm=[1,1]),
+            dict(box,origin_mm=[1000000001,0,0]),dict(box,origin_mm=['0',0,0]),
+            dict(box,name=''),dict(box,name='🙂'*257),dict(box,name='bad\x00name'),dict(box,entity_ids=[]),
+        ]
+        invalid_boxes.append(dict(origin_mm=[0,0,0],size_mm=[1,1,1]))
+        invalid = [('sketchup_create_box',fields) for fields in invalid_boxes]
+        invalid += [('sketchup_duplicate_entities',fields) for fields in [
+            dict(entity_ids=[],delta_mm=[1,0,0]),dict(entity_ids=['101']*2,delta_mm=[1,0,0]),
+            dict(entity_ids=[str(n) for n in range(1,27)],delta_mm=[1,0,0]),
+            dict(entity_ids=['101'],delta_mm=[True,0,0]),dict(entity_ids=['101']),
+        ]]
+        for number,(name,fields) in enumerate(invalid,10):
+            self.send('tools/call',{'name':name,'arguments':dict(common,**fields)},number)
+            self.assertEqual(-32602,self.response()['error']['code'],(name,fields))
 
     def test_requires_initialized_notification(self):
         self.send("tools/list", {}, 1)
