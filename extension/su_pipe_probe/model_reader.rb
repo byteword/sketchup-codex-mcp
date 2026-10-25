@@ -1,6 +1,7 @@
 # encoding: UTF-8
 require 'json'
 require 'time'
+require_relative 'entity_browser'
 
 module SUPipeProbe
   # Called only by Panel's UI timer. No observers, operations, or setters.
@@ -17,6 +18,7 @@ module SUPipeProbe
       case method
       when 'get_model_summary' then summary
       when 'get_selection_info' then selection(arguments)
+      when 'find_entities', 'get_children' then EntityBrowser.new(@model).call(method, arguments)
       else raise ArgumentError, 'Unknown read method'
       end
     end

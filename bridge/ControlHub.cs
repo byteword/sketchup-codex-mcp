@@ -214,6 +214,8 @@ namespace SketchUpPipeProbe
                 case "sketchup_get_instance": method = "get_state"; break;
                 case "sketchup_get_model_summary": method = "get_model_summary"; break;
                 case "sketchup_get_selection_info": method = "get_selection_info"; break;
+                case "sketchup_find_entities": method = "find_entities"; break;
+                case "sketchup_get_children": method = "get_children"; break;
                 case "sketchup_ping": method = "ping"; if (!fields.ContainsKey("text")) fields["text"] = "ChatGPT → SketchUp: 한글 왕복 / 日本語 / 🙂"; break;
                 case "sketchup_start_demo": method = "demo"; break;
                 case "sketchup_get_job": method = "get_job"; break;

@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(15, len(tools))
-        self.assertEqual(15, len({tool["name"] for tool in tools}))
+        self.assertEqual(17, len(tools))
+        self.assertEqual(17, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
         self.assertTrue(next(t for t in tools if t["name"] == "sketchup_ping")["annotations"]["readOnlyHint"])
@@ -105,6 +105,56 @@ class StdioTests(unittest.TestCase):
         self.send("tools/call", {"name": "sketchup_get_selection_info", "arguments": args}, 3)
         payload = json.loads(self.response()["result"]["content"][0]["text"])
         self.assertEqual(args, payload["arguments"])
+
+    def test_discovery_contract_and_nested_arguments(self):
+        self.initialize()
+        self.send('tools/list', {}, 2)
+        tools = {t['name']: t for t in self.response()['result']['tools']}
+        common = dict(session_id=SESSION, model_id=SESSION)
+        cases = [
+            ('sketchup_find_entities', dict(scope='model', name='기둥🙂', tag='구조', entity_type='Group', max_depth=32, limit=25)),
+            ('sketchup_find_entities', dict(name='🙂'*256)),
+            ('sketchup_get_children', dict(parent_path=[], limit=1)),
+            ('sketchup_get_children', dict(parent_path=['100','101'], cursor='opaque-cursor')),
+        ]
+        for number, (name, fields) in enumerate(cases, 10):
+            tool = tools[name]
+            self.assertTrue(tool['annotations']['readOnlyHint'])
+            self.assertTrue(tool['annotations']['idempotentHint'])
+            self.send('tools/call', {'name':name, 'arguments':dict(common, **fields)}, number)
+            result = self.response()['result']
+            self.assertFalse(result['isError'])
+            self.assertEqual(dict(common, **fields), json.loads(result['content'][0]['text'])['arguments'])
+        self.assertEqual(['session_id','model_id','parent_path'], tools['sketchup_get_children']['inputSchema']['required'])
+
+    def test_discovery_rejects_invalid_filters_paths_and_limits(self):
+        self.initialize()
+        common = dict(session_id=SESSION, model_id=SESSION)
+        invalid = [
+            ('sketchup_find_entities', dict(limit=True)),
+            ('sketchup_find_entities', dict(limit=1.5)),
+            ('sketchup_find_entities', dict(limit=26)),
+            ('sketchup_find_entities', dict(max_depth=0)),
+            ('sketchup_find_entities', dict(max_depth=33)),
+            ('sketchup_find_entities', dict(scope='selection')),
+            ('sketchup_find_entities', dict(entity_type='Edge')),
+            ('sketchup_find_entities', dict(name='')),
+            ('sketchup_find_entities', dict(name='🙂'*257)),
+            ('sketchup_find_entities', dict(tag=None)),
+            ('sketchup_find_entities', dict(name='bad\x00name')),
+            ('sketchup_find_entities', dict(cursor='x'*8193)),
+            ('sketchup_find_entities', dict(cursor='')),
+            ('sketchup_find_entities', dict(parent_path=[])),
+            ('sketchup_get_children', {}),
+            ('sketchup_get_children', dict(parent_path='100')),
+            ('sketchup_get_children', dict(parent_path=[100])),
+            ('sketchup_get_children', dict(parent_path=['0'])),
+            ('sketchup_get_children', dict(parent_path=['1']*32)),
+            ('sketchup_get_children', dict(parent_path=[], name='x')),
+        ]
+        for number, (name, fields) in enumerate(invalid, 10):
+            self.send('tools/call', {'name':name, 'arguments':dict(common, **fields)}, number)
+            self.assertEqual(-32602, self.response()['error']['code'], (name, fields))
 
     def test_protocol_negotiation(self):
         self.assertEqual("2025-11-25", self.initialize("unsupported-future-version")["protocolVersion"])

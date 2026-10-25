@@ -13,7 +13,11 @@ clock = 0.0
 2.times do |index|
   client = SUPipeProbe::PipeClient.new
   model = SketchupDouble::Model.new
-  model.selection.add([model.add(1000 + index)])
+  building = model.add(1000 + index)
+  model.selection.add([building])
+  column = model.add_child(building, 2000 + index, 'ComponentInstance')
+  column.name = '기둥 ' + index.to_s
+  column.layer = model.layers['구조']
   data = {'pid' => Process.pid, 'model_id' => SecureRandom.uuid,
     'title' => "인스턴스 #{index}", 'path' => '', 'extension_version' => SUPipeProbe::VERSION}
   session = SUPipeProbe::Session.new(lambda { |m| client.send_message(m) }, lambda { data },

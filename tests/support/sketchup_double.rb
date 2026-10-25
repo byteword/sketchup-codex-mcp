@@ -77,10 +77,11 @@ module SketchupDouble
     end
   end
   class Definition
-    attr_accessor :bounds, :instances, :name
+    attr_accessor :bounds, :instances, :name, :entities
     def initialize
       @bounds = Geom::BoundingBox.new.add(Geom::Point3d.new(0,0,0)).add(Geom::Point3d.new(2,3,4))
       @instances, @name = [], '定義'
+      @entities = Collection.new(self)
     end
     def entityID; 900; end
     def persistent_id; raise NotImplementedError; end
@@ -146,6 +147,13 @@ module SketchupDouble
       entity = Entity.new(self, pid, type)
       @all << entity
       @entities << entity
+      entity
+    end
+    def add_child(parent, pid, type = 'Group')
+      entity = Entity.new(self, pid, type)
+      entity.parent = parent.definition
+      @all << entity
+      parent.definition.entities << entity
       entity
     end
     def find_entity_by_persistent_id(pid); @all.find { |e| e.persistent_id == pid }; end

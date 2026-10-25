@@ -1,4 +1,6 @@
-# 0.3.0 읽기 전용 조회
+# 모델 요약·선택 객체 조회
+
+0.4.0의 선택하지 않은 객체 검색과 배치 경로별 구조 탐색은 [ENTITY_DISCOVERY.md](ENTITY_DISCOVERY.md)를 참고하세요.
 
 1. `sketchup_list_instances`로 연결 목록을 읽습니다.
 2. PID·경로를 확인해 대상의 `session_id`, `model_id`를 그대로 사용합니다.

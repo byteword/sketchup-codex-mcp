@@ -1,5 +1,13 @@
 # 연결 구조 및 후속 설계
 
+## 0.4.0 객체 검색·구조 탐색
+
+`DiscoveryCatalog`가 읽기 전용 도구 두 개를 선언하고 인수를 검증합니다. 기존 GUI 라우팅·Session 조회 경로를 통해 ModelReader가 EntityBrowser를 호출합니다. 별도 실행 허가나 명령 ID를 소비하지 않으며 모델·선택·카메라·편집 경로를 변경하지 않습니다.
+
+탐색은 정의를 한 번만 읽는 방식이 아니라 실제 배치 경로별 깊이 우선 순회입니다. 이어보기 커서는 방문 스택의 배치 ID·다음 인덱스·컬렉션 크기를 보관하고 세션/모델·필터·기준 경로·현재 편집 위치에 결합합니다. 서버에 무제한 검색 결과를 쌓지 않습니다. 페이지당 최대 20,000개 조사 또는 0.25초의 협력적 예산, 25개 결과·40 KB 항목 예산을 적용합니다. 깊이/순환/미지원 ID로 생략한 범위를 결과에 표시합니다.
+
+커서는 잠긴 스냅샷이 아닙니다. 보관한 스택 크기나 경로가 달라지면 거부하며, 그 밖의 모델 변경도 누락/중복을 피하려면 첫 페이지부터 다시 읽습니다. 검색 인수는 통신 메시지의 `type`과 충돌하지 않도록 `entity_type`을 사용합니다. 상세 계약은 [ENTITY_DISCOVERY.md](ENTITY_DISCOVERY.md)에 있습니다.
+
 ## 0.4.0 기초 명령 전달
 
 `shared/CommandCatalog.cs`가 변경 도구 5개와 결과 조회 도구를 선언하고 입력을 검증합니다. GUI는 기존 파이프를 통해 Ruby Session으로 라우팅하며, `CommandExecutor`는 패널의 메인 스레드 타이머에서 선택·카메라·객체 속성·이동을 동기 실행합니다. 기존 조회 도구의 권한 규칙은 유지합니다.
@@ -74,7 +82,7 @@ SketchUp API 호출은 `UI.start_timer`가 호출하는 메인 스레드에 한�
 | hello / welcome | 버전·세션·PID 등록 / 수락 |
 | state | 모델·제어권·진행률·오류 보고 |
 | bridge_state | GUI에서 Ruby로 MCP 클라이언트 연결 상태 전달 |
-| request | ping, get_state, get_model_summary, get_selection_info, demo, get_job, cancel, release_owner, test_error, set_selection, set_view, zoom, update_entity_properties, move_entities, get_command_result |
+| request | ping, get_state, get_model_summary, get_selection_info, find_entities, get_children, demo, get_job, cancel, release_owner, test_error, set_selection, set_view, zoom, update_entity_properties, move_entities, get_command_result |
 | result | 요청 ID에 대응하는 수락/오류/응답 |
 | event | 작업 완료/취소 |
 
@@ -101,7 +109,7 @@ SketchUp API 호출은 `UI.start_timer`가 호출하는 메인 스레드에 한�
 ## 다음 단계
 
 1. 0.4.0 RBZ를 실제 SketchUp 시험 모델에 설치하고 조회 회귀·명령·중첩 편집 이동·Undo를 검증.
-2. 필요에 따른 객체 검색·구조 탐색·화면 캡처.
+2. 객체 검색·구조 탐색의 실제 모델 확인과 필요에 따른 화면 캡처 기능.
 3. 모델 생성·회전·축척 도구와 편집 충돌 처리의 후속 범위 설계.
 4. 설치 프로그램·서명·공개 GitHub Release. 필요할 때 .NET LTS 자체 포함 배포로 이전.
 

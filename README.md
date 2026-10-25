@@ -1,7 +1,15 @@
 # SketchUp Local MCP Bridge 0.4.0 (시험 버전)
 
 Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는 GUI 중개 앱입니다.
-이번 버전은 **모델 조회·선택 변경·화면 제어·객체 속성 변경·이동**을 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. 실제 SketchUp에서 새 변경 명령과 Undo 확인은 아직 진행하지 않은 시험 버전입니다.
+이번 버전은 **모델 조회·객체 검색·구조 탐색·선택 변경·화면 제어·객체 속성 변경·이동**을 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. 실제 SketchUp에서 새 변경 명령과 Undo 확인은 아직 진행하지 않은 시험 버전입니다.
+
+## 0.4.0: 객체 검색·구조 탐색 추가
+
+- `sketchup_find_entities`: 현재 편집 위치 또는 모델 전체에서 이름·정의 이름·태그·객체 종류로 그룹/컴포넌트를 찾습니다.
+- `sketchup_get_children`: 루트 또는 지정한 배치 경로의 바로 아래 그룹/컴포넌트를 읽습니다. 편집 위치를 열거나 선택을 바꾸지 않습니다.
+- 결과에는 영구 ID, 루트부터의 배치 경로, 현재 편집 위치 소속 여부를 포함합니다. 같은 정의의 여러 배치도 경로별로 구분합니다.
+- 두 도구는 실행 허가 없이 읽기 전용으로 사용합니다. 큰 모델은 `next_cursor`로 나눠 조회하고, 깊이 제한 등으로 빠진 범위는 별도로 표시합니다.
+- MCP 도구는 **17개**, Windows 자동 검사는 **104개 통과**입니다. [인수·예시·조회 한계](docs/ENTITY_DISCOVERY.md)를 참고하세요.
 
 ## 0.4.0: 기초 명령 전달
 
@@ -10,7 +18,7 @@ Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는
 - 현재 편집 위치의 그룹/컴포넌트 최대 25개에 이름·숨김·잠금·기존 태그/재질을 지정하거나 모델 축 기준 mm 상대 이동을 적용합니다. 속성·이동 명령은 요청당 하나의 Undo 작업으로 처리합니다.
 - `dry_run`은 변경 없이 검증과 미리보기를 수행합니다. 미리보기와 실행에는 각각 새 명령 ID가 필요합니다.
 - 명령 ID와 편집 경로를 확인하고 최근 결과 32개를 보관합니다. 중복 명령은 재실행하지 않으며, 시간 초과 시 결과를 조회합니다.
-- Windows 자동 검사 **84개 통과**. 실제 모델 API·Undo·카메라 동작은 [수동 시험](docs/MANUAL_TEST.md)으로 확인해야 합니다.
+- 명령 전달을 처음 반영했을 때 Windows 자동 검사 **84개 통과**. 실제 모델 API·Undo·카메라 동작은 [수동 시험](docs/MANUAL_TEST.md)으로 확인해야 합니다.
 
 인수·권한·결과 이력의 상세 계약은 [기초 명령 전달](docs/COMMAND_SCOPE.md), 검사 환경과 한계는 [검증 범위](docs/VALIDATION.md)에 있습니다.
 
@@ -30,7 +38,7 @@ Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는
 - 숫자로 반환하는 길이는 모두 **mm**입니다. 모델의 표시 단위 설정은 별도 반환합니다.
 - 선택은 기본 10개, 최대 25개씩 조회합니다. 응답 크기에 따라 더 짧아질 수 있으므로 `next_offset`을 따릅니다. 최상위 유형별 집계는 최대 20,000개 또는 0.5초이며 불완전하면 `complete=false`를 반환합니다.
 
-예: “현재 모델을 요약해줘”, “지금 선택한 그룹의 이름·태그·재질·크기를 알려줘”. [조회 결과와 치수 기준](docs/READ_QUERIES.md)을 참고하세요.
+예: “구조 태그의 기둥을 찾아줘”, “이 그룹의 하위 구조를 보여줘”, “현재 모델을 요약해줘”, “지금 선택한 그룹의 이름·태그·재질·크기를 알려줘”. [조회 결과와 치수 기준](docs/READ_QUERIES.md)을 참고하세요.
 
 ## 연결 구조
 
@@ -68,7 +76,7 @@ ChatGPT에는 `SketchUpMcp.exe`를 등록합니다. GUI는 별도 프로세스�
 
 GUI와 RBZ를 함께 업데이트하세요. 소스 배포본에 EXE가 없으면 `start.cmd`가 먼저 빌드합니다.
 
-기존 MCP 등록 경로를 유지하려면 해당 폴더에 새 배포본을 덮어씁니다. GUI·SketchUp을 저장 후 종료한 상태에서 교체하고, MCP 서버도 다시 시작해 도구 15개를 불러오세요. 새 버전은 실행 중인 이전 프로세스에 자동으로 주입되지 않습니다.
+기존 MCP 등록 경로를 유지하려면 해당 폴더에 새 배포본을 덮어씁니다. GUI·SketchUp을 저장 후 종료한 상태에서 교체하고, MCP 서버도 다시 시작해 도구 17개를 불러오세요. 새 버전은 실행 중인 이전 프로세스에 자동으로 주입되지 않습니다.
 
 ## ChatGPT 등록
 
@@ -116,6 +124,8 @@ GUI에는 초기화된 MCP 클라이언트 이름·PID·진행 중 호출 수·�
 | `sketchup_get_instance` | `session_id` | Ruby에 요청한 최신 상태 |
 | `sketchup_get_model_summary` | `session_id`, `model_id` | 모델 기본 정보·mm 크기·최상위 집계 |
 | `sketchup_get_selection_info` | `session_id`, `model_id`, 선택 `offset`, `limit` | 현재 선택 객체 상세와 다음 페이지 위치 |
+| `sketchup_find_entities` | `session_id`, `model_id`, 선택 `scope`, `name`, `tag`, `entity_type`, `max_depth`, `limit`, `cursor` | 그룹/컴포넌트 검색과 배치 경로 |
+| `sketchup_get_children` | `session_id`, `model_id`, `parent_path`, 선택 `limit`, `cursor` | 지정 경로의 바로 아래 그룹/컴포넌트 |
 | `sketchup_ping` | `session_id`, 선택 `text` | 실제 Ruby 왕복 응답 |
 | `sketchup_start_demo` | `session_id`, `model_id` | 20초 시험 작업의 `job_id` |
 | `sketchup_get_job` | `session_id`, `job_id` | 실행·완료·취소 상태와 진행률 |

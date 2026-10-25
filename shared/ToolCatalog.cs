@@ -41,12 +41,14 @@ namespace SketchUpPipeProbe
                 Tool("sketchup_cancel_job", "Cooperatively cancel exactly this job. Does not cancel a newer job and does not grant authority.", new[] { "session_id", "job_id" }, false)
             };
             result.AddRange(CommandCatalog.List());
+            result.AddRange(DiscoveryCatalog.List());
             return result.ToArray();
         }
 
         public static void Validate(string name, Dictionary<string, object> args)
         {
             if (CommandCatalog.Contains(name)) { CommandCatalog.Validate(name, args); return; }
+            if (DiscoveryCatalog.Contains(name)) { DiscoveryCatalog.Validate(name, args); return; }
             string[] required;
             switch (name)
             {

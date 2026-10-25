@@ -184,4 +184,24 @@ class SessionTest < Minitest::Test
     @session = SUPipeProbe::Session.new(lambda { |m| @sent << m }, lambda { @model }, nil, reader)
     assert_equal 'request_expired', request('get_model_summary', 'expires_at_ms' => 1)['status']
   end
+  def test_discovery_is_read_only_routed_and_model_checked
+    calls = []
+    reader = lambda { |method, args| calls << [method, args]; {'items'=>[], 'complete'=>true} }
+    @session = SUPipeProbe::Session.new(lambda { |m| @sent << m }, lambda { @model }, nil, reader)
+    original = @session.snapshot['next_command_id']
+    {'find_entities'=>'entities_found', 'get_children'=>'children'}.each do |method, status|
+      result = request(method, 'parent_path'=>[])
+      assert result['ok']
+      assert_equal status, result['status']
+      assert_equal [], result['data']['items']
+      assert_equal 'model_mismatch', request(method, 'model_id'=>'wrong')['status']
+      assert_equal 'request_expired', request(method, 'expires_at_ms'=>1)['status']
+    end
+    assert_equal %w[find_entities get_children], calls.map(&:first)
+    assert_equal original, @session.snapshot['next_command_id']
+    assert_equal 'user', @session.authority
+    assert_nil @session.job
+  end
+
+
 end

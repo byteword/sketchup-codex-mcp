@@ -165,9 +165,42 @@ class WindowsMcpTests(unittest.TestCase):
         self.assertEqual('user', self.tool('sketchup_get_instance', self.target(0))['state']['authority'])
         self.assertEqual('authority_or_model_mismatch', self.tool('sketchup_start_demo', args, True)['status'])
 
+    def test_discovery_routes_nested_occurrences_and_connects_to_selection(self):
+        for index in range(2):
+            target = self.target(index, True)
+            before = self.tool('sketchup_get_instance', self.target(index))['state']
+            first = self.tool('sketchup_find_entities', dict(target, scope='model', limit=1))['data']
+            self.assertEqual([str(1000+index)], first['items'][0]['instance_path'])
+            self.assertTrue(first['items'][0]['in_current_context'])
+            second = self.tool('sketchup_find_entities', dict(target, scope='model', limit=1, cursor=first['next_cursor']))['data']
+            self.assertEqual([str(1000+index),str(2000+index)], second['items'][0]['instance_path'])
+            self.assertTrue(second['complete'])
+            self.assertFalse(second['items'][0]['in_current_context'])
+            children = self.tool('sketchup_get_children', dict(target, parent_path=first['items'][0]['instance_path']))['data']
+            self.assertEqual(second['items'], children['items'])
+            found = self.tool('sketchup_find_entities', dict(target, name='기둥', tag='구조', entity_type='ComponentInstance'))['data']
+            self.assertEqual(children['items'], found['items'])
+            after = self.tool('sketchup_get_instance', self.target(index))['state']
+            self.assertEqual('user', after['authority'])
+            self.assertEqual(before['next_command_id'], after['next_command_id'])
+            bad = self.tool('sketchup_find_entities', dict(target, cursor='not-a-cursor'), True)
+            self.assertEqual('query_failed', bad['status'])
+            self.assertEqual('pong', self.tool('sketchup_ping', self.target(index))['status'])
+        self.command(grant=0)
+        root = self.tool('sketchup_find_entities', self.target(0, True))['data']['items'][0]
+        self.tool('sketchup_set_selection', self.command_args(entity_ids=[root['persistent_id']], expected_context=root['parent_path'], mode='replace'))
+        selection = self.tool('sketchup_get_selection_info', self.target(0, True))['data']
+        self.assertEqual(root['persistent_id'], selection['items'][0]['persistent_id'])
+        stale = self.target(0, True)
+        self.command(change_model=0)
+        for name, fields in [('sketchup_find_entities', {}), ('sketchup_get_children', {'parent_path':[]})]:
+            self.assertEqual('model_mismatch', self.tool(name, dict(stale, **fields), True)['status'])
+
     def command_args(self, **fields):
         state = self.tool('sketchup_get_instance', self.target(0))['state']
-        return dict(self.target(0, True), command_id=state['next_command_id'], expected_context=[], **fields)
+        args = dict(self.target(0, True), command_id=state['next_command_id'], expected_context=[])
+        args.update(fields)
+        return args
 
     def test_commands_round_trip_through_real_executor_without_duplicates(self):
         args = self.command_args(entity_ids=['1000'], delta_mm=[1000,500,0])

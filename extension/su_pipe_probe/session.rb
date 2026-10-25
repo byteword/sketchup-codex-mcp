@@ -130,7 +130,7 @@ module SUPipeProbe
         reply(id, true, 'pong', 'text' => message['text'].to_s)
       when 'get_state'
         reply(id, true, 'state', 'state' => snapshot.reject { |key, _| key == 'lease' })
-      when 'get_model_summary', 'get_selection_info'
+      when 'get_model_summary', 'get_selection_info', 'find_entities', 'get_children'
         return reply(id, false, 'model_mismatch', 'model_id' => @model_id) unless message['model_id'] == @model_id
         if message['expires_at_ms'] && Time.now.to_f * 1000 > message['expires_at_ms'].to_f
           return reply(id, false, 'request_expired')
@@ -144,7 +144,9 @@ module SUPipeProbe
           # Query errors must not reset the pipe or revoke an unrelated job.
           return reply(id, false, 'query_failed', 'message' => error.message.to_s[0, 256])
         end
-        reply(id, true, method == 'get_model_summary' ? 'model_summary' : 'selection_info',
+        statuses = {'get_model_summary'=>'model_summary', 'get_selection_info'=>'selection_info',
+          'find_entities'=>'entities_found', 'get_children'=>'children'}
+        reply(id, true, statuses.fetch(method),
           'model_id' => @model_id, 'data' => data)
       when 'get_job'
         job_id = message['job_id']
