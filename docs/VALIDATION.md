@@ -1,5 +1,11 @@
 # 검증 범위
 
+## 0.6.3 실제 SketchUp 전체 검사 — 2026-10-28
+
+실제 SketchUp20.0.363/Ruby2.5.5에서 직접 MCP suite=all을 한 번 실행해 **56개 통과·실패0·생략0**, duration48ms, cleanup_verified=true를 확인했습니다. Follow Me·raw_group·점/꼭짓점 이동 수정이 모두 통과했습니다. 후속 모델 조회에서 modified=false와 루트 객체/리소스/선택/편집 경로/외곽이 검사 직전과 일치했습니다. UI 작업 종료·화면/inspector 갱신 요청 성공, 표시 경고0입니다. [실기 기록](MANUAL_RESULTS_0.6.3.md), [원본 응답](native-test-0.6.3-2026-10-28.json).
+
+이번 실행은 한 임시 operation을 abort한 결과입니다. 개별 Undo·모델 수명주기·CPU/렌더·모든 경계 조건의 전체 합격 판정은 아닙니다. batch/장면/purge의 별도 실기는0.6.2 문서에 보존합니다. 아래 개발 검증/실기 대기 문장은 실행 전 기록이며 최신 결과는 이 섹션을 기준으로 합니다.
+
 ## 0.6.3 native 타입/Length 회귀 수정 — 2026-10-28
 
 전체 **229개 통과**: Ruby189개 / 1362 assertions, Python STDIO25개·외부 실행기6개·Win32/MCP/Ruby 통합9개. 실패·오류·생략0. [성공 로그](validation-0.6.3.txt). 원본 E: 소스와 검사 복사본의 파일 내용을 비교했습니다.

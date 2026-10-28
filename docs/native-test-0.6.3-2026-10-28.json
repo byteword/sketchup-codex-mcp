@@ -1,0 +1,549 @@
+{
+  "version": "0.6.3",
+  "target": {
+    "session_id": "e030d84d-6b1b-4de7-a458-64d7dff19007",
+    "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50"
+  },
+  "request": {
+    "session_id": "e030d84d-6b1b-4de7-a458-64d7dff19007",
+    "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50",
+    "command_id": "e030d84d-6b1b-4de7-a458-64d7dff19007:1",
+    "expected_context": [],
+    "confirm_test_model": true,
+    "suite": "all"
+  },
+  "pre": {
+    "instance": {
+      "v": 1,
+      "type": "result",
+      "session_id": "e030d84d-6b1b-4de7-a458-64d7dff19007",
+      "id": "caf8c5c1-d67a-4bfb-b77d-804397ba9866",
+      "ok": true,
+      "status": "state",
+      "state": {
+        "pid": 10124,
+        "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50",
+        "title": "",
+        "path": "",
+        "sketchup_version": "20.0.363",
+        "ruby_version": "2.5.5",
+        "extension_version": "0.6.3",
+        "pointer_bits": 64,
+        "authority": "mcp",
+        "next_command_id": "e030d84d-6b1b-4de7-a458-64d7dff19007:1",
+        "mcp_clients": [
+          {
+            "name": "codex-mcp-client",
+            "pid": 54280
+          }
+        ],
+        "job_id": null,
+        "progress": 0,
+        "last_error": "",
+        "last_result": "Disconnected / control returned to user"
+      }
+    },
+    "bridge": {
+      "version": "0.6.3",
+      "sketchup_listener": "Listening",
+      "mcp_listener": "Listening",
+      "instances": 1,
+      "clients": [
+        {
+          "name": "codex-mcp-client",
+          "version": "0.165.0-alpha.1.2",
+          "pid": 54280,
+          "protocol": "2025-06-18"
+        }
+      ],
+      "last_error": ""
+    },
+    "selection": {
+      "v": 1,
+      "type": "result",
+      "session_id": "e030d84d-6b1b-4de7-a458-64d7dff19007",
+      "id": "b17af5a8-671e-4828-ae42-bee078db1f5d",
+      "ok": true,
+      "status": "selection_info",
+      "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50",
+      "data": {
+        "queried_at": "2026-10-28T13:07:12.280Z",
+        "measurement_unit": "mm",
+        "model_units": {
+          "length_unit_code": 2,
+          "length_unit": "mm",
+          "length_format_code": 0,
+          "length_precision": 0
+        },
+        "total": 0,
+        "offset": 0,
+        "returned": 0,
+        "next_offset": null,
+        "truncated": false,
+        "edit_context": {
+          "depth": 0,
+          "path": [],
+          "path_truncated": false,
+          "name_character_limit": 64
+        },
+        "items": [],
+        "notes": [
+          "Each call reads the current selection; pages are not a frozen snapshot.",
+          "Material and visibility flags describe direct assignments, not inherited or effective appearance.",
+          "model_bounds encloses transformed bounding-box corners; it can exceed the actual geometry extents.",
+          "definition_bounds is unscaled; instance_axis_lengths_mm includes this instance and its edit ancestors."
+        ]
+      }
+    },
+    "model": {
+      "v": 1,
+      "type": "result",
+      "session_id": "e030d84d-6b1b-4de7-a458-64d7dff19007",
+      "id": "6df71b76-5463-4d2d-b6e2-0d92507c8975",
+      "ok": true,
+      "status": "model_summary",
+      "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50",
+      "data": {
+        "queried_at": "2026-10-28T13:07:12.280Z",
+        "measurement_unit": "mm",
+        "model_units": {
+          "length_unit_code": 2,
+          "length_unit": "mm",
+          "length_format_code": 0,
+          "length_precision": 0
+        },
+        "title": "",
+        "path": "",
+        "saved": false,
+        "modified": false,
+        "bounds": {
+          "empty": false,
+          "axes": "model_axes",
+          "min": [
+            -67.623181,
+            -181.923181,
+            -0.683933
+          ],
+          "max": [
+            1007.423181,
+            893.123181,
+            1701.733117
+          ],
+          "size": [
+            1075.046363,
+            1075.046363,
+            1702.41705
+          ]
+        },
+        "top_level_entities": {
+          "total": 1,
+          "by_type": {
+            "ComponentInstance": 1
+          },
+          "scanned": 1,
+          "complete": true,
+          "scope": "direct_children"
+        },
+        "collection_counts": {
+          "tags": 1,
+          "materials": 8,
+          "definitions": 1,
+          "scenes": 0
+        },
+        "selection_count": 0,
+        "edit_context": {
+          "depth": 0,
+          "path": [],
+          "path_truncated": false,
+          "name_character_limit": 64
+        },
+        "notes": [
+          "Entity counts cover the model root only, including hidden objects. They do not recurse into definitions.",
+          "Collection counts include unused entries. All numeric lengths and coordinates are millimeters.",
+          "Bounds are bounding-box extents, not measured edges or usable floor dimensions."
+        ]
+      }
+    }
+  },
+  "response": {
+    "v": 1,
+    "type": "result",
+    "session_id": "e030d84d-6b1b-4de7-a458-64d7dff19007",
+    "id": "ea32d5db-89ba-43be-80ea-695c8d0deb2e",
+    "ok": true,
+    "status": "command_completed",
+    "command_id": "e030d84d-6b1b-4de7-a458-64d7dff19007:1",
+    "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50",
+    "next_command_id": "e030d84d-6b1b-4de7-a458-64d7dff19007:2",
+    "result": {
+      "command_id": "e030d84d-6b1b-4de7-a458-64d7dff19007:1",
+      "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50",
+      "command": "run_self_test",
+      "expected_context": [],
+      "finished_at": "2026-10-28T13:07:17.210Z",
+      "state": "completed",
+      "data": {
+        "dry_run": false,
+        "undoable": false,
+        "suite": "all",
+        "passed": true,
+        "passed_count": 56,
+        "failed_count": 0,
+        "skipped_count": 0,
+        "checks": [
+          {
+            "name": "box",
+            "status": "passed"
+          },
+          {
+            "name": "rectangle",
+            "status": "passed"
+          },
+          {
+            "name": "circle",
+            "status": "passed"
+          },
+          {
+            "name": "polyline",
+            "status": "passed"
+          },
+          {
+            "name": "entity_info",
+            "status": "passed"
+          },
+          {
+            "name": "face_edge_metrics",
+            "status": "passed"
+          },
+          {
+            "name": "push_pull",
+            "status": "passed"
+          },
+          {
+            "name": "rotate",
+            "status": "passed"
+          },
+          {
+            "name": "scale",
+            "status": "passed"
+          },
+          {
+            "name": "move",
+            "status": "passed"
+          },
+          {
+            "name": "duplicate",
+            "status": "passed"
+          },
+          {
+            "name": "selection",
+            "status": "passed"
+          },
+          {
+            "name": "properties",
+            "status": "passed"
+          },
+          {
+            "name": "locked_rejection",
+            "status": "passed"
+          },
+          {
+            "name": "unlock",
+            "status": "passed"
+          },
+          {
+            "name": "erase",
+            "status": "passed"
+          },
+          {
+            "name": "group",
+            "status": "passed"
+          },
+          {
+            "name": "make_unique",
+            "status": "passed"
+          },
+          {
+            "name": "nested_query",
+            "status": "passed"
+          },
+          {
+            "name": "view_top",
+            "status": "passed"
+          },
+          {
+            "name": "view_front",
+            "status": "passed"
+          },
+          {
+            "name": "view_right",
+            "status": "passed"
+          },
+          {
+            "name": "view_isometric",
+            "status": "passed"
+          },
+          {
+            "name": "zoom",
+            "status": "passed"
+          },
+          {
+            "name": "polygon",
+            "status": "passed"
+          },
+          {
+            "name": "planar_face",
+            "status": "passed"
+          },
+          {
+            "name": "construction_points",
+            "status": "passed"
+          },
+          {
+            "name": "freehand",
+            "status": "passed"
+          },
+          {
+            "name": "bezier",
+            "status": "passed"
+          },
+          {
+            "name": "arc_center",
+            "status": "passed"
+          },
+          {
+            "name": "arc_two_point",
+            "status": "passed"
+          },
+          {
+            "name": "arc_three_point",
+            "status": "passed"
+          },
+          {
+            "name": "offset",
+            "status": "passed"
+          },
+          {
+            "name": "polyhedron",
+            "status": "passed"
+          },
+          {
+            "name": "revolution",
+            "status": "passed"
+          },
+          {
+            "name": "sweep",
+            "status": "passed"
+          },
+          {
+            "name": "component_convert",
+            "status": "passed"
+          },
+          {
+            "name": "component_instantiate",
+            "status": "passed"
+          },
+          {
+            "name": "component_replace",
+            "status": "passed"
+          },
+          {
+            "name": "shared_component_edit",
+            "status": "passed"
+          },
+          {
+            "name": "component_metadata",
+            "status": "passed"
+          },
+          {
+            "name": "component_explode",
+            "status": "passed"
+          },
+          {
+            "name": "raw_group",
+            "status": "passed"
+          },
+          {
+            "name": "raw_point_move",
+            "status": "passed"
+          },
+          {
+            "name": "raw_vertex_move",
+            "status": "passed"
+          },
+          {
+            "name": "raw_face_rebuild",
+            "status": "passed"
+          },
+          {
+            "name": "raw_reverse",
+            "status": "passed"
+          },
+          {
+            "name": "raw_properties",
+            "status": "passed"
+          },
+          {
+            "name": "smoothing",
+            "status": "passed"
+          },
+          {
+            "name": "surface_simplify",
+            "status": "passed"
+          },
+          {
+            "name": "material_lifecycle",
+            "status": "passed"
+          },
+          {
+            "name": "tag_lifecycle",
+            "status": "passed"
+          },
+          {
+            "name": "resource_query",
+            "status": "passed"
+          },
+          {
+            "name": "mirror",
+            "status": "passed"
+          },
+          {
+            "name": "camera_configure",
+            "status": "passed"
+          },
+          {
+            "name": "cleanup",
+            "status": "passed"
+          }
+        ],
+        "duration_ms": 48,
+        "cleanup_verified": true,
+        "ui_update": {
+          "mode": "defer",
+          "suppression_requested": true,
+          "operation_closed": true,
+          "view_redraw_requested": true,
+          "inspectors_refresh_requested": true,
+          "outliner_control": "operation_disable_ui",
+          "outliner_visibility_changed": false,
+          "warnings": []
+        },
+        "modified_before": false,
+        "modified_after": false,
+        "individual_undo_tested": false,
+        "model_lifecycle_tested": false,
+        "notes": [
+          "All edits were temporary and aborted in one operation. Individual command Undo, New/Open and permission revocation require separate acceptance tests."
+        ]
+      }
+    }
+  },
+  "post": {
+    "model": {
+      "v": 1,
+      "type": "result",
+      "session_id": "e030d84d-6b1b-4de7-a458-64d7dff19007",
+      "id": "86f1d98a-4dd2-458d-bb64-a1ee3032bb6c",
+      "ok": true,
+      "status": "model_summary",
+      "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50",
+      "data": {
+        "queried_at": "2026-10-28T13:07:39.219Z",
+        "measurement_unit": "mm",
+        "model_units": {
+          "length_unit_code": 2,
+          "length_unit": "mm",
+          "length_format_code": 0,
+          "length_precision": 0
+        },
+        "title": "",
+        "path": "",
+        "saved": false,
+        "modified": false,
+        "bounds": {
+          "empty": false,
+          "axes": "model_axes",
+          "min": [
+            -67.623181,
+            -181.923181,
+            -0.683933
+          ],
+          "max": [
+            1007.423181,
+            893.123181,
+            1701.733117
+          ],
+          "size": [
+            1075.046363,
+            1075.046363,
+            1702.41705
+          ]
+        },
+        "top_level_entities": {
+          "total": 1,
+          "by_type": {
+            "ComponentInstance": 1
+          },
+          "scanned": 1,
+          "complete": true,
+          "scope": "direct_children"
+        },
+        "collection_counts": {
+          "tags": 1,
+          "materials": 8,
+          "definitions": 1,
+          "scenes": 0
+        },
+        "selection_count": 0,
+        "edit_context": {
+          "depth": 0,
+          "path": [],
+          "path_truncated": false,
+          "name_character_limit": 64
+        },
+        "notes": [
+          "Entity counts cover the model root only, including hidden objects. They do not recurse into definitions.",
+          "Collection counts include unused entries. All numeric lengths and coordinates are millimeters.",
+          "Bounds are bounding-box extents, not measured edges or usable floor dimensions."
+        ]
+      }
+    },
+    "selection": {
+      "v": 1,
+      "type": "result",
+      "session_id": "e030d84d-6b1b-4de7-a458-64d7dff19007",
+      "id": "49f50826-5cd3-406a-91ba-9e10cc378fd2",
+      "ok": true,
+      "status": "selection_info",
+      "model_id": "7ff0c983-6d1a-4207-bb44-9fafe3a2cb50",
+      "data": {
+        "queried_at": "2026-10-28T13:07:39.279Z",
+        "measurement_unit": "mm",
+        "model_units": {
+          "length_unit_code": 2,
+          "length_unit": "mm",
+          "length_format_code": 0,
+          "length_precision": 0
+        },
+        "total": 0,
+        "offset": 0,
+        "returned": 0,
+        "next_offset": null,
+        "truncated": false,
+        "edit_context": {
+          "depth": 0,
+          "path": [],
+          "path_truncated": false,
+          "name_character_limit": 64
+        },
+        "items": [],
+        "notes": [
+          "Each call reads the current selection; pages are not a frozen snapshot.",
+          "Material and visibility flags describe direct assignments, not inherited or effective appearance.",
+          "model_bounds encloses transformed bounding-box corners; it can exceed the actual geometry extents.",
+          "definition_bounds is unscaled; instance_axis_lengths_mm includes this instance and its edit ancestors."
+        ]
+      }
+    }
+  }
+}
