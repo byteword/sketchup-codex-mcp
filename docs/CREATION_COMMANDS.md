@@ -69,6 +69,6 @@
 
 ## 검증 상태
 
-자동 검사 124개가 통과했습니다. 실제 파이프와 Ruby 실행기까지 연결했지만, 모델·면 생성·그룹 복사·속성 사전·Undo는 테스트 대역입니다. 실제 SketchUp API 확인은 [수동 시험](MANUAL_TEST.md)에 남아 있습니다. 이번 단계는 로컬 개발과 커밋이며 배포 ZIP 갱신·설치·GitHub 게시를 수행하지 않았습니다.
+자동 검사 124개가 통과했습니다. 해당 자동 검사의 모델·면 생성·그룹 복사·속성 사전·Undo는 테스트 대역입니다. 이후 2026-10-28 SketchUp 2019 실기에서 원점의 6000 × 12000 × 3000 mm 박스 생성과 X +10000 mm 그룹 1개 복제, 각각 한 번의 Undo를 사용자와 확인했습니다. 컴포넌트 복제·정의 독립성의 실제 편집 대조·속성 사전·다중 복제·중첩 생성·실패 롤백 등은 별도 실기가 필요합니다. [실기 결과](MANUAL_RESULTS_0.4.0.md)와 전체 [수동 시험 계획](MANUAL_TEST.md)을 참고하세요.
 
 사용 API: [Entities.add_group](https://ruby.sketchup.com/Sketchup/Entities.html#add_group-instance_method), [Entities.add_face](https://ruby.sketchup.com/Sketchup/Entities.html#add_face-instance_method), [Group.copy](https://ruby.sketchup.com/Sketchup/Group.html#copy-instance_method), [Group.make_unique](https://ruby.sketchup.com/Sketchup/Group.html#make_unique-instance_method), [Entities.add_instance](https://ruby.sketchup.com/Sketchup/Entities.html#add_instance-instance_method), [Entity.set_attribute](https://ruby.sketchup.com/Sketchup/Entity.html#set_attribute-instance_method).

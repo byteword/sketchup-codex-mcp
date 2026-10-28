@@ -88,6 +88,6 @@
 4. 대상이 현재 편집 위치의 직접 자식일 때만 `persistent_id`를 `entity_ids`에, 부모 경로를 `expected_context`에 전달합니다. 변경에는 별도 로컬 허가가 필요합니다.
 5. 다른 편집 위치의 결과는 자동으로 내부로 진입해 변경하지 않습니다. 잠금·공유 정의 등 기존 명령 제한도 유지합니다.
 
-예: “모델 전체에서 구조 태그의 기둥을 찾아줘”, “이 그룹의 하위 구조를 보여줘”, “검색한 루트 그룹을 선택해줘”. 실제 SketchUp API 결과와 UI 상태 유지 확인은 [수동 시험](MANUAL_TEST.md)에 남아 있습니다.
+예: “모델 전체에서 구조 태그의 기둥을 찾아줘”, “이 그룹의 하위 구조를 보여줘”, “검색한 루트 그룹을 선택해줘”. 2026-10-28 실기에서 현재 편집 위치의 그룹 검색과 루트/중첩 하위 조회를 확인했습니다. 전체 필터·반복 커서·공유 배치 경로와 UI 상태 불변 등은 추가 시험 대상입니다. [실기 결과](MANUAL_RESULTS_0.4.0.md)와 전체 [수동 시험 계획](MANUAL_TEST.md)을 참고하세요.
 
 구현에서 사용하는 읽기 API: [Entities 인덱스 접근](https://ruby.sketchup.com/Sketchup/Entities.html#%5B%5D-instance_method), [Group.definition](https://ruby.sketchup.com/Sketchup/Group.html#definition-instance_method), [ComponentInstance.definition](https://ruby.sketchup.com/Sketchup/ComponentInstance.html#definition-instance_method). 공식 API 계약과 별도로 현재 자동 검사는 모델 대역을 사용합니다.

@@ -1,7 +1,7 @@
 # SketchUp Local MCP Bridge 0.4.0 (시험 버전)
 
 Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는 GUI 중개 앱입니다.
-이번 버전은 **모델 조회·객체 검색·구조 탐색·선택 변경·화면 제어·객체 속성 변경·이동·박스 생성·복제**를 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. 실제 SketchUp에서 새 변경 명령과 Undo 확인은 아직 진행하지 않은 시험 버전입니다.
+이번 버전은 **모델 조회·객체 검색·구조 탐색·선택 변경·화면 제어·객체 속성 변경·이동·박스 생성·복제**를 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. SketchUp 2019에서 생성·복제·이름 변경·이동과 Undo, 중첩 이동, 잠금·허가 회수 차단을 확인한 시험 버전입니다. [실기 결과와 남은 확인](docs/MANUAL_RESULTS_0.4.0.md)을 참고하세요.
 
 ## 다른 컴퓨터에서 이어가기
 
@@ -187,7 +187,7 @@ Windows 통합 검사는 `PROBE_TEST` 빌드와 `SUPIPE_TEST=1`로 별도 파이
 | `native/` | Win32 보조 DLL 소스 |
 | `tests/` | 상태 머신, 통신, MCP 프로토콜 및 통합 검사 |
 
-현재 범위에는 박스 외 임의 형상 생성·객체 삭제·회전·축척, 임의 Ruby 실행, 플러그인에서 ChatGPT 대화 시작, API 기반 역방향 AI 요청, 설치 프로그램, 코드 서명이 포함되지 않습니다. [기초 명령 전달](docs/COMMAND_SCOPE.md)은 구현된 시험 기능이며 실제 SketchUp 검증이 남아 있습니다.
+현재 범위에는 박스 외 임의 형상 생성·객체 삭제·회전·축척, 임의 Ruby 실행, 플러그인에서 ChatGPT 대화 시작, API 기반 역방향 AI 요청, 설치 프로그램, 코드 서명이 포함되지 않습니다. [기초 명령 전달](docs/COMMAND_SCOPE.md)은 구현된 시험 기능이며 실기 확인 범위는 [결과 기록](docs/MANUAL_RESULTS_0.4.0.md)에 구분했습니다.
 
 [설계](docs/ARCHITECTURE.md) · [수동 시험](docs/MANUAL_TEST.md) · [검증 범위](docs/VALIDATION.md)
 
