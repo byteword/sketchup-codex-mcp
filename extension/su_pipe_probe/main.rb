@@ -4,11 +4,18 @@ require 'json'
 require_relative 'session'
 require_relative 'model_reader'
 require_relative 'version'
+require_relative 'model_identity'
 
 module SUPipeProbe
   class Panel
     def initialize
       @error = ''
+      # Keep the observer alive even while the panel is hidden or disconnected.
+      # Synchronize authority immediately; receive also checks before dispatch.
+      @model_identity = ModelIdentity.new { @session.tick if @session }
+      unless Sketchup.add_observer(@model_identity)
+        raise 'Cannot observe model changes; MCP control is unavailable'
+      end
       begin
         require_relative 'win_pipe'
         @pipe = PipeClient.new
@@ -26,11 +33,7 @@ module SUPipeProbe
 
     def metadata
       model = Sketchup.active_model
-      unless @model.equal?(model)
-        @model = model
-        @model_id = SecureRandom.uuid
-      end
-      {'pid' => Process.pid, 'model_id' => @model_id, 'title' => model.title.to_s,
+      {'pid' => Process.pid, 'model_id' => @model_identity.id_for(model), 'title' => model.title.to_s,
        'path' => model.path.to_s, 'sketchup_version' => Sketchup.version,
        'ruby_version' => RUBY_VERSION, 'extension_version' => VERSION, 'pointer_bits' => [0].pack('J').bytesize * 8}
     end

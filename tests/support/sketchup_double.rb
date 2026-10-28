@@ -1,6 +1,9 @@
 # encoding: UTF-8
 # SketchUp API doubles for deterministic command/Undo tests; no native model edits.
 require 'matrix'
+module Sketchup
+  class AppObserver; end
+end
 module Geom
   class Transformation
     attr_reader :matrix

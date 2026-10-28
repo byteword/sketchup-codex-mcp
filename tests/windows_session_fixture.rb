@@ -6,9 +6,10 @@ require_relative '../extension/su_pipe_probe/session'
 require_relative '../extension/su_pipe_probe/version'
 require_relative '../extension/su_pipe_probe/model_reader'
 require_relative 'support/creation_double'
+require_relative '../extension/su_pipe_probe/model_identity'
 $stdout.sync = true
 control_path = ARGV.fetch(0)
-clients, sessions, metadata = [], [], []
+clients, sessions, metadata, identities = [], [], [], []
 clock = 0.0
 2.times do |index|
   client = SUPipeProbe::PipeClient.new
@@ -18,9 +19,13 @@ clock = 0.0
   column = model.add_child(building, 2000 + index, 'ComponentInstance')
   column.name = '기둥 ' + index.to_s
   column.layer = model.layers['구조']
-  data = {'pid' => Process.pid, 'model_id' => SecureRandom.uuid,
-    'title' => "인스턴스 #{index}", 'path' => '', 'extension_version' => SUPipeProbe::VERSION}
-  session = SUPipeProbe::Session.new(lambda { |m| client.send_message(m) }, lambda { data },
+  session = nil
+  identity = SUPipeProbe::ModelIdentity.new { session.tick if session }
+  data = {'pid' => Process.pid, 'model_id' => identity.id_for(model),
+    'title' => "인스턴스 #{index}", 'path' => '', 'extension_version' => SUPipeProbe::VERSION,
+    'test_model_wrapper_id' => model.object_id}
+  session = SUPipeProbe::Session.new(lambda { |m| client.send_message(m) },
+    lambda { data['model_id'] = identity.id_for(model); data },
     lambda { clock }, lambda { |method, args| SUPipeProbe::ModelReader.new(model).call(method, args).merge('instance_index'=>index, 'method'=>method) },
     lambda { |method, args| SUPipeProbe::CommandExecutor.new(model).call(method, args) })
   deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 5
@@ -33,6 +38,7 @@ clock = 0.0
   end
   clients << client
   sessions << session
+  identities << [identity, model]
   metadata << data.merge('session_id' => session.session_id)
   session.publish('hello')
 end
@@ -49,11 +55,16 @@ begin
       clock = command['clock'].to_f if command.key?('clock')
       sessions[command['grant']].grant if command.key?('grant')
       if command.key?('change_model')
-        # Metadata callback closes over each session's mutable data hash.
+        # Simulate native New/Open reusing the same Model wrapper and entity IDs.
+        # Exercise the production observer, rather than manually replacing UUIDs.
         index = command['change_model']
-        new_id = SecureRandom.uuid
-        sessions[index].instance_variable_get(:@metadata).call['model_id'] = new_id
-        metadata[index]['model_id'] = new_id
+        changed_identity, changed_model = identities[index]
+        if command['change_model_event'] == 'open'
+          changed_identity.onOpenModel(changed_model)
+        else
+          changed_identity.onNewModel(changed_model)
+        end
+        metadata[index]['model_id'] = sessions[index].snapshot['model_id']
       end
       puts JSON.generate('ack' => sequence, 'instances' => metadata)
     end

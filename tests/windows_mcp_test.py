@@ -225,6 +225,34 @@ class WindowsMcpTests(unittest.TestCase):
         cached = self.tool('sketchup_get_command_result',dict(self.target(0,True),command_id=duplicate['command_id']))
         self.assertEqual(copied,cached['result']['data']['created'][0])
 
+    def test_same_wrapper_new_and_open_reject_stale_commands_and_revoke_permission(self):
+        for event in ['new', 'open']:
+            self.command(grant=0)
+            old_target = self.target(0, True)
+            wrapper_id = self.instances[0]['test_model_wrapper_id']
+            other_target = self.target(1, True)
+            stale = self.command_args(entity_ids=['1000'], delta_mm=[1000, 0, 0])
+            before = self.tool('sketchup_get_selection_info', old_target)['data']['items'][0]['model_bounds']
+            self.command(change_model=0, change_model_event=event)
+            self.assertEqual(wrapper_id, self.instances[0]['test_model_wrapper_id'])
+            self.assertEqual(old_target['session_id'], self.target(0)['session_id'])
+            self.assertNotEqual(old_target['model_id'], self.target(0, True)['model_id'])
+            self.assertEqual(other_target, self.target(1, True))
+            state = self.tool('sketchup_get_instance', self.target(0))['state']
+            self.assertEqual('user', state['authority'])
+            self.assertEqual(stale['command_id'], state['next_command_id'])
+            self.assertEqual('model_mismatch', self.tool('sketchup_move_entities', stale, True)['status'])
+            self.assertEqual('model_mismatch', self.tool('sketchup_get_selection_info', old_target, True)['status'])
+            fresh = self.command_args(entity_ids=['1000'], delta_mm=[1000, 0, 0])
+            self.assertEqual('authority_or_model_mismatch', self.tool('sketchup_move_entities', fresh, True)['status'])
+            after = self.tool('sketchup_get_selection_info', self.target(0, True))['data']['items'][0]['model_bounds']
+            self.assertEqual(before, after)
+            self.command(grant=0)
+            moved = self.tool('sketchup_move_entities', self.command_args(entity_ids=['1000'], delta_mm=[1000, 0, 0]))
+            self.assertEqual('completed', moved['result']['state'])
+            self.assertEqual([before['min'][0] + 1000, before['min'][1], before['min'][2]],
+                             self.tool('sketchup_get_selection_info', self.target(0, True))['data']['items'][0]['model_bounds']['min'])
+
     def command_args(self, **fields):
         state = self.tool('sketchup_get_instance', self.target(0))['state']
         args = dict(self.target(0, True), command_id=state['next_command_id'], expected_context=[])

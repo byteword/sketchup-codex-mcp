@@ -54,6 +54,7 @@ module SUPipeProbe
     end
 
     def grant
+      tick
       return if @authority == 'mcp'
       @authority = 'mcp'
       @lease = SecureRandom.uuid

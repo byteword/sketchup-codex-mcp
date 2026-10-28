@@ -1,0 +1,4 @@
+interface:
+  display_name: "SketchUp 작업"
+  short_description: "연결된 SketchUp 모델 조회·도형 작업·실기 검증과 MCP 기능 개발"
+  default_prompt: "$sketchup-mcp로 현재 SketchUp 모델을 확인하고 요청한 조회 또는 도형 작업을 진행해줘."

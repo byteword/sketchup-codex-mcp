@@ -21,6 +21,8 @@ Copy-Item bridge\App.config dist\SketchUpMcp.Test.exe.config -Force
 if ($LASTEXITCODE -ne 0) { throw 'MCP stdio tests failed' }
 & $Ruby @RubyArguments tests/session_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Session tests failed' }
+& $Ruby @RubyArguments tests/model_identity_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Model lifecycle identity tests failed' }
 & $Ruby @RubyArguments tests/command_session_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Command session tests failed' }
 & $Ruby @RubyArguments tests/command_executor_test.rb
