@@ -1,0 +1,269 @@
+Built: dist\SketchUpPipeProbe.exe and dist\SketchUpMcp.exe
+test_basic_commands_reject_bad_vectors_ranges_and_unconfirmed_batch (__main__.StdioTests.test_basic_commands_reject_bad_vectors_ranges_and_unconfirmed_batch) ... ok
+test_basic_drawing_edit_query_and_batch_contract (__main__.StdioTests.test_basic_drawing_edit_query_and_batch_contract) ... ok
+test_batch_rejects_forbidden_actions_overrides_and_bad_inner_types (__main__.StdioTests.test_batch_rejects_forbidden_actions_overrides_and_bad_inner_types) ... ok
+test_batch_schema_and_nested_validation (__main__.StdioTests.test_batch_schema_and_nested_validation) ... ok
+test_command_tool_annotations_and_result_schema (__main__.StdioTests.test_command_tool_annotations_and_result_schema) ... ok
+test_command_validation_and_nested_input (__main__.StdioTests.test_command_validation_and_nested_input) ... ok
+test_concurrent_calls_and_cancellation (__main__.StdioTests.test_concurrent_calls_and_cancellation) ... ok
+test_creation_and_duplication_contract_and_arguments (__main__.StdioTests.test_creation_and_duplication_contract_and_arguments) ... ok
+test_creation_and_duplication_reject_invalid_geometry_and_targets (__main__.StdioTests.test_creation_and_duplication_reject_invalid_geometry_and_targets) ... ok
+test_discovery_contract_and_nested_arguments (__main__.StdioTests.test_discovery_contract_and_nested_arguments) ... ok
+test_discovery_rejects_invalid_filters_paths_and_limits (__main__.StdioTests.test_discovery_rejects_invalid_filters_paths_and_limits) ... ok
+test_duplicate_active_id_closes_without_repeating_tool (__main__.StdioTests.test_duplicate_active_id_closes_without_repeating_tool) ... ok
+test_eof_cancels_pending_call (__main__.StdioTests.test_eof_cancels_pending_call) ... ok
+test_extended_tools_accept_typed_contracts (__main__.StdioTests.test_extended_tools_accept_typed_contracts) ... ok
+test_extended_tools_reject_untyped_nested_options_and_unknown_keys (__main__.StdioTests.test_extended_tools_reject_untyped_nested_options_and_unknown_keys) ... ok
+test_initialization_and_tool_contract (__main__.StdioTests.test_initialization_and_tool_contract) ... ok
+test_oversized_frame_closes_connection (__main__.StdioTests.test_oversized_frame_closes_connection) ... ok
+test_parse_error_and_invalid_request_do_not_break_session (__main__.StdioTests.test_parse_error_and_invalid_request_do_not_break_session) ... ok
+test_protocol_negotiation (__main__.StdioTests.test_protocol_negotiation) ... ok
+test_read_query_validation_and_paging (__main__.StdioTests.test_read_query_validation_and_paging) ... ok
+test_requires_initialized_notification (__main__.StdioTests.test_requires_initialized_notification) ... ok
+test_runtime_failure_is_tool_error (__main__.StdioTests.test_runtime_failure_is_tool_error) ... ok
+test_unicode_and_fragmented_input (__main__.StdioTests.test_unicode_and_fragmented_input) ... ok
+test_unknown_notification_has_no_response (__main__.StdioTests.test_unknown_notification_has_no_response) ... ok
+test_validation_and_unknown_methods (__main__.StdioTests.test_validation_and_unknown_methods) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 7.871s
+
+OK
+test_lost_response_uses_result_lookup_without_rerunning (__main__.NativeRunnerTest.test_lost_response_uses_result_lookup_without_rerunning) ... ok
+test_missing_permission_stops_before_mutation (__main__.NativeRunnerTest.test_missing_permission_stops_before_mutation) ... ok
+test_old_schema_is_blocked_before_submitting_extended_test (__main__.NativeRunnerTest.test_old_schema_is_blocked_before_submitting_extended_test) ... ok
+test_one_batch_command_writes_a_structured_report (__main__.NativeRunnerTest.test_one_batch_command_writes_a_structured_report) ... ok
+test_stale_model_never_runs_a_test (__main__.NativeRunnerTest.test_stale_model_never_runs_a_test) ... ok
+test_version_mismatch_stops_before_mutation (__main__.NativeRunnerTest.test_version_mismatch_stops_before_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 5.963s
+
+OK
+Run options: --seed 4140
+
+# Running:
+
+..................
+
+Finished in 0.008555s, 2104.1065 runs/s, 8299.5312 assertions/s.
+
+18 runs, 71 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 34656
+
+# Running:
+
+............
+
+Finished in 0.011001s, 1090.8000 runs/s, 4999.5000 assertions/s.
+
+12 runs, 55 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 47540
+
+# Running:
+
+.............
+
+Finished in 0.060217s, 215.8870 runs/s, 1660.6689 assertions/s.
+
+13 runs, 100 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 60840
+
+# Running:
+
+..................
+
+Finished in 0.011721s, 1535.6789 runs/s, 8531.5496 assertions/s.
+
+18 runs, 100 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 3369
+
+# Running:
+
+................
+
+Finished in 0.017633s, 907.3690 runs/s, 8336.4524 assertions/s.
+
+16 runs, 147 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 9200
+
+# Running:
+
+.......................
+
+Finished in 0.628915s, 36.5709 runs/s, 216.2453 assertions/s.
+
+23 runs, 136 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 3353
+
+# Running:
+
+........
+
+Finished in 0.034670s, 230.7470 runs/s, 6922.4113 assertions/s.
+
+8 runs, 240 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 29122
+
+# Running:
+
+...........................
+
+Finished in 2.147804s, 12.5710 runs/s, 62.8549 assertions/s.
+
+27 runs, 135 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 33921
+
+# Running:
+
+..................
+
+Finished in 0.277791s, 64.7968 runs/s, 572.3719 assertions/s.
+
+18 runs, 159 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 18922
+
+# Running:
+
+..........
+
+Finished in 0.090875s, 110.0411 runs/s, 572.2140 assertions/s.
+
+10 runs, 52 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 43576
+
+# Running:
+
+................
+
+Finished in 0.016957s, 943.5743 runs/s, 5484.5253 assertions/s.
+
+16 runs, 93 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 51108
+
+# Running:
+
+..
+
+Finished in 0.001835s, 1090.0371 runs/s, 2180.0741 assertions/s.
+
+2 runs, 4 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 58976
+
+# Running:
+
+.....
+
+Finished in 0.009718s, 514.4827 runs/s, 2572.4135 assertions/s.
+
+5 runs, 25 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 11933
+
+# Running:
+
+...
+
+Finished in 1.309314s, 2.2913 runs/s, 34.3691 assertions/s.
+
+3 runs, 45 assertions, 0 failures, 0 errors, 0 skips
+test_atomic_batch_permission_replay_failure_and_ui_restoration (__main__.WindowsMcpTests.test_atomic_batch_permission_replay_failure_and_ui_restoration) ... ERROR
+test_basic_geometry_and_native_suite_use_real_pipe_with_one_request (__main__.WindowsMcpTests.test_basic_geometry_and_native_suite_use_real_pipe_with_one_request) ... FAIL
+test_commands_round_trip_through_real_executor_without_duplicates (__main__.WindowsMcpTests.test_commands_round_trip_through_real_executor_without_duplicates) ... FAIL
+test_create_duplicate_and_replay_flow_returns_discoverable_ids (__main__.WindowsMcpTests.test_create_duplicate_and_replay_flow_returns_discoverable_ids) ... FAIL
+test_discovery_routes_nested_occurrences_and_connects_to_selection (__main__.WindowsMcpTests.test_discovery_routes_nested_occurrences_and_connects_to_selection) ... FAIL
+test_extended_suite_and_resource_query_cross_real_pipe (__main__.WindowsMcpTests.test_extended_suite_and_resource_query_cross_real_pipe) ... FAIL
+test_jobs_history_and_adapter_restart_still_work (__main__.WindowsMcpTests.test_jobs_history_and_adapter_restart_still_work) ... FAIL
+test_reads_route_to_exact_model_in_user_mode (__main__.WindowsMcpTests.test_reads_route_to_exact_model_in_user_mode) ... FAIL
+test_same_wrapper_new_and_open_reject_stale_commands_and_revoke_permission (__main__.WindowsMcpTests.test_same_wrapper_new_and_open_reject_stale_commands_and_revoke_permission) ... FAIL
+
+======================================================================
+ERROR: test_atomic_batch_permission_replay_failure_and_ui_restoration (__main__.WindowsMcpTests.test_atomic_batch_permission_replay_failure_and_ui_restoration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 98, in tearDown
+    self.write_control({'stop': True})
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 53, in write_control
+    temporary.replace(self.control)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\pathlib\_local.py", line 780, in replace
+    os.replace(self, target)
+    ~~~~~~~~~~^^^^^^^^^^^^^^
+PermissionError: [WinError 5] �׼����� �źεǾ����ϴ�: 'E:\\Clouds\\byteword\\OneDrive\\����\\ChatGPT\\sketchup-codex-mcp\\dist\\fixture-1c877684-d5fb-42eb-9f6a-4d554955f506.tmp' -> 'E:\\Clouds\\byteword\\OneDrive\\����\\ChatGPT\\sketchup-codex-mcp\\dist\\fixture-1c877684-d5fb-42eb-9f6a-4d554955f506.json'
+
+======================================================================
+FAIL: test_basic_geometry_and_native_suite_use_real_pipe_with_one_request (__main__.WindowsMcpTests.test_basic_geometry_and_native_suite_use_real_pipe_with_one_request)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 46, in setUp
+    self.fail('Ruby peers did not register')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Ruby peers did not register
+
+======================================================================
+FAIL: test_commands_round_trip_through_real_executor_without_duplicates (__main__.WindowsMcpTests.test_commands_round_trip_through_real_executor_without_duplicates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 46, in setUp
+    self.fail('Ruby peers did not register')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Ruby peers did not register
+
+======================================================================
+FAIL: test_create_duplicate_and_replay_flow_returns_discoverable_ids (__main__.WindowsMcpTests.test_create_duplicate_and_replay_flow_returns_discoverable_ids)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 46, in setUp
+    self.fail('Ruby peers did not register')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Ruby peers did not register
+
+======================================================================
+FAIL: test_discovery_routes_nested_occurrences_and_connects_to_selection (__main__.WindowsMcpTests.test_discovery_routes_nested_occurrences_and_connects_to_selection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 46, in setUp
+    self.fail('Ruby peers did not register')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Ruby peers did not register
+
+======================================================================
+FAIL: test_extended_suite_and_resource_query_cross_real_pipe (__main__.WindowsMcpTests.test_extended_suite_and_resource_query_cross_real_pipe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 46, in setUp
+    self.fail('Ruby peers did not register')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Ruby peers did not register
+
+======================================================================
+FAIL: test_jobs_history_and_adapter_restart_still_work (__main__.WindowsMcpTests.test_jobs_history_and_adapter_restart_still_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 46, in setUp
+    self.fail('Ruby peers did not register')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Ruby peers did not register
+
+======================================================================
+FAIL: test_reads_route_to_exact_model_in_user_mode (__main__.WindowsMcpTests.test_reads_route_to_exact_model_in_user_mode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 46, in setUp
+    self.fail('Ruby peers did not register')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Ruby peers did not register
+
+======================================================================
+FAIL: test_same_wrapper_new_and_open_reject_stale_commands_and_revoke_permission (__main__.WindowsMcpTests.test_same_wrapper_new_and_open_reject_stale_commands_and_revoke_permission)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\Clouds\byteword\OneDrive\����\ChatGPT\sketchup-codex-mcp\tests\windows_mcp_test.py", line 46, in setUp
+    self.fail('Ruby peers did not register')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Ruby peers did not register
+
+----------------------------------------------------------------------
+Ran 9 tests in 46.967s
+
+FAILED (failures=8, errors=1)

@@ -1,5 +1,23 @@
 # 검증 범위
 
+## 0.6.3 native 타입/Length 회귀 수정 — 2026-10-28
+
+전체 **229개 통과**: Ruby189개 / 1362 assertions, Python STDIO25개·외부 실행기6개·Win32/MCP/Ruby 통합9개. 실패·오류·생략0. [성공 로그](validation-0.6.3.txt). 원본 E: 소스와 검사 복사본의 파일 내용을 비교했습니다.
+
+최초 E: OneDrive 실행에서는 임시 제어 파일 교체에 WinError5가 발생하고 이후 원래 시험 peer가 남아 통합 검사9개가 실패했습니다. [최초 로그](validation-0.6.3-first-run.txt)를 보존합니다. 같은 소스를 동기화되지 않는 ASCII 경로 `dist/validation-0.6.3` 검사 복사본에서 다시 실행하자 전체가 통과했습니다. 프로덕션 모델/파이프에 연결한 자동 검사가 아니며 임시 파일 재시도나 런타임 변경으로 실패를 숨기지 않았습니다.
+
+신규5개 검사는 native Length의 허용 오차 비교로 정확한 좌표도 실패하는 조건, 실제 좌표 불일치의 계속 거부, explode 내부 항목/Vertex/PID0·중복 제외와 필터 후128개 제한 판정을 확인합니다. 수정 전4개 실패/오류를 재현하고 수정 후 통과했습니다. [공식 Length 비교](https://ruby.sketchup.com/Length.html#%3C-instance_method)는 Float와 다른 허용 오차를 적용합니다.
+
+0.6.2 실제 앱의 Follow Me·해제/이동 실패·후속 기능·Undo 결과는 [실기 기록](MANUAL_RESULTS_0.6.2.md)에 있습니다. **0.6.3 수정본의 실제 설치 후 전체 검사는 아직 미실행**입니다.
+
+## 0.6.2 Follow Me 회귀 수정 — 2026-10-28
+
+전체 **224개 통과**: Ruby184개 / 1347 assertions, Python STDIO25개·외부 실행기6개·Win32/MCP/Ruby 통합9개. 실패·오류·생략0. SketchUp2020 Ruby2.5.5 DLL 호스트, Minitest5.15.0, Python3.13.17, .NET4.8/x64 환경입니다. [전체 로그](validation-0.6.2.txt).
+
+기존 Follow Me 대역은 경로선을 자동 제거하고 manifold 판정에서 독립 선을 무시했습니다. 이를 보완하니 중앙 경로 sweep와 전체 suite에서 같은 오류가 재현됐습니다. 프로덕션은 Follow Me 성공 후 새 그룹의 면에 속하지 않는 선만 제거하고 솔리드를 확인합니다. 추가3개 검사는 중앙 경로선 정리·외곽 모서리 유지·native 실패 후 전체 취소를 확인합니다.
+
+이 결과는 API 대역 회귀이며 **수정본의 실제 SketchUp 검사는 아직 미실행**입니다. 기존 0.6.1의 실기 실패와 정리는 [실기 기록](MANUAL_RESULTS_0.6.1.md), 원본 응답은 [JSON](native-test-0.6.1-2026-10-28.json)에 있습니다.
+
 ## 0.6.1 UI 갱신·일괄 변경 — 2026-10-28
 
 전체 **221개 통과**: Ruby181개 / 1332 assertions, Python STDIO25개·외부 실행기6개·Win32/MCP/Ruby 통합9개. 실패·오류·생략0. [로그](validation-0.6.1.txt).

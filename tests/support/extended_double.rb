@@ -3,7 +3,9 @@ require_relative 'drawing_double'
 PAGE_USE_CAMERA=1 unless defined?(PAGE_USE_CAMERA)
 module Sketchup
   Color=SketchupDouble::Color
+  module Drawingelement; end
 end
+[SketchupDouble::Entity,SketchupDouble::Face,SketchupDouble::Edge].each { |type| type.include(Sketchup::Drawingelement) }
 module Geom
   class Point3d
     def initialize(*values); @values=values.length==1 ? values[0].to_a.dup : values; end
@@ -67,6 +69,7 @@ module SketchupDouble
     def count_instances; instances.length; end
   end
   class ConstructionPoint
+    include Sketchup::Drawingelement
     include Primitive
     attr_accessor :layer
     def initialize(p); @points=[p.to_a.dup]; end
@@ -103,8 +106,12 @@ module SketchupDouble
       n=normal_without_normalization.to_a; length=Math.sqrt(n.inject(0.0) { |s,x| s+x*x }); Geom::Vector3d.new(n.map { |x| x/length })
     end
     def followme(edges)
-      a,b=edges.first.points; normal=normal().to_a; size=Math.sqrt(b.zip(a).inject(0.0) { |s,(x,y)| s+(x-y)**2 })
-      @parent.entities.erase_entities(edges); pushpull(size,false); true
+      a,b=edges.first.points; size=Math.sqrt(b.zip(a).inject(0.0) { |s,(x,y)| s+(x-y)**2 })
+      # Native Follow Me can leave its guide edges inside the resulting solid.
+      paths=edges.map { |edge| edge.points.map(&:dup) }
+      pushpull(size,false)
+      paths.each { |points| @parent.entities.add_line(*points) }
+      !@parent.model.fail_followme
     end
   end
   class Collection
@@ -133,6 +140,7 @@ module SketchupDouble
       add_curve(points)
     end
     def transform_by_vectors(items,vectors)
+      return self if owner_model.ignore_vector_moves
       items.zip(vectors).each { |e,v| e.position=e.position.offset(v) }; self
     end
   end
@@ -145,7 +153,10 @@ module SketchupDouble
         elsif e.respond_to?(:points); e.points.each { |p| p.replace(Geom::Point3d.new(p).transform(@transformation).to_a) } end
         e.parent=collection.parent; collection<<e
       end
-      collection.erase_entities([self]); children
+      collection.erase_entities([self])
+      # Native explode also returns topology helpers and may repeat entities.
+      internals=Array.new(@model.explode_internal_count || 2) { |i| ExplodeInternal.new(i.even? ? 0 : 90_000_000+i,collection.parent) }
+      children+internals+children.first(1)
     end
   end
   class Model
@@ -169,6 +180,27 @@ module SketchupDouble
     def restore(snapshot)
       restore_before_extended(snapshot); @layers.restore(snapshot[:resources][0]); @materials.restore(snapshot[:resources][1])
       snapshot[:raw_points].each { |e,points,material,hidden| e.points.replace(points) if points; e.material=material; e.hidden=hidden }
+    end
+  end
+end
+
+module SketchupDouble
+  ExplodeInternal=Struct.new(:persistent_id,:parent) do
+    def valid?; true; end
+    def typename; 'Vertex'; end
+  end
+  class Model
+    attr_accessor :fail_followme,:explode_internal_count,:ignore_vector_moves
+  end
+  class Entity
+    alias_method :manifold_without_loose_edges?, :manifold?
+    def manifold?
+      return false unless manifold_without_loose_edges?
+      supported={}
+      entities.select { |e| e.typename=='Face' }.each do |face|
+        face.points.each_index { |i| supported[[face.points[i],face.points[(i+1)%face.points.length]].sort]=true }
+      end
+      entities.select { |e| e.typename=='Edge' }.all? { |edge| supported[edge.points.sort] }
     end
   end
 end

@@ -1,4 +1,4 @@
-# SketchUp Local MCP Bridge 0.6.1 (시험 버전)
+# SketchUp Local MCP Bridge 0.6.3 (시험 버전)
 
 Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는 GUI 중개 앱입니다.
 모델 조회·검색, 그룹/컴포넌트·점/선/면 편집, 드로잉·리소스 관리·화면 제어를 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. 실제 SketchUp에서 확인한 0.4.x 기능과 0.6.0에서 추가한 개발 검증 범위를 구분합니다. [이전 실기 결과](docs/MANUAL_RESULTS_0.4.0.md)와 아래 최신 지원 범위를 참고하세요.
@@ -6,6 +6,14 @@ Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는
 ## 다른 컴퓨터에서 이어가기
 
 현재 작업 기준은 기본 브랜치 `main`입니다. 시험 배포본 설치는 [시험 배포 안내](docs/TEST_RELEASE.md), 구현·검사 이력과 환경 준비는 [작업 인계 기록](docs/HANDOFF.md)을 확인하세요.
+
+## 0.6.3: 해제 결과와 원시 형상 이동 판정 수정
+
+실제0.6.2에서 확인한 해제 결과의 내부 항목/Vertex를 제외하고, 점·꼭짓점 이동의 Length 비교를 수치 비교로 바꿨습니다. 전체 개발 검사 **229개 통과**. Follow Me 수정·후속 개별 기능·batch Undo의 [실기 결과](docs/MANUAL_RESULTS_0.6.2.md)를 기록했으며, 0.6.3 전체 실기는 설치 후 진행합니다.
+
+## 0.6.2: Follow Me 경로선 정리
+
+0.6.1 실제 SketchUp 2020 검사에서 중앙 경로의 Follow Me가 실패했습니다. 새 그룹 안에서 Follow Me 후 면에 연결되지 않은 경로선을 정리한 다음 솔리드를 판정하도록 수정했습니다. 전체 개발 검사 **224개 통과**, 실제 앱의 수정본 재검사는 설치 후 진행합니다. [실기 결과와 남은 검사](docs/MANUAL_RESULTS_0.6.1.md)를 확인하세요. 도구 수는 39개입니다.
 
 ## 0.6.1: 대량 변경의 UI·아웃라이너 갱신 관리
 
@@ -110,8 +118,8 @@ ChatGPT에는 `SketchUpMcp.exe`를 등록합니다. GUI는 별도 프로세스�
 
 1. 이전 GUI와 모든 SketchUp을 종료합니다.
 2. ZIP을 한 폴더에 모두 압축 해제합니다.
-3. SketchUp 확장 관리자에서 `dist/su_pipe_probe-0.5.0.rbz`를 덮어 설치합니다.
-4. SketchUp을 완전히 종료하고 다시 실행합니다. 패널 버전이 **0.5.0**이어야 합니다.
+3. SketchUp 확장 관리자에서 `dist/su_pipe_probe-0.6.3.rbz`를 덮어 설치합니다.
+4. SketchUp을 완전히 종료하고 다시 실행합니다. 패널 버전이 **0.6.3**이어야 합니다.
 5. `dist/SketchUpPipeProbe.exe`를 실행합니다.
 6. 각 SketchUp에서 **확장 프로그램 → SketchUp Pipe Probe → 연결 / 자동 재연결**을 누릅니다.
 7. GUI에서 PID·세션·모델 경로가 서로 구분되는지 확인합니다.

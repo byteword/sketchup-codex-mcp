@@ -67,7 +67,12 @@ module SUPipeProbe
         elsif kind=='sweep'
           face=collection.add_face(points.map { |p| local.call(p) }); fail_command('geometry_failed','Profile creation failed') unless face
           edges=path.each_cons(2).map { |a,b| collection.add_line(local.call(a),local.call(b)) }
-          fail_command('geometry_failed','Follow Me failed or did not create a closed solid') unless face.followme(edges) && group.manifold?
+          fail_command('geometry_failed','Follow Me did not complete') unless face.followme(edges)
+          # Follow Me can retain guide edges inside the solid. Only remove loose
+          # edges in this newly isolated group; keep edges supporting its faces.
+          loose=collection.select { |e| e.typename=='Edge' && e.faces.empty? }
+          collection.erase_entities(loose) unless loose.empty?
+          fail_command('geometry_failed','Follow Me result is not a closed solid after path cleanup') unless group.manifold?
         elsif %w[face polygon offset].include?(kind)
           face=collection.add_face(points.map { |p| local.call(p) })
           fail_command('geometry_failed','Planar face creation failed') unless face && face.valid? && collection.count { |e| e.typename=='Face' }==1
@@ -164,11 +169,11 @@ module SUPipeProbe
         when 'move_points'
           desired=items.map { |p| p.position.transform(world).offset(Geom::Vector3d.new(delta.map { |x| x/25.4 })).transform(world.inverse) }
           collection.transform_by_vectors(items,items.zip(desired).map { |p,q| q-p.position })
-          fail_command('postcondition_failed','Point position did not match') unless items.zip(desired).all? { |p,q| p.position.distance(q)<1e-7 }
+          fail_command('postcondition_failed','Point position did not match') unless items.zip(desired).all? { |p,q| p.position.distance(q).to_f<1e-7 }
         when 'move_vertices'
           vectors=vertices.zip(desired).map { |v,p| p-v.position }
           collection.transform_by_vectors(vertices,vectors)
-          fail_command('postcondition_failed','Vertex move did not match') unless vertices.zip(desired).all? { |v,p| v.valid? && v.position.distance(p)<1e-7 }
+          fail_command('postcondition_failed','Vertex move did not match') unless vertices.zip(desired).all? { |v,p| v.valid? && v.position.distance(p).to_f<1e-7 }
         when 'rebuild_faces'
           before=collection.select { |e| e.typename=='Face' }; items.each(&:find_faces)
           after=collection.select { |e| e.typename=='Face' }

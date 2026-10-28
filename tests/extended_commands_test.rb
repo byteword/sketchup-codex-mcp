@@ -40,6 +40,76 @@ class ExtendedCommandsTest < Minitest::Test
     error('invalid_geometry') { geometry('arc_three_point','points_mm'=>[[0,0,0],[1,0,0],[2,0,0]]) }
     assert_equal starts,@model.starts
   end
+  def test_sweep_removes_center_guide_without_removing_solid_edges
+    pid=id(geometry('sweep','points_mm'=>square,'path_mm'=>[[500,500,0],[500,500,1000]]))
+    group=entity(pid)
+    assert group.manifold?
+    assert_equal 6,group.entities.count { |e| e.typename=='Face' }
+    assert_equal 12,group.entities.count { |e| e.typename=='Edge' }
+    assert group.entities.select { |e| e.typename=='Edge' }.all? { |edge| edge.faces.length==2 }
+    assert_equal 1,@model.commits
+    @model.undo; assert_empty @model.entities.to_a
+  end
+  def test_sweep_keeps_guide_edges_that_form_the_solid_boundary
+    pid=id(geometry('sweep','points_mm'=>square,'path_mm'=>[[0,0,0],[0,0,1000]]))
+    assert item(pid)['manifold']
+    assert_equal 12,entity(pid).entities.count { |e| e.typename=='Edge' }
+  end
+  def test_sweep_native_failure_aborts_even_when_geometry_was_created
+    @model.fail_followme=true
+    error('geometry_failed') { geometry('sweep','points_mm'=>square,'path_mm'=>[[500,500,0],[500,500,1000]]) }
+    assert_equal 1,@model.aborts
+    assert_equal 0,@model.commits
+    assert_empty @model.entities.to_a
+  end
+  NativeLength=Struct.new(:value) do
+    def <(threshold); value < threshold.to_f && (value-threshold.to_f).abs>1e-6; end
+    def to_f; value.to_f; end
+  end
+  def with_native_length_comparison
+    original=Geom::Point3d.instance_method(:distance)
+    Geom::Point3d.send(:define_method,:distance) { |other| NativeLength.new(original.bind(self).call(other)) }
+    yield
+  ensure
+    Geom::Point3d.send(:define_method,:distance,original)
+  end
+  def test_native_length_point_move_uses_numeric_distance
+    pid=id(geometry('points','points_mm'=>[[100,200,300]]))
+    point=item(pid)['direct_children'].first['persistent_id']
+    refute NativeLength.new(0)<1e-7
+    with_native_length_comparison { raw(pid,'move_points','entity_ids'=>[point],'delta_mm'=>[100,200,300]) }
+    assert_equal [200.0,400.0,600.0],@reader.call('get_entity_info','instance_path'=>[pid,point])['item']['position_mm']
+  end
+  def test_native_length_vertex_move_uses_numeric_distance
+    pid=id(geometry('freehand','points_mm'=>[[0,0,0],[100,0,0]]))
+    edge=item(pid)['direct_children'].first['persistent_id']
+    with_native_length_comparison { raw(pid,'move_vertices','vertex_moves'=>[{'edge_id'=>edge,'endpoint'=>'start','position_mm'=>[-100,0,0]}]) }
+    assert_equal [-100.0,0.0,0.0],@reader.call('get_entity_info','instance_path'=>[pid,edge])['item']['endpoints_mm'].first
+  end
+  def test_raw_move_still_rejects_an_actual_coordinate_mismatch
+    pid=id(geometry('points','points_mm'=>[[0,0,0]])); point=item(pid)['direct_children'].first['persistent_id']
+    @model.ignore_vector_moves=true
+    with_native_length_comparison { error('postcondition_failed') { raw(pid,'move_points','entity_ids'=>[point],'delta_mm'=>[100,0,0]) } }
+    assert_equal [0.0,0.0,0.0],@reader.call('get_entity_info','instance_path'=>[pid,point])['item']['position_mm']
+    assert_equal 1,@model.aborts
+  end
+  def test_explode_returns_only_unique_addressable_drawing_children
+    pid=id(geometry('face','points_mm'=>square))
+    result=component('explode','entity_ids'=>[pid])
+    paths=result['result_paths']; assert_equal 5,result['result_count']
+    assert_equal paths.uniq,paths
+    assert paths.all? { |path| path.last.match(/\A[1-9][0-9]*\z/) }
+    assert_equal %w[Edge Edge Edge Edge Face],paths.map { |path| entity(path.last).typename }.sort
+    grouped=call('group_entities','entity_ids'=>paths.map(&:last))
+    assert_in_delta 1_000_000,item(id(grouped))['direct_geometry']['face_area_mm2'],0.001
+  end
+  def test_explode_page_limit_counts_drawing_children_only
+    @model.explode_internal_count=200
+    pid=id(geometry('face','points_mm'=>square))
+    result=component('explode','entity_ids'=>[pid])
+    assert_equal 5,result['result_count']; assert_equal 5,result['result_paths'].length
+    refute result['paths_truncated']
+  end
   def test_drawing_api_failure_rolls_back_without_orphans
     @model.fail_face_after=1
     assert_raises(RuntimeError) { geometry('face','points_mm'=>square) }

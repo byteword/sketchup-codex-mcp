@@ -165,7 +165,13 @@ module SUPipeProbe
           made=entities.flat_map do |e|
             result=e.explode; fail_command('geometry_failed','Explode failed') unless result.is_a?(Array) && !e.valid?; result
           end
-          data['result_paths']=made.select(&:valid?).first(128).map { |e| context_ids+[e.persistent_id.to_s] }; data['result_count']=made.count(&:valid?); data['paths_truncated']=made.length>128
+          # Native explode also returns vertices/edge-uses and other topology
+          # helpers. Only direct drawing children have usable collection paths.
+          children=made.select do |e|
+            e.is_a?(Sketchup::Drawingelement) && e.valid? && e.parent==@model.active_entities.parent && e.persistent_id.to_i>0
+          end.uniq
+          data['result_paths']=children.first(128).map { |e| context_ids+[e.persistent_id.to_s] }
+          data['result_count']=children.length; data['paths_truncated']=children.length>128
         when 'convert'
           made=entities.map do |group|
             transform=group.transformation.to_a

@@ -1,0 +1,347 @@
+{
+  "version": "0.6.2",
+  "session": {
+    "session_id": "6c050c9a-d087-47d6-8528-9a7f5fab7e99",
+    "model_id": "70315288-3a9a-42a7-81a3-2f9150cc0bea"
+  },
+  "suite_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99\",\"id\":\"29545d6d-7d68-46d0-9a57-9e5e2ae38c6b\",\"ok\":true,\"status\":\"command_completed\",\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:1\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"next_command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:2\",\"result\":{\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:1\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"command\":\"run_self_test\",\"expected_context\":[],\"finished_at\":\"2026-10-28T12:39:33.807Z\",\"state\":\"completed\",\"data\":{\"dry_run\":false,\"undoable\":false,\"suite\":\"all\",\"passed\":false,\"passed_count\":43,\"failed_count\":1,\"skipped_count\":12,\"checks\":[{\"name\":\"box\",\"status\":\"passed\"},{\"name\":\"rectangle\",\"status\":\"passed\"},{\"name\":\"circle\",\"status\":\"passed\"},{\"name\":\"polyline\",\"status\":\"passed\"},{\"name\":\"entity_info\",\"status\":\"passed\"},{\"name\":\"face_edge_metrics\",\"status\":\"passed\"},{\"name\":\"push_pull\",\"status\":\"passed\"},{\"name\":\"rotate\",\"status\":\"passed\"},{\"name\":\"scale\",\"status\":\"passed\"},{\"name\":\"move\",\"status\":\"passed\"},{\"name\":\"duplicate\",\"status\":\"passed\"},{\"name\":\"selection\",\"status\":\"passed\"},{\"name\":\"properties\",\"status\":\"passed\"},{\"name\":\"locked_rejection\",\"status\":\"passed\"},{\"name\":\"unlock\",\"status\":\"passed\"},{\"name\":\"erase\",\"status\":\"passed\"},{\"name\":\"group\",\"status\":\"passed\"},{\"name\":\"make_unique\",\"status\":\"passed\"},{\"name\":\"nested_query\",\"status\":\"passed\"},{\"name\":\"view_top\",\"status\":\"passed\"},{\"name\":\"view_front\",\"status\":\"passed\"},{\"name\":\"view_right\",\"status\":\"passed\"},{\"name\":\"view_isometric\",\"status\":\"passed\"},{\"name\":\"zoom\",\"status\":\"passed\"},{\"name\":\"polygon\",\"status\":\"passed\"},{\"name\":\"planar_face\",\"status\":\"passed\"},{\"name\":\"construction_points\",\"status\":\"passed\"},{\"name\":\"freehand\",\"status\":\"passed\"},{\"name\":\"bezier\",\"status\":\"passed\"},{\"name\":\"arc_center\",\"status\":\"passed\"},{\"name\":\"arc_two_point\",\"status\":\"passed\"},{\"name\":\"arc_three_point\",\"status\":\"passed\"},{\"name\":\"offset\",\"status\":\"passed\"},{\"name\":\"polyhedron\",\"status\":\"passed\"},{\"name\":\"revolution\",\"status\":\"passed\"},{\"name\":\"sweep\",\"status\":\"passed\"},{\"name\":\"component_convert\",\"status\":\"passed\"},{\"name\":\"component_instantiate\",\"status\":\"passed\"},{\"name\":\"component_replace\",\"status\":\"passed\"},{\"name\":\"shared_component_edit\",\"status\":\"passed\"},{\"name\":\"component_metadata\",\"status\":\"passed\"},{\"name\":\"component_explode\",\"status\":\"passed\"},{\"name\":\"raw_group\",\"status\":\"failed\",\"message\":\"Expected an array of positive persistent ID strings within the item limit\"},{\"name\":\"raw_point_move\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"raw_vertex_move\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"raw_face_rebuild\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"raw_reverse\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"raw_properties\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"smoothing\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"surface_simplify\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"material_lifecycle\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"tag_lifecycle\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"resource_query\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"mirror\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"camera_configure\",\"status\":\"skipped\",\"reason\":\"Stopped after a failure\"},{\"name\":\"cleanup\",\"status\":\"passed\"}],\"duration_ms\":65,\"cleanup_verified\":true,\"ui_update\":{\"mode\":\"defer\",\"suppression_requested\":true,\"operation_closed\":true,\"view_redraw_requested\":true,\"inspectors_refresh_requested\":true,\"outliner_control\":\"operation_disable_ui\",\"outliner_visibility_changed\":false,\"warnings\":[]},\"modified_before\":false,\"modified_after\":false,\"individual_undo_tested\":false,\"model_lifecycle_tested\":false,\"notes\":[\"All edits were temporary and aborted in one operation. Individual command Undo, New/Open and permission revocation require separate acceptance tests.\"]}}}"
+      }
+    ],
+    "isError": false
+  },
+  "manual_checks": [
+    {
+      "name": "raw_point_move",
+      "passed": false,
+      "error": "postcondition_failed",
+      "command_id": "6c050c9a-d087-47d6-8528-9a7f5fab7e99:9"
+    },
+    {
+      "name": "raw_vertex_move",
+      "passed": false,
+      "error": "Error: {\"v\":1,\"type\":\"result\",\"session_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99\",\"id\":\"6ba66074-b792-4b04-91b8-49fd04eda5a2\",\"ok\":false,\"status\":\"postcondition_failed\",\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:11\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"next_command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:12\",\"result\":{\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:11\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"command\":\"edit_geometry\",\"expected_context\":[],\"finished_at\":\"2026-10-28T12:43:37.999Z\",\"state\":\"failed\",\"error\":\"postcondition_failed\",\"message\":\"Vertex move did not match\"}}"
+    },
+    {
+      "name": "raw_face_rebuild",
+      "passed": true,
+      "area_mm2": 999999.9999999993
+    },
+    {
+      "name": "raw_reverse",
+      "passed": true,
+      "signedAreaBefore": -1000000,
+      "signedAreaAfter": 1000000
+    },
+    {
+      "name": "raw_properties",
+      "passed": true,
+      "hidden": true
+    },
+    {
+      "name": "smoothing",
+      "passed": true
+    },
+    {
+      "name": "surface_simplify",
+      "passed": true,
+      "area_mm2": 999999.9999999993,
+      "face_count": 1
+    },
+    {
+      "name": "material_lifecycle",
+      "passed": true
+    },
+    {
+      "name": "tag_lifecycle",
+      "passed": true
+    },
+    {
+      "name": "resource_query",
+      "passed": true
+    },
+    {
+      "name": "mirror",
+      "passed": true,
+      "bounds": {
+        "empty": false,
+        "axes": "model_axes",
+        "min": [
+          -11000,
+          1000,
+          0
+        ],
+        "max": [
+          -10000,
+          2000,
+          0
+        ],
+        "size": [
+          1000,
+          1000,
+          0
+        ]
+      }
+    },
+    {
+      "name": "camera_configure",
+      "passed": true,
+      "restored": true
+    },
+    {
+      "name": "raw_group_manual_filtered",
+      "passed": true
+    },
+    {
+      "name": "definitions_purge_unused",
+      "passed": true,
+      "removed_only_test_definition": true
+    },
+    {
+      "name": "camera_scene_lifecycle",
+      "passed": true
+    },
+    {
+      "name": "atomic_batch_mid_failure_rollback",
+      "passed": true,
+      "error": "Error: {\"v\":1,\"type\":\"result\",\"session_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99\",\"id\":\"23b10d28-35fa-4eab-8a70-292f72155393\",\"ok\":false,\"status\":\"batch_step_failed\",\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:40\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"next_command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:41\",\"result\":{\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:40\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"command\":\"run_batch\",\"expected_context\":[],\"finished_at\":\"2026-10-28T12:49:43.496Z\",\"state\":\"failed\",\"error\":\"batch_step_failed\",\"message\":\"Step 2 (move_entities): entity_not_found / An entity is missing or no longer valid\"}}",
+      "rootCount": 1
+    },
+    {
+      "name": "atomic_batch_success_after_failure",
+      "passed": true,
+      "rootCount": 3
+    },
+    {
+      "name": "atomic_batch_single_user_undo",
+      "passed": true,
+      "user_confirmed_one_ctrl_z": true,
+      "rootCount": 1,
+      "created_ids_absent": [
+        "14493",
+        "14520"
+      ],
+      "bounds_exactly_restored": false,
+      "note": "Remaining face-me figure bounds differ; object count/removed IDs/resources verified."
+    }
+  ],
+  "identity_movement": [
+    {
+      "action": "move_points",
+      "passed": false,
+      "error": "Error: {\"v\":1,\"type\":\"result\",\"session_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99\",\"id\":\"4e62d8d3-fb9a-48de-aef2-e410e6ff0c37\",\"ok\":false,\"status\":\"postcondition_failed\",\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:43\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"next_command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:44\",\"result\":{\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:43\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"command\":\"edit_geometry\",\"expected_context\":[],\"finished_at\":\"2026-10-28T12:52:18.684Z\",\"state\":\"failed\",\"error\":\"postcondition_failed\",\"message\":\"Point position did not match\"}}",
+      "item": {
+        "entity_id": "16960",
+        "persistent_id": "14548",
+        "type": "ConstructionPoint",
+        "tag": {
+          "name": "Layer0",
+          "visible": true
+        },
+        "hidden": false,
+        "material": null,
+        "model_bounds": {
+          "empty": false,
+          "axes": "model_axes",
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            0,
+            0,
+            0
+          ]
+        },
+        "text_truncated": false,
+        "instance_path": [
+          "14547",
+          "14548"
+        ],
+        "parent_path": [
+          "14547"
+        ],
+        "position_mm": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "action": "move_vertices",
+      "passed": false,
+      "error": "Error: {\"v\":1,\"type\":\"result\",\"session_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99\",\"id\":\"1b433c5a-3e93-4c6b-8126-858789799277\",\"ok\":false,\"status\":\"postcondition_failed\",\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:45\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"next_command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:46\",\"result\":{\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:45\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"command\":\"edit_geometry\",\"expected_context\":[],\"finished_at\":\"2026-10-28T12:52:25.054Z\",\"state\":\"failed\",\"error\":\"postcondition_failed\",\"message\":\"Vertex move did not match\"}}",
+      "item": {
+        "entity_id": "16975",
+        "persistent_id": "14550",
+        "type": "Edge",
+        "tag": {
+          "name": "Layer0",
+          "visible": true
+        },
+        "hidden": false,
+        "material": null,
+        "model_bounds": {
+          "empty": false,
+          "axes": "model_axes",
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            100,
+            0,
+            0
+          ],
+          "size": [
+            100,
+            0,
+            0
+          ]
+        },
+        "text_truncated": false,
+        "instance_path": [
+          "14549",
+          "14550"
+        ],
+        "parent_path": [
+          "14549"
+        ],
+        "length_mm": 100,
+        "endpoints_mm": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            100,
+            0,
+            0
+          ]
+        ],
+        "soft": false,
+        "smooth": false,
+        "curve_type": "Curve",
+        "adjacent_face_ids": []
+      }
+    }
+  ],
+  "noncurve_movement": {
+    "passed": false,
+    "error": "Error: {\"v\":1,\"type\":\"result\",\"session_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99\",\"id\":\"e505b769-49ab-4213-a7b2-18f181a154e2\",\"ok\":false,\"status\":\"postcondition_failed\",\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:48\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"next_command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:49\",\"result\":{\"command_id\":\"6c050c9a-d087-47d6-8528-9a7f5fab7e99:48\",\"model_id\":\"70315288-3a9a-42a7-81a3-2f9150cc0bea\",\"command\":\"edit_geometry\",\"expected_context\":[],\"finished_at\":\"2026-10-28T12:53:06.381Z\",\"state\":\"failed\",\"error\":\"postcondition_failed\",\"message\":\"Vertex move did not match\"}}"
+  },
+  "camera_before": {
+    "eye_mm": [
+      8224.054753,
+      -7360.182895,
+      3490.828636
+    ],
+    "target_mm": [
+      682.056533,
+      3813.478919,
+      77.292911
+    ],
+    "up": [
+      -0.13732942314234511,
+      0.20345702643967736,
+      0.9694049040167454
+    ],
+    "perspective": true,
+    "fov_degrees": 35,
+    "height_mm": null,
+    "aspect_ratio": 0
+  },
+  "camera_restored": {
+    "eye_mm": [
+      8224.054753,
+      -7360.182895,
+      3490.828636
+    ],
+    "target_mm": [
+      682.056533,
+      3813.478919,
+      77.292911
+    ],
+    "up": [
+      -0.13732942314234511,
+      0.20345702643967736,
+      0.9694049040167454
+    ],
+    "perspective": true,
+    "fov_degrees": 35,
+    "height_mm": null,
+    "aspect_ratio": 0
+  },
+  "final_summary": {
+    "queried_at": "2026-10-28T13:00:43.606Z",
+    "measurement_unit": "mm",
+    "model_units": {
+      "length_unit_code": 2,
+      "length_unit": "mm",
+      "length_format_code": 0,
+      "length_precision": 0
+    },
+    "title": "",
+    "path": "",
+    "saved": false,
+    "modified": true,
+    "bounds": {
+      "empty": false,
+      "axes": "model_axes",
+      "min": [
+        70.142624,
+        -44.157376,
+        -0.683933
+      ],
+      "max": [
+        869.657376,
+        755.357376,
+        1701.733117
+      ],
+      "size": [
+        799.514752,
+        799.514752,
+        1702.41705
+      ]
+    },
+    "top_level_entities": {
+      "total": 1,
+      "by_type": {
+        "ComponentInstance": 1
+      },
+      "scanned": 1,
+      "complete": true,
+      "scope": "direct_children"
+    },
+    "collection_counts": {
+      "tags": 1,
+      "materials": 8,
+      "definitions": 1,
+      "scenes": 0
+    },
+    "selection_count": 0,
+    "edit_context": {
+      "depth": 0,
+      "path": [],
+      "path_truncated": false,
+      "name_character_limit": 64
+    },
+    "notes": [
+      "Entity counts cover the model root only, including hidden objects. They do not recurse into definitions.",
+      "Collection counts include unused entries. All numeric lengths and coordinates are millimeters.",
+      "Bounds are bounding-box extents, not measured edges or usable floor dimensions."
+    ]
+  }
+}
