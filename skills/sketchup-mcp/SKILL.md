@@ -21,6 +21,8 @@ Use the installed SketchUp MCP tools for model work. A skill supplies operating 
 
 ## Extend or validate the bridge
 
+For fast native acceptance, use the installed `sketchup-self-test` skill and `sketchup_run_self_test` when available. A single confirmed test-model run replaces per-step interactive geometry checks; lifecycle/Undo scenarios remain separate. Do not require a user reply after every successful batch step.
+
 Read [development guidance](references/development.md) for source locations, model lifecycle rules, Windows test setup, and minimal packaging. Locate the user's current checkout first; do not assume this installed skill lives inside the repository.
 
-Implement one agreed capability at a time. Record its tool contract and units before connecting schema validation, routing, Ruby execution, and regression tests. Native acceptance results and API doubles are different evidence. Consult the repository's latest handoff, validation, and feature plan instead of treating an old successful test as general release approval.
+Keep each capability's contract, units and regression evidence clear while connecting validation, routing and Ruby execution. Honor an explicitly requested feature bundle; do not stop after one feature merely because development was previously incremental. Native acceptance results and API doubles are different evidence. Consult the latest handoff, validation and feature plan instead of treating an old successful test as general release approval.

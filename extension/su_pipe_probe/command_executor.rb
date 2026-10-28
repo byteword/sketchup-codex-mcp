@@ -1,6 +1,7 @@
 # encoding: UTF-8
 require 'json'
 require_relative 'creation_commands'
+require_relative 'basic_commands'
 
 module SUPipeProbe
   class CommandError < StandardError
@@ -14,7 +15,8 @@ module SUPipeProbe
   # Every call runs synchronously on Panel's UI timer, never on a worker thread.
   class CommandExecutor
     include CreationCommands
-    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities].freeze
+    include BasicCommands
+    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test].freeze
     RESULT_LIMIT = 44_000
     MAX_SELECTION = 1000
 
@@ -35,6 +37,16 @@ module SUPipeProbe
       when 'move_entities' then move(args, dry)
       when 'create_box' then create_box(args, dry)
       when 'duplicate_entities' then duplicate_entities(args, dry)
+      when 'create_rectangle' then drawing(args,dry,'rectangle')
+      when 'create_circle' then drawing(args,dry,'circle')
+      when 'create_polyline' then drawing(args,dry,'polyline')
+      when 'rotate_entities' then transform_instances(args,dry,'rotate')
+      when 'scale_entities' then transform_instances(args,dry,'scale')
+      when 'erase_entities' then erase_instances(args,dry)
+      when 'group_entities' then group_instances(args,dry)
+      when 'make_unique' then unique_instances(args,dry)
+      when 'push_pull' then push_pull_profile(args,dry)
+      when 'run_self_test' then NativeSelfTest.new(@model).call(args,dry)
       end
     end
 
@@ -305,3 +317,4 @@ module SUPipeProbe
     end
   end
 end
+require_relative 'native_self_test'

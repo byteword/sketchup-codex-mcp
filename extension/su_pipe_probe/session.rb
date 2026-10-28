@@ -131,7 +131,7 @@ module SUPipeProbe
         reply(id, true, 'pong', 'text' => message['text'].to_s)
       when 'get_state'
         reply(id, true, 'state', 'state' => snapshot.reject { |key, _| key == 'lease' })
-      when 'get_model_summary', 'get_selection_info', 'find_entities', 'get_children'
+      when 'get_model_summary', 'get_selection_info', 'find_entities', 'get_children', 'get_entity_info'
         return reply(id, false, 'model_mismatch', 'model_id' => @model_id) unless message['model_id'] == @model_id
         if message['expires_at_ms'] && Time.now.to_f * 1000 > message['expires_at_ms'].to_f
           return reply(id, false, 'request_expired')
@@ -146,7 +146,7 @@ module SUPipeProbe
           return reply(id, false, 'query_failed', 'message' => error.message.to_s[0, 256])
         end
         statuses = {'get_model_summary'=>'model_summary', 'get_selection_info'=>'selection_info',
-          'find_entities'=>'entities_found', 'get_children'=>'children'}
+          'find_entities'=>'entities_found', 'get_children'=>'children', 'get_entity_info'=>'entity_info'}
         reply(id, true, statuses.fetch(method),
           'model_id' => @model_id, 'data' => data)
       when 'get_job'
@@ -268,10 +268,21 @@ module SUPipeProbe
       @commands.shift while @commands.length > 32
       labels = {'set_selection'=>'선택 변경', 'set_view'=>'보기 변경', 'zoom'=>'화면 확대',
         'update_entity_properties'=>'객체 속성 변경', 'move_entities'=>'객체 이동',
-        'create_box'=>'박스 생성', 'duplicate_entities'=>'객체 복제'}
+        'create_box'=>'박스 생성', 'duplicate_entities'=>'객체 복제',
+        'create_rectangle'=>'사각형 생성', 'create_circle'=>'원 생성', 'create_polyline'=>'선 생성',
+        'rotate_entities'=>'회전', 'scale_entities'=>'축척', 'erase_entities'=>'삭제',
+        'push_pull'=>'밀기/끌기', 'group_entities'=>'그룹 묶기', 'make_unique'=>'정의 독립화', 'run_self_test'=>'실기 일괄 검사'}
       states = {'preview'=>'미리보기 완료', 'completed'=>'완료', 'failed'=>'실패', 'unknown'=>'결과 확인 필요'}
       @last_result = labels[method] + ': ' + states[result['state']]
       @last_error = result['message'] || ''
+      if method == 'run_self_test' && result['state'] == 'completed'
+        report = result['data']
+        @last_result = '실기 일괄 검사: ' + (report['passed'] ? '통과' : '실패')
+        unless report['passed']
+          failed = (report['checks'] || []).find { |check| check['status'] == 'failed' }
+          @last_error = failed ? (failed['name'].to_s + ': ' + failed['message'].to_s)[0,256] : 'Inspect the self-test report'
+        end
+      end
       reply(id, !result.key?('error'), result['error'] || 'command_' + result['state'],
         'command_id' => command_id, 'model_id' => @model_id,
         'next_command_id' => next_command_id, 'result' => result)

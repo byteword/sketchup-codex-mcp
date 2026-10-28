@@ -253,6 +253,29 @@ class WindowsMcpTests(unittest.TestCase):
             self.assertEqual([before['min'][0] + 1000, before['min'][1], before['min'][2]],
                              self.tool('sketchup_get_selection_info', self.target(0, True))['data']['items'][0]['model_bounds']['min'])
 
+    def test_basic_geometry_and_native_suite_use_real_pipe_with_one_request(self):
+        self.command(grant=0)
+        rect=self.tool('sketchup_create_rectangle',self.command_args(name='r',origin_mm=[0,0,0],size_mm=[1000,2000],plane='XY'))['result']['data']['created'][0]
+        query=dict(self.target(0,True),instance_path=rect['instance_path'])
+        item=self.tool('sketchup_get_entity_info',query)['data']['item']
+        self.assertAlmostEqual(2000000,item['direct_geometry']['face_area_mm2'])
+        self.tool('sketchup_push_pull',self.command_args(entity_ids=[rect['persistent_id']],distance_mm=3000))
+        self.assertTrue(self.tool('sketchup_get_entity_info',query)['data']['item']['manifold'])
+        self.tool('sketchup_rotate_entities',self.command_args(entity_ids=[rect['persistent_id']],pivot_mm=[0,0,0],axis=[0,0,1],angle_degrees=90))
+        self.tool('sketchup_scale_entities',self.command_args(entity_ids=[rect['persistent_id']],pivot_mm=[0,0,0],factors=[2,1,1]))
+        before=self.tool('sketchup_get_model_summary',self.target(0,True))['data']['top_level_entities']['total']
+        args=self.command_args(confirm_test_model=True)
+        report=self.tool('sketchup_run_self_test',args)['result']['data']
+        self.assertTrue(report['passed'],report)
+        self.assertTrue(report['cleanup_verified'])
+        self.assertEqual(25,report['passed_count'])
+        self.assertEqual(before,self.tool('sketchup_get_model_summary',self.target(0,True))['data']['top_level_entities']['total'])
+        replay=self.tool('sketchup_run_self_test',args)
+        self.assertTrue(replay['replayed'])
+        self.assertEqual(report,replay['result']['data'])
+        self.tool('sketchup_erase_entities',self.command_args(entity_ids=[rect['persistent_id']]))
+        self.assertEqual('query_failed',self.tool('sketchup_get_entity_info',query,True)['status'])
+
     def command_args(self, **fields):
         state = self.tool('sketchup_get_instance', self.target(0))['state']
         args = dict(self.target(0, True), command_id=state['next_command_id'], expected_context=[])

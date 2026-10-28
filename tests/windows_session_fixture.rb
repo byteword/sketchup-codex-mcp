@@ -5,7 +5,7 @@ require_relative '../extension/su_pipe_probe/win_pipe'
 require_relative '../extension/su_pipe_probe/session'
 require_relative '../extension/su_pipe_probe/version'
 require_relative '../extension/su_pipe_probe/model_reader'
-require_relative 'support/creation_double'
+require_relative 'support/drawing_double'
 require_relative '../extension/su_pipe_probe/model_identity'
 $stdout.sync = true
 control_path = ARGV.fetch(0)
@@ -48,7 +48,14 @@ deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 90
 begin
   loop do
     raise 'Fixture lifetime exceeded' if Process.clock_gettime(Process::CLOCK_MONOTONIC) > deadline
-    command = JSON.parse(File.read(control_path, :encoding => 'UTF-8'))
+    begin
+      command = JSON.parse(File.read(control_path, :encoding => 'UTF-8'))
+    rescue Errno::EACCES, Errno::ENOENT
+      # Windows can briefly deny a read while Python atomically replaces this
+      # test-control file. Retry only the read, within the fixture deadline.
+      sleep 0.005
+      next
+    end
     if command['sequence'] != sequence
       sequence = command['sequence']
       break if command['stop']

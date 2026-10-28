@@ -9,7 +9,8 @@ Find the current checkout from the task workspace and Git remote (`byteword/sket
 - `docs/VALIDATION.md`, `docs/MANUAL_RESULTS_0.4.0.md`: automated versus native evidence and remaining cases.
 - `shared/ToolCatalog.cs`, `CommandCatalog.cs`, `DiscoveryCatalog.cs`: MCP schemas and validation; `bridge/ControlHub.cs`: routing.
 - `extension/su_pipe_probe/model_identity.rb`, `main.rb`, `session.rb`: document identity, native wiring, authority, command IDs and result history.
-- `model_reader.rb`, `entity_browser.rb`, `command_executor.rb`, `creation_commands.rb` in the same Ruby directory: queries and native operations.
+- `model_reader.rb`, `entity_browser.rb`, `entity_details.rb`, `command_executor.rb`, `creation_commands.rb`, `basic_commands.rb` in the same Ruby directory: queries and native operations.
+- `native_self_test.rb` and `docs/BATCH_TEST.md`: fixed native smoke suite, cleanup guarantees and limits. It suppresses individual operation boundaries inside one aborted outer operation, so it does not certify per-command native Undo.
 
 ## Document identity
 

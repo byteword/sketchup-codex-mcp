@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(19, len(tools))
-        self.assertEqual(19, len({tool["name"] for tool in tools}))
+        self.assertEqual(30, len(tools))
+        self.assertEqual(30, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
         self.assertTrue(next(t for t in tools if t["name"] == "sketchup_ping")["annotations"]["readOnlyHint"])
@@ -155,6 +155,57 @@ class StdioTests(unittest.TestCase):
         for number, (name, fields) in enumerate(invalid, 10):
             self.send('tools/call', {'name':name, 'arguments':dict(common, **fields)}, number)
             self.assertEqual(-32602, self.response()['error']['code'], (name, fields))
+
+    def test_basic_drawing_edit_query_and_batch_contract(self):
+        self.initialize()
+        self.send('tools/list',{},2)
+        tools={t['name']:t for t in self.response()['result']['tools']}
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        cases=[
+            ('sketchup_create_rectangle',dict(name='r',origin_mm=[0,0,0],size_mm=[1,2],plane='XY')),
+            ('sketchup_create_circle',dict(name='c',origin_mm=[0,0,0],radius_mm=10,plane='XZ')),
+            ('sketchup_create_polyline',dict(name='p',points_mm=[[0,0,0],[1,0,0]])),
+            ('sketchup_rotate_entities',dict(entity_ids=['101'],pivot_mm=[0,0,0],axis=[0,0,1],angle_degrees=30)),
+            ('sketchup_scale_entities',dict(entity_ids=['101'],pivot_mm=[0,0,0],factors=[2,1,1])),
+            ('sketchup_erase_entities',dict(entity_ids=['101'])),
+            ('sketchup_group_entities',dict(entity_ids=['101','102'])),
+            ('sketchup_make_unique',dict(entity_ids=['101'])),
+            ('sketchup_push_pull',dict(entity_ids=['101'],distance_mm=-1000)),
+            ('sketchup_run_self_test',dict(confirm_test_model=True)),
+        ]
+        for number,(name,fields) in enumerate(cases,30):
+            self.assertFalse(tools[name]['annotations']['readOnlyHint'])
+            self.send('tools/call',{'name':name,'arguments':dict(common,**fields)},number)
+            self.assertFalse(self.response()['result']['isError'])
+        self.assertTrue(tools['sketchup_erase_entities']['annotations']['destructiveHint'])
+        self.assertTrue(tools['sketchup_get_entity_info']['annotations']['readOnlyHint'])
+        self.assertNotIn('segments',tools['sketchup_create_circle']['inputSchema']['required'])
+        self.send('tools/call',{'name':'sketchup_get_entity_info','arguments':dict(session_id=SESSION,model_id=SESSION,instance_path=['101','102'],child_offset=25,child_limit=10)},70)
+        self.assertFalse(self.response()['result']['isError'])
+
+    def test_basic_commands_reject_bad_vectors_ranges_and_unconfirmed_batch(self):
+        self.initialize()
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        cases=[
+            ('sketchup_create_rectangle',dict(name='r',origin_mm=[0,0,0],size_mm=[1,2,3],plane='XY')),
+            ('sketchup_create_circle',dict(name='c',origin_mm=[0,0,0],radius_mm=0,plane='XY')),
+            ('sketchup_create_circle',dict(name='c',origin_mm=[0,0,0],radius_mm=1,plane='XY',segments=True)),
+            ('sketchup_create_polyline',dict(name='p',points_mm=[[0,0,0],[True,0,0]])),
+            ('sketchup_rotate_entities',dict(entity_ids=['101'],pivot_mm=[0,0,0],axis=[0,0,0],angle_degrees=30)),
+            ('sketchup_scale_entities',dict(entity_ids=['101'],pivot_mm=[0,0,0],factors=[-1,1,1])),
+            ('sketchup_push_pull',dict(entity_ids=['101','102'],distance_mm=1000)),
+            ('sketchup_push_pull',dict(entity_ids=['101'],distance_mm=0)),
+            ('sketchup_run_self_test',dict(confirm_test_model=False)),
+            ('sketchup_run_self_test',dict(confirm_test_model=True,expected_context=['101'])),
+            ('sketchup_run_self_test',dict(confirm_test_model=True,ruby='anything')),
+        ]
+        for number,(name,fields) in enumerate(cases,30):
+            args=dict(common); args.update(fields)
+            self.send('tools/call',{'name':name,'arguments':args},number)
+            self.assertEqual(-32602,self.response()['error']['code'],(name,fields))
+        for number,path in enumerate([[],['0'],[1],['1']*33],80):
+            self.send('tools/call',{'name':'sketchup_get_entity_info','arguments':dict(session_id=SESSION,model_id=SESSION,instance_path=path)},number)
+            self.assertEqual(-32602,self.response()['error']['code'])
 
     def test_protocol_negotiation(self):
         self.assertEqual("2025-11-25", self.initialize("unsupported-future-version")["protocolVersion"])

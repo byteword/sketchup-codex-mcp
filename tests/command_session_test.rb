@@ -141,5 +141,18 @@ class CommandSessionTest < Minitest::Test
     end
   end
 
+  def test_batch_report_failure_is_visible_and_cached_without_an_automatic_rerun
+    @executor = lambda { |method,args| @calls << method; {'passed'=>false,'cleanup_verified'=>true,'checks'=>[{'name'=>'circle','status'=>'failed','message'=>'Area mismatch'}]} }
+    @session.grant
+    fields={'command_id'=>@session.snapshot['next_command_id'],'expected_context'=>[],'confirm_test_model'=>true}
+    result=request('run_self_test',fields)
+    assert_equal 'completed',result['result']['state']
+    refute result['result']['data']['passed']
+    assert_includes @session.last_result,'실패'
+    assert_includes @session.last_error,'Area mismatch'
+    assert request('run_self_test',fields)['replayed']
+    assert_equal 1,@calls.length
+  end
+
 
 end

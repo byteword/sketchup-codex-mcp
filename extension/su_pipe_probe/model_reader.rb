@@ -2,10 +2,12 @@
 require 'json'
 require 'time'
 require_relative 'entity_browser'
+require_relative 'entity_details'
 
 module SUPipeProbe
   # Called only by Panel's UI timer. No observers, operations, or setters.
   class ModelReader
+    include EntityDetails
     STRING_LIMIT = 256
     COUNT_LIMIT = 20_000
     PAGE_BUDGET = 40_000
@@ -18,6 +20,7 @@ module SUPipeProbe
       case method
       when 'get_model_summary' then summary
       when 'get_selection_info' then selection(arguments)
+      when 'get_entity_info' then specific_entity(arguments)
       when 'find_entities', 'get_children' then EntityBrowser.new(@model).call(method, arguments)
       else raise ArgumentError, 'Unknown read method'
       end

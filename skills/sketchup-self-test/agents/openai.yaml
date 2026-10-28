@@ -1,0 +1,4 @@
+interface:
+  display_name: "SketchUp 일괄 검사"
+  short_description: "시험 모델에서 드로잉·편집·조회 기능을 한 번에 검증하고 결과를 정리"
+  default_prompt: "$sketchup-self-test로 현재 SketchUp 시험 모델의 일괄 실기 검사를 실행하고 실패 항목과 정리 결과를 알려줘."

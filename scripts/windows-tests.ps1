@@ -19,6 +19,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Isolated MCP adapter build failed' }
 Copy-Item bridge\App.config dist\SketchUpMcp.Test.exe.config -Force
 & $Python tests/mcp_stdio_test.py dist/McpHarness.exe
 if ($LASTEXITCODE -ne 0) { throw 'MCP stdio tests failed' }
+& $Python tests/native_runner_test.py
+if ($LASTEXITCODE -ne 0) { throw 'Standalone native batch runner tests failed' }
 & $Ruby @RubyArguments tests/session_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Session tests failed' }
 & $Ruby @RubyArguments tests/model_identity_test.rb
@@ -29,6 +31,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Command session tests failed' }
 if ($LASTEXITCODE -ne 0) { throw 'Command executor tests failed' }
 & $Ruby @RubyArguments tests/creation_commands_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Creation and duplication tests failed' }
+& $Ruby @RubyArguments tests/basic_commands_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Basic drawing/edit/query and native-suite tests failed' }
 & $Ruby @RubyArguments tests/model_reader_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Model reader tests failed' }
 & $Ruby @RubyArguments tests/entity_browser_test.rb
