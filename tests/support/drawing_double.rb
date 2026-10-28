@@ -32,6 +32,11 @@ module SketchupDouble
     include Primitive
     attr_accessor :layer
     attr_reader :points
+    attr_accessor :soft,:smooth
+    def soft?; !!@soft; end
+    def smooth?; !!@smooth; end
+    def curve; nil; end
+    def faces; @parent.entities.select { |e| e.typename=='Face' && e.edges.include?(self) }; end
     def initialize(a,b); @points = [a.to_a.dup,b.to_a.dup]; end
     def typename; 'Edge'; end
     def start; Vertex.new(Geom::Point3d.new(@points[0])); end
@@ -42,6 +47,11 @@ module SketchupDouble
   end
   class Face
     include Primitive
+    def valid?; @valid != false; end
+    attr_accessor :back_material
+    def outer_loop; Struct.new(:vertices).new(vertices); end
+    def loops; [outer_loop]; end
+    def get_glued_instances; []; end
     def area(transform=Geom::Transformation.new)
       points = @points.map { |p| Geom::Point3d.new(p).transform(transform).to_a }
       a = points.first
@@ -76,7 +86,9 @@ module SketchupDouble
         @items.delete(e)
         e.parent=group.definition
         group.entities << e
-        8.times { |i| group.definition.bounds.add(e.definition.bounds.corner(i).transform(e.transformation)) } unless e.definition.bounds.empty?
+        box=e.respond_to?(:definition) ? e.definition.bounds : e.bounds
+        transform=e.respond_to?(:transformation) ? e.transformation : Geom::Transformation.new
+        8.times { |i| group.definition.bounds.add(box.corner(i).transform(transform)) } unless box.empty?
       end
       group
     end

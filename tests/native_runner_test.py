@@ -31,7 +31,7 @@ class NativeRunnerTest(unittest.TestCase):
         process, report, calls = self.run_case('ok')
         self.assertEqual(0, process.returncode, process.stderr)
         self.assertEqual('passed', report['status'])
-        self.assertEqual(25, report['report']['passed_count'])
+        self.assertEqual(56, report['report']['passed_count'])
         self.assertEqual(1, calls.count('sketchup_run_self_test'))
 
     def test_missing_permission_stops_before_mutation(self):
@@ -47,6 +47,11 @@ class NativeRunnerTest(unittest.TestCase):
 
     def test_stale_model_never_runs_a_test(self):
         _, report, calls = self.run_case('ok', '33333333-3333-4333-8333-333333333333')
+        self.assertEqual('blocked', report['status'])
+        self.assertNotIn('sketchup_run_self_test', calls)
+
+    def test_old_schema_is_blocked_before_submitting_extended_test(self):
+        _, report, calls = self.run_case('old_schema')
         self.assertEqual('blocked', report['status'])
         self.assertNotIn('sketchup_run_self_test', calls)
 

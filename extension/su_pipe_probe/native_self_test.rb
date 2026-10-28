@@ -1,11 +1,13 @@
 # encoding: UTF-8
 require_relative 'model_reader'
+require_relative 'extended_self_checks'
 
 module SUPipeProbe
   # Fixed internal suite, never user-supplied Ruby or arbitrary batch commands.
   # Normal command validation/postconditions run inside a single outer operation;
   # sub-command Undo boundaries are deliberately suppressed and NOT certified.
   class NativeSelfTest
+    include ExtendedSelfChecks
     CHECKS = %w[box rectangle circle polyline entity_info face_edge_metrics push_pull rotate scale move duplicate selection properties locked_rejection unlock erase group make_unique nested_query view_top view_front view_right view_isometric zoom].freeze
     class InlineExecutor < CommandExecutor
       private
@@ -25,11 +27,15 @@ module SUPipeProbe
       if @model.entities.length > 1000 || @model.definitions.length > 5000 || @model.selection.length > 1000
         raise CommandError.new('test_model_too_large','Use a small dedicated test model')
       end
-      return {'dry_run'=>true,'undoable'=>false,'planned_checks'=>CHECKS,'temporary_geometry'=>true} if dry
+      suite=args.fetch('suite','core')
+      raise CommandError.new('invalid_arguments','suite must be core, extended or all') unless %w[core extended all].include?(suite)
+      planned=(suite=='extended' ? [] : CHECKS)+(suite=='core' ? [] : ExtendedSelfChecks::CHECKS)
+      return {'dry_run'=>true,'undoable'=>false,'suite'=>suite,'planned_checks'=>planned,'temporary_geometry'=>true} if dry
       @executor,@reader = InlineExecutor.new(@model),ModelReader.new(@model)
       @checks,@started_at = [],@clock.call
       root_before = keys(@model.entities)
       definitions_before = keys(@model.definitions)
+      resources_before = suite=='core' ? nil : [keys(@model.layers),keys(@model.materials),keys(@model.pages)]
       selection_before = @model.selection.to_a
       modified_before = @model.modified?
       active_layer = @model.active_layer if @model.respond_to?(:active_layer)
@@ -44,7 +50,8 @@ module SUPipeProbe
       begin
         raise 'Could not start test operation' unless @model.start_operation('MCP: temporary native smoke test',true)
         started = true
-        run_checks(camera)
+        run_checks(camera) unless suite=='extended'
+        run_extended_checks(camera) unless suite=='core'
       rescue StandardError => error
         @checks << {'name'=>'suite','status'=>'failed','message'=>error.message.to_s[0,256]} if @checks.none? { |c| c['status'] == 'failed' }
       ensure
@@ -65,14 +72,15 @@ module SUPipeProbe
       cleanup = aborted && restore_ok && root_before == keys(@model.entities) && definitions_before == keys(@model.definitions) &&
         keys(selection_before) == keys(@model.selection) && (!camera || camera_before == @executor.send(:camera_state,@model.active_view.camera)) &&
         (!@model.respond_to?(:active_layer) || active_layer == @model.active_layer)
+      cleanup &&= resources_before == [keys(@model.layers),keys(@model.materials),keys(@model.pages)] if resources_before
       raise CommandError.new('outcome_unknown','Self-test rollback/UI restoration could not be verified; inspect the test model. Do not retry.') unless cleanup
-      remaining = CHECKS-@checks.map { |c| c['name'] }
+      remaining = planned-@checks.map { |c| c['name'] }
       remaining.each { |name| @checks << {'name'=>name,'status'=>'skipped','reason'=>'Stopped after a failure'} }
       @checks << {'name'=>'cleanup','status'=>'passed'}
       if modified_before != @model.modified?
         @checks << {'name'=>'modified_state','status'=>'failed','message'=>'Geometry/UI restored but the model modified flag changed'}
       end
-      {'dry_run'=>false,'undoable'=>false,'passed'=>@checks.none? { |c| c['status'] == 'failed' },
+      {'dry_run'=>false,'undoable'=>false,'suite'=>suite,'passed'=>@checks.none? { |c| c['status'] == 'failed' },
        'passed_count'=>@checks.count { |c| c['status'] == 'passed' },'failed_count'=>@checks.count { |c| c['status'] == 'failed' },
        'skipped_count'=>@checks.count { |c| c['status'] == 'skipped' },'checks'=>@checks,
        'duration_ms'=>((@clock.call-@started_at)*1000).round,'cleanup_verified'=>true,

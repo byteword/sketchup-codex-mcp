@@ -1,5 +1,15 @@
 # 다른 컴퓨터에서 이어가기 — 2026-10-28
 
+## 최신 상태: 0.6.0 확장 기능
+
+MCP 도구38개. 요청 목록의 구현·제한과 추가로 발견한 기본 기능은 [확장 도구 계약](EXTENDED_TOOLKIT.md)에 있습니다. `shared/ToolkitSchemas.json`과 `ToolkitCatalog.cs`의 원본은 `scripts/generate_toolkit_catalog.py` + `ToolkitCatalog.template`이며 변경 후 생성기를 실행합니다. C#5/.NET4.8을 유지합니다.
+
+Ruby는 geometry_plan/extended_geometry/resources/view_commands와 extended_self_checks로 분리했습니다. 정의·태그·재질은 SketchUp2019에서 PID가 없으므로 resource_id/definition_id는 모델 세션의 entityID를 명시한 별도 문자열입니다. 정의 조회를 model.find_entity_by_persistent_id에 의존하지 않습니다. 도형은 기존 PID/전체 경로를 유지합니다.
+
+`run_self_test(suite=all)`은 기능55개+정리=56항목. 기본 core는 기존25항목으로 호환을 유지합니다. 외부 실행기/스킬은 all을 선택합니다. 기존 태그·재질·정의·장면 집합도 복구 검사합니다. 장면 변경과 모델 전체 purge는 자체 임시 형상 검사에서 제외합니다. 실제 0.6.0 앱은 아직 업데이트/실기하지 않았으며 현재 앱을 자동으로 종료·교체하지 않았습니다.
+
+스킬 원본 두 개도 새 계약으로 갱신합니다. [검증 기록](VALIDATION.md), [시험 배포 안내](TEST_RELEASE.md)를 확인하세요. 아래의0.5.0/0.4.x 섹션은 과거 기록입니다.
+
 ## 최신 상태: 0.5.0 기본 도구와 일괄 실기 검사
 
 사각형·원·폴리라인, 회전·축척·그룹 묶기·정의 독립화·삭제·프로파일 돌출, 전체 경로의 그룹/면/선 상세 조회를 추가했습니다. MCP 도구는 30개이며 [인수·지원 범위](BASIC_TOOLKIT.md)에 계약을 정리했습니다. 이전 단계의 “도구 19개/다음 구현 예정” 표시는 당시 기록입니다.

@@ -276,6 +276,23 @@ class WindowsMcpTests(unittest.TestCase):
         self.tool('sketchup_erase_entities',self.command_args(entity_ids=[rect['persistent_id']]))
         self.assertEqual('query_failed',self.tool('sketchup_get_entity_info',query,True)['status'])
 
+    def test_extended_suite_and_resource_query_cross_real_pipe(self):
+        target=self.target(0,True)
+        resources=self.tool('sketchup_get_resources',dict(target,kind='definitions',limit=25))['data']
+        self.assertTrue(resources['items'])
+        self.assertTrue(resources['items'][0]['definition_id'].startswith('definition:'))
+        self.assertEqual('user',self.tool('sketchup_get_instance',self.target(0))['state']['authority'])
+        self.command(grant=0)
+        before=self.tool('sketchup_get_model_summary',target)['data']['top_level_entities']['total']
+        fields=self.command_args(confirm_test_model=True,suite='all')
+        report=self.tool('sketchup_run_self_test',fields)['result']['data']
+        self.assertTrue(report['passed'],report)
+        self.assertEqual(56,report['passed_count'])
+        self.assertTrue(report['cleanup_verified'])
+        self.assertEqual(before,self.tool('sketchup_get_model_summary',target)['data']['top_level_entities']['total'])
+        replay=self.tool('sketchup_run_self_test',fields)
+        self.assertTrue(replay['replayed']); self.assertEqual(report,replay['result']['data'])
+
     def command_args(self, **fields):
         state = self.tool('sketchup_get_instance', self.target(0))['state']
         args = dict(self.target(0, True), command_id=state['next_command_id'], expected_context=[])

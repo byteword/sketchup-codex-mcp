@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(30, len(tools))
-        self.assertEqual(30, len({tool["name"] for tool in tools}))
+        self.assertEqual(38, len(tools))
+        self.assertEqual(38, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
         self.assertTrue(next(t for t in tools if t["name"] == "sketchup_ping")["annotations"]["readOnlyHint"])
@@ -206,6 +206,45 @@ class StdioTests(unittest.TestCase):
         for number,path in enumerate([[],['0'],[1],['1']*33],80):
             self.send('tools/call',{'name':'sketchup_get_entity_info','arguments':dict(session_id=SESSION,model_id=SESSION,instance_path=path)},number)
             self.assertEqual(-32602,self.response()['error']['code'])
+
+    def test_extended_tools_accept_typed_contracts(self):
+        self.initialize()
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        cases=[
+            ('manage_resource',dict(kind='materials',action='create',options=dict(name='paint',color_rgb=[1,2,3],alpha=0.5))),
+            ('component',dict(action='instantiate',options=dict(definition_id='definition:123',origin_mm=[0,0,0]))),
+            ('create_geometry',dict(kind='arc_three_point',name='arc',options=dict(points_mm=[[1,0,0],[0,1,0],[-1,0,0]],segments=12))),
+            ('edit_geometry',dict(container_id='101',affect_all_instances=True,action='move_vertices',options=dict(vertex_moves=[dict(edge_id='102',endpoint='end',position_mm=[1,2,3])]))),
+            ('mirror_entities',dict(entity_ids=['101'],axis='X',pivot_mm=[0,0,0])),
+            ('configure_camera',dict(eye_mm=[1,2,3],target_mm=[0,0,0],up=[0,0,1],perspective=True,fov_degrees=45)),
+            ('scene',dict(action='create',name='view',options={})),
+            ('run_self_test',dict(confirm_test_model=True,suite='all')),
+        ]
+        for index,(name,fields) in enumerate(cases,50):
+            self.send('tools/call',dict(name='sketchup_'+name,arguments=dict(common,**fields)),index)
+            self.assertFalse(self.response()['result']['isError'],name)
+        self.send('tools/call',dict(name='sketchup_get_resources',arguments=dict(session_id=SESSION,model_id=SESSION,kind='definitions',limit=25)),80)
+        self.assertFalse(self.response()['result']['isError'])
+
+    def test_extended_tools_reject_untyped_nested_options_and_unknown_keys(self):
+        self.initialize()
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        cases=[
+            ('manage_resource',dict(kind='tags',action='create',options=dict(name='tag',visible=1))),
+            ('manage_resource',dict(kind='materials',action='create',options=dict(name='paint',color_rgb=[256,0,0]))),
+            ('manage_resource',dict(kind='materials',action='purge_unused',options=dict(confirm_model_wide='yes'))),
+            ('component',dict(action='instantiate',options=dict(definition_id='123',origin_mm=[0,0,0]))),
+            ('create_geometry',dict(kind='face',name='f',options=dict(points_mm=[[0,0,True]]))),
+            ('create_geometry',dict(kind='freehand',name='f',options=dict(points_mm=[[0,0,0]]*257))),
+            ('edit_geometry',dict(container_id='1',action='erase',options=dict(entity_ids=['0']))),
+            ('edit_geometry',dict(container_id='1',action='move_vertices',options=dict(vertex_moves=[dict(edge_id='1',endpoint='start',position_mm=[0,0,0],ruby='bad')]))),
+            ('configure_camera',dict(eye_mm=[1,2,3],target_mm=[0,0,0],up=[0,0,1],perspective=True,fov_degrees=121)),
+            ('scene',dict(action='eval',name='s',options={})),
+            ('run_self_test',dict(confirm_test_model=True,suite='unknown')),
+        ]
+        for index,(name,fields) in enumerate(cases,50):
+            self.send('tools/call',dict(name='sketchup_'+name,arguments=dict(common,**fields)),index)
+            self.assertEqual(-32602,self.response()['error']['code'],name)
 
     def test_protocol_negotiation(self):
         self.assertEqual("2025-11-25", self.initialize("unsupported-future-version")["protocolVersion"])

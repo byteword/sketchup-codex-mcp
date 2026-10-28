@@ -5,7 +5,7 @@ require_relative '../extension/su_pipe_probe/win_pipe'
 require_relative '../extension/su_pipe_probe/session'
 require_relative '../extension/su_pipe_probe/version'
 require_relative '../extension/su_pipe_probe/model_reader'
-require_relative 'support/drawing_double'
+require_relative 'support/extended_double'
 require_relative '../extension/su_pipe_probe/model_identity'
 $stdout.sync = true
 control_path = ARGV.fetch(0)

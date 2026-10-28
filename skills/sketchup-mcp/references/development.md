@@ -8,9 +8,11 @@ Find the current checkout from the task workspace and Git remote (`byteword/sket
 - `docs/FEATURE_PLAN.md`: incremental drawing/query scope; distinguish implemented tools from planned names.
 - `docs/VALIDATION.md`, `docs/MANUAL_RESULTS_0.4.0.md`: automated versus native evidence and remaining cases.
 - `shared/ToolCatalog.cs`, `CommandCatalog.cs`, `DiscoveryCatalog.cs`: MCP schemas and validation; `bridge/ControlHub.cs`: routing.
+- `ToolkitCatalog.cs`/`ToolkitSchemas.json`: generated extended schemas. Edit `scripts/generate_toolkit_catalog.py` and `ToolkitCatalog.template`, then regenerate. `geometry_plan.rb`, `extended_geometry.rb`, `resources.rb`, `view_commands.rb` implement the bounded extension.
 - `extension/su_pipe_probe/model_identity.rb`, `main.rb`, `session.rb`: document identity, native wiring, authority, command IDs and result history.
 - `model_reader.rb`, `entity_browser.rb`, `entity_details.rb`, `command_executor.rb`, `creation_commands.rb`, `basic_commands.rb` in the same Ruby directory: queries and native operations.
 - `native_self_test.rb` and `docs/BATCH_TEST.md`: fixed native smoke suite, cleanup guarantees and limits. It suppresses individual operation boundaries inside one aborted outer operation, so it does not certify per-command native Undo.
+- `extended_self_checks.rb`: optional extended/all suites. Scene mutations are excluded because SketchUp2019 does not restore their camera metadata through model abort. Resource PID support is version-dependent; definitions/materials/tags must use the separate model-session IDs on2019.
 
 ## Document identity
 

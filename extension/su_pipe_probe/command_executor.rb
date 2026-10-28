@@ -2,6 +2,9 @@
 require 'json'
 require_relative 'creation_commands'
 require_relative 'basic_commands'
+require_relative 'extended_geometry'
+require_relative 'resources'
+require_relative 'view_commands'
 
 module SUPipeProbe
   class CommandError < StandardError
@@ -16,7 +19,10 @@ module SUPipeProbe
   class CommandExecutor
     include CreationCommands
     include BasicCommands
-    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test].freeze
+    include ExtendedGeometry
+    include ResourceCommands
+    include ViewCommands
+    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene].freeze
     RESULT_LIMIT = 44_000
     MAX_SELECTION = 1000
 
@@ -47,6 +53,7 @@ module SUPipeProbe
       when 'make_unique' then unique_instances(args,dry)
       when 'push_pull' then push_pull_profile(args,dry)
       when 'run_self_test' then NativeSelfTest.new(@model).call(args,dry)
+      when 'manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
       end
     end
 
@@ -86,7 +93,7 @@ module SUPipeProbe
     end
 
     def editable(entities, unlocking = false)
-      fail_command('entity_locked', 'Unlock the object in a separate command first') if !unlocking && entities.any?(&:locked?)
+      fail_command('entity_locked', 'Unlock the object in a separate command first') if !unlocking && entities.any? { |e| e.respond_to?(:locked?) && e.locked? }
       # Editing a child in a shared definition affects every occurrence of its parent.
       if (@model.active_path || []).any? { |e| e.definition.instances.length > 1 }
         fail_command('shared_edit_context', 'Make the edit ancestors unique in SketchUp before changing their children')

@@ -8,8 +8,8 @@ namespace SketchUpPipeProbe
     public static class CommandCatalog
     {
         static readonly string[] Names = { "sketchup_set_selection", "sketchup_set_view", "sketchup_zoom", "sketchup_update_entity_properties", "sketchup_move_entities", "sketchup_create_box", "sketchup_duplicate_entities", "sketchup_create_rectangle", "sketchup_create_circle", "sketchup_create_polyline", "sketchup_rotate_entities", "sketchup_scale_entities", "sketchup_erase_entities", "sketchup_group_entities", "sketchup_make_unique", "sketchup_push_pull", "sketchup_run_self_test", "sketchup_get_command_result" };
-        public static bool Contains(string name) { return Array.IndexOf(Names, name) >= 0; }
-        public static bool IsWrite(string name) { return Contains(name) && name != "sketchup_get_command_result"; }
+        public static bool Contains(string name) { return Array.IndexOf(Names, name) >= 0 || ToolkitCatalog.Contains(name); }
+        public static bool IsWrite(string name) { return ToolkitCatalog.Contains(name) ? ToolkitCatalog.IsWrite(name) : Contains(name) && name != "sketchup_get_command_result"; }
         public static string Method(string name) { return name.Substring("sketchup_".Length); }
         static object Text(int maximum, int minimum = 1) { return new { type = "string", minLength = minimum, maxLength = maximum }; }
         static object Ids(int maximum) { return new { type = "array", maxItems = maximum, uniqueItems = true, items = new { type = "string", pattern = "^[1-9][0-9]{0,18}$" } }; }
@@ -54,7 +54,7 @@ namespace SketchUpPipeProbe
                     break;
                 case "sketchup_group_entities": case "sketchup_make_unique": case "sketchup_erase_entities": fields["entity_ids"] = Ids(25); break;
                 case "sketchup_push_pull": fields["entity_ids"] = Ids(1); fields["distance_mm"] = new { type = "number", minimum = -1000000, maximum = 1000000 }; break;
-                case "sketchup_run_self_test": fields["confirm_test_model"] = new { type = "boolean", @const = true, description = "Explicitly confirm this is a test model. Root context only. Temporary geometry is rolled back. Does not test individual Undo or file switching." }; break;
+                case "sketchup_run_self_test": fields["suite"] = Choice("core","extended","all"); fields["confirm_test_model"] = new { type = "boolean", @const = true, description = "Explicitly confirm this is a test model. Root context only. Temporary geometry is rolled back. Does not test individual Undo or file switching." }; break;
                 case "sketchup_update_entity_properties":
                     fields["entity_ids"] = Ids(25);
                     fields["properties"] = new { type = "object", minProperties = 1, additionalProperties = false,
@@ -76,6 +76,7 @@ namespace SketchUpPipeProbe
                 var required = new List<string>(fields.Keys);
                 required.Remove("dry_run");
                 required.Remove("segments");
+                required.Remove("suite");
                 string detail = name == "sketchup_get_command_result" ? "Read a cached command result without execution permission. Results retain their original model_id. Evicted IDs are expired and cannot execute again." :
                     "Requires local permission in the SketchUp panel and current session/model/edit context. Existing targets require returned persistent IDs, at most 25 groups/components in the current context. A command ID is consumed once. No automatic retries. dry_run previews without changes. Selection/camera changes have no model Undo; property/move/create/duplicate edits use one Undo operation. Shared edit ancestors and unsupported camera modes are rejected.";
                 switch (name)
@@ -93,7 +94,7 @@ namespace SketchUpPipeProbe
                     case "sketchup_rotate_entities": detail = "Rotate groups/components around model-axis pivot_mm and nonzero axis, angle_degrees -360..360. " + detail; break;
                     case "sketchup_scale_entities": detail = "Scale groups/components along MODEL axes about pivot_mm. Positive factors 0.001..1000; no reflection. " + detail; break;
                     case "sketchup_erase_entities": detail = "Erase only explicitly named groups/components, at most25, with one Undo operation. No raw geometry deletion. " + detail; break;
-                    case "sketchup_group_entities": detail = "Wrap the explicit groups/components in a new outer group, preserving their world transforms. Returns new parent/child paths; old paths are stale. " + detail; break;
+                    case "sketchup_group_entities": detail = "Group explicit current children: groups/components, faces/edges/construction points. Up to25 targets. Raw surfaces require all boundary edges and adjacent faces included; partial connected geometry is rejected. Preserves model-space positions. Returns new parent/child paths; old paths are stale. Requires panel permission, fresh model/context/command ID; one Undo operation, no retries; dry_run supported."; break;
                     case "sketchup_make_unique": detail = "Separate each selected group's/component's outer definition while preserving instance transforms. Inner component definitions can remain shared. " + detail; break;
                     case "sketchup_push_pull": detail = "Extrude a unique single-face group along its normal by signed distance_mm, absolute1..1000000. Requires orthogonal uniform world scale. " + detail; break;
                     case "sketchup_run_self_test": detail = "Run a fixed fast native geometry/query/edit smoke suite with one local permission grant and one command ID. confirm_test_model=true and expected_context=[] required. Only temporary test geometry is changed, within one operation that is aborted; restores selection/camera. Read data.passed, checks, cleanup_verified, duration_ms. Individual Undo and model lifecycle are not tested. Cooperative4s budget, stops on first failure. No retries; after timeout query command result. dry_run lists checks without running."; break;
@@ -154,10 +155,11 @@ namespace SketchUpPipeProbe
 
         public static void Validate(string name, Dictionary<string, object> args)
         {
+            if (ToolkitCatalog.Contains(name)) { ToolkitCatalog.Validate(name,args); return; }
             if (args == null) throw new ArgumentException("arguments must be an object");
             var fields = Fields(name);
             foreach (string key in fields.Keys)
-                if (key != "dry_run" && key != "segments" && !args.ContainsKey(key)) throw new ArgumentException("Missing argument: " + key);
+                if (key != "dry_run" && key != "segments" && key != "suite" && !args.ContainsKey(key)) throw new ArgumentException("Missing argument: " + key);
             foreach (var pair in args)
             {
                 if (!fields.ContainsKey(pair.Key)) throw new ArgumentException("Unexpected argument: " + pair.Key);
@@ -177,6 +179,7 @@ namespace SketchUpPipeProbe
                     case "preset": ValidateChoice(pair.Value, "top", "front", "right", "isometric"); break;
                     case "scope": ValidateChoice(pair.Value, "model", "entities"); break;
                     case "plane": ValidateChoice(pair.Value,"XY","XZ","YZ"); break;
+                    case "suite": ValidateChoice(pair.Value,"core","extended","all"); break;
                     case "origin_mm": case "delta_mm": case "pivot_mm": Numbers(pair.Value,3,-1000000000,1000000000); break;
                     case "size_mm": Numbers(pair.Value,name == "sketchup_create_rectangle" ? 2 : 3,1,1000000); break;
                     case "factors": Numbers(pair.Value,3,0.001,1000); break;

@@ -126,17 +126,34 @@ module SUPipeProbe
     end
 
     def group_instances(args,dry)
-      entities=targets(args['entity_ids'])
+      ids(args['entity_ids'],25)
+      entities=raw_targets(@model.active_entities,args['entity_ids'],%w[Group ComponentInstance Face Edge ConstructionPoint])
       editable(entities)
+      # Refuse a partial connected surface: grouping must not tear unspecified
+      # faces/edges away from user geometry or silently add extra targets.
+      fail_command('connected_geometry','Include every boundary edge and adjacent face when grouping raw surfaces') if entities.any? do |e|
+        e.typename=='Face' && (e.edges-entities).any? || e.typename=='Edge' && (e.faces-entities).any?
+      end
+      fail_command('geometry_too_large','Raw grouping supports faces with at most128 vertices') if entities.any? { |e| e.typename=='Face' && e.vertices.length>128 }
       edit=invertible(@model.edit_transform)
-      before=entities.map { |e| {'persistent_id'=>e.persistent_id.to_s,'model_transform'=>wire_transform(edit*e.transformation)} }
+      sample=lambda do |e,t|
+        points=case e.typename
+          when 'Face' then e.vertices.map(&:position)
+          when 'Edge' then [e.start.position,e.end.position]
+          else [e.position]
+        end
+        points.flat_map { |p| p.transform(t).to_a }
+      end
+      before=entities.map do |e|
+        {'persistent_id'=>e.persistent_id.to_s}.merge(e.respond_to?(:transformation) ? {'model_transform'=>wire_transform(edit*e.transformation)} : {'sample_mm'=>sample.call(e,edit).map { |n| n*25.4 }})
+      end
       data=checked('dry_run'=>dry,'undoable'=>!dry,'before'=>before,'matrix_layout'=>'column_major','matrix_translation_unit'=>'mm')
       return data if dry
       operation('Group instances') do
         group=@model.active_entities.add_group(entities)
         validate_created(group,'Group',args['entity_ids'].dup)
         group.name,group.layer='MCP Group',@model.layers[0]
-        unless entities.zip(before).all? { |e,b| e.valid? && e.parent == group.definition && same_numbers(wire_transform(edit*group.transformation*e.transformation),b['model_transform']) }
+        unless entities.zip(before).all? { |e,b| e.valid? && e.parent == group.definition && (b['model_transform'] ? same_numbers(wire_transform(edit*group.transformation*e.transformation),b['model_transform']) : same_numbers(sample.call(e,edit*group.transformation).map { |n| n*25.4 },b['sample_mm'])) }
           fail_command('postcondition_failed','Grouping changed a child world transform')
         end
         data.merge('created'=>[instance_snapshot(group,edit)],'child_paths'=>entities.map { |e| context_ids+[group.persistent_id.to_s,e.persistent_id.to_s] })

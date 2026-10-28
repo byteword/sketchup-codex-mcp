@@ -92,8 +92,12 @@ def run(args):
         if not (version == bridge['version'] == state['extension_version']):
             raise RuntimeError('Adapter/bridge/extension versions differ; restart matching runtime files')
         tools = client.rpc('tools/list', {})['tools']
-        if not any(t['name'] == 'sketchup_run_self_test' for t in tools):
+        test_tool = next((t for t in tools if t['name'] == 'sketchup_run_self_test'), None)
+        if test_tool is None:
             raise RuntimeError('Installed adapter has no batch test tool')
+        has_suite = 'suite' in test_tool.get('inputSchema', {}).get('properties', {})
+        if not has_suite and args.suite != 'core':
+            raise RuntimeError('Installed adapter supports only the older core suite; update it or choose --suite core')
         if state['model_id'] != args.model_id or state['authority'] != 'mcp':
             raise RuntimeError('Target changed or local execution permission is missing')
         selection = client.tool('sketchup_get_selection_info', target)['data']
@@ -105,6 +109,8 @@ def run(args):
             raise RuntimeError('Target or permission changed before test submission')
         command_id = state['next_command_id']
         fields = dict(target, command_id=command_id, expected_context=[], confirm_test_model=True)
+        if has_suite:
+            fields['suite'] = args.suite
         submitted = True
         recovered = False
         try:
@@ -137,6 +143,7 @@ def main():
     parser.add_argument('--session-id', required=True)
     parser.add_argument('--model-id', required=True)
     parser.add_argument('--confirm-test-model', action='store_true', required=True)
+    parser.add_argument('--suite', choices=['core', 'extended', 'all'], default='all')
     parser.add_argument('--timeout', type=float, default=20)
     parser.add_argument('--output', default='native-test-report.json')
     args = parser.parse_args()

@@ -17,7 +17,9 @@ Use the installed SketchUp MCP tools for model work. A skill supplies operating 
 - `dry_run` consumes its own command ID. A later execution needs a fresh ID; a preview is not a reservation of unchanged geometry. Preview when useful for the requested operation, without making it an extra approval gate for already authorized work.
 - After a timeout, disconnect, or unknown outcome, do not resend a mutation or mint a replacement command ID to repeat it. Query `get_command_result` and current objects. Cached results describe history, including after Undo; replay is not Redo.
 - A new/opened model needs a fresh model ID and local grant. Re-resolve targets rather than carrying entity IDs across documents. If the user changed documents but a running old adapter still reports the same ID, avoid further mutations until the identity fault is resolved.
-- Validate completion using returned before/after data and a fresh query where useful. Say which results are API-verified and which were visually/Undo-confirmed by the user. Object edits use one Undo operation per request; selection/camera changes are separate.
+- Validate completion using returned before/after data and a fresh query where useful. Say which results are API-verified and which were visually/Undo-confirmed by the user. Geometry/resource edits use one Undo operation per request; selection/camera and legacy scene changes are separate.
+
+For component/raw-geometry/resource/curve/scene work, read [extended tool guidance](references/extended-tools.md). Use the installed schema to determine which release is available; do not treat planned or development-only features as installed capabilities.
 
 ## Extend or validate the bridge
 

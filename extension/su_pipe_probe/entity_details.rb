@@ -33,9 +33,17 @@ module SUPipeProbe
         item['manifold'] = entity.manifold? if geometry.length <= 5000 && entity.respond_to?(:manifold?)
       elsif entity.typename == 'Face'
         item['area_mm2'] = entity.area(transform).to_f*25.4**2
+        item['vertices_mm'] = entity.outer_loop.vertices.first(128).map { |v| point(v.position.transform(transform)) }
+        item['hole_count'] = entity.loops.length-1
       elsif entity.typename == 'Edge'
         item['length_mm'] = entity.length(transform).to_f*25.4
         item['endpoints_mm'] = [entity.start.position,entity.end.position].map { |p| point(p.transform(transform)) }
+        item['soft'] = entity.soft?
+        item['smooth'] = entity.smooth?
+        item['curve_type'] = entity.curve && entity.curve.typename
+        item['adjacent_face_ids'] = entity.faces.map { |f| f.persistent_id.to_s }
+      elsif entity.typename == 'ConstructionPoint'
+        item['position_mm'] = point(entity.position.transform(transform))
       end
       base.merge('edit_context'=>edit_context,'item'=>item,
         'notes'=>['Lengths in mm, areas in mm2. Direct geometry excludes nested groups/components; complete describes the aggregation limit.',
