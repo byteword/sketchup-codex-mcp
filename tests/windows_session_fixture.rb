@@ -5,7 +5,7 @@ require_relative '../extension/su_pipe_probe/win_pipe'
 require_relative '../extension/su_pipe_probe/session'
 require_relative '../extension/su_pipe_probe/version'
 require_relative '../extension/su_pipe_probe/model_reader'
-require_relative 'support/extended_double'
+require_relative 'support/sliding_window_double'
 require_relative '../extension/su_pipe_probe/model_identity'
 module UI
   def self.refresh_inspectors; nil; end
@@ -16,7 +16,7 @@ clients, sessions, metadata, identities = [], [], [], []
 clock = 0.0
 2.times do |index|
   client = SUPipeProbe::PipeClient.new
-  model = SketchupDouble::Model.new
+  model = SlidingWindowDouble::Model.new
   model.active_view.define_singleton_method(:invalidate) { self }
   building = model.add(1000 + index)
   model.selection.add([building])
@@ -31,7 +31,7 @@ clock = 0.0
   session = SUPipeProbe::Session.new(lambda { |m| client.send_message(m) },
     lambda { data['model_id'] = identity.id_for(model); data },
     lambda { clock }, lambda { |method, args| SUPipeProbe::ModelReader.new(model).call(method, args).merge('instance_index'=>index, 'method'=>method) },
-    lambda { |method, args| SUPipeProbe::CommandExecutor.new(model).call(method, args) })
+    lambda { |method, args| (method=='create_sliding_window' ? SlidingWindowDouble::Executor : SUPipeProbe::CommandExecutor).new(model).call(method, args) })
   deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 5
   begin
     client.connect

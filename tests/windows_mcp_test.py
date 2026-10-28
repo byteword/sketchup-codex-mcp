@@ -129,6 +129,35 @@ class WindowsMcpTests(unittest.TestCase):
         keys = ['session_id', 'model_id'] if model else ['session_id']
         return {key: self.instances[index][key] for key in keys}
 
+    def window_fields(self, **changes):
+        fields=dict(name='Recipe window',origin_mm=[2000,0,0],width_mm=1200,height_mm=900,depth_mm=100,materials=dict(frame='콘크리트',glass='콘크리트',seal='콘크리트',hardware='콘크리트'))
+        fields.update(changes)
+        return fields
+
+    def test_window_recipe_is_one_command_with_permission_and_replay(self):
+        fields=self.command_args(**self.window_fields())
+        self.assertEqual('authority_or_model_mismatch',self.tool('sketchup_create_sliding_window',fields,True)['status'])
+        self.command(grant=0)
+        fields=self.command_args(**self.window_fields())
+        response=self.tool('sketchup_create_sliding_window',fields)
+        data=response['result']['data']
+        self.assertEqual(1,len(data['created'])); self.assertEqual(3,len(data['sections']))
+        self.assertEqual(4,data['planned']['group_count'])
+        self.assertEqual([3200,100,900],data['created'][0]['model_bounds']['max'])
+        self.assertTrue(data['ui_update']['operation_closed'])
+        self.assertTrue(self.tool('sketchup_create_sliding_window',fields)['replayed'])
+        summary=self.tool('sketchup_get_model_summary',self.target(0,True))['data']
+        self.assertEqual(2,summary['top_level_entities']['total'])
+
+    def test_window_recipe_invalid_native_parameters_do_not_change_model(self):
+        self.command(grant=0)
+        bad=self.command_args(**self.window_fields(depth_mm=80,glass_thickness_mm=12))
+        self.assertEqual('invalid_arguments',self.tool('sketchup_create_sliding_window',bad,True)['status'])
+        preview=self.tool('sketchup_create_sliding_window',self.command_args(**self.window_fields(dry_run=True)))['result']['data']
+        self.assertTrue(preview['dry_run'])
+        self.assertEqual(1,self.tool('sketchup_get_model_summary',self.target(0,True))['data']['top_level_entities']['total'])
+        self.assertNotEqual(bad['command_id'],self.tool('sketchup_get_instance',self.target(0))['state']['next_command_id'])
+
     def test_reads_route_to_exact_model_in_user_mode(self):
         for index in range(2):
             args = self.target(index, True)

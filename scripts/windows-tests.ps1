@@ -37,6 +37,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Basic drawing/edit/query and native-suite test
 if ($LASTEXITCODE -ne 0) { throw 'Geometry algorithm tests failed' }
 & $Ruby @RubyArguments tests/extended_commands_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Extended drawing/component/resource tests failed' }
+& $Ruby @RubyArguments tests/sliding_window_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Sliding window recipe tests failed' }
 & $Ruby @RubyArguments tests/ui_updates_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'UI suppression, atomic batch and cleanup tests failed' }
 & $Ruby @RubyArguments tests/model_reader_test.rb

@@ -904,5 +904,162 @@
       ],
       "additionalProperties": false
     }
+  },
+  "sketchup_create_sliding_window": {
+    "description": "Create an optimized parametric two-panel sliding window in one typed request and one operation/Undo. Model axes: X width, Z height, Y depth. Builds frame/rails, separate sliding sashes, 6mm-default glass, beads/seals and outer-stile flush pulls; applies existing materials and removes coplanar untextured seams internally without per-face RPCs. Four groups total. Explicit replace_entity_id atomically replaces one current direct group/component. open_sash selects left/right and open_fraction0..1; none requires0. Dimensions/profile/glass clearances validated together. Fixed4s cooperative budget; no arbitrary Ruby, file I/O or implicit edit-context changes. Native UI updates deferred until completion.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "origin_mm": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": -1000000000.0,
+            "maximum": 1000000000.0
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "width_mm": {
+          "type": "number",
+          "minimum": 600,
+          "maximum": 6000
+        },
+        "height_mm": {
+          "type": "number",
+          "minimum": 400,
+          "maximum": 3600
+        },
+        "depth_mm": {
+          "type": "number",
+          "minimum": 80,
+          "maximum": 300
+        },
+        "frame_width_mm": {
+          "type": "number",
+          "minimum": 30,
+          "maximum": 100
+        },
+        "sash_width_mm": {
+          "type": "number",
+          "minimum": 20,
+          "maximum": 80
+        },
+        "glass_thickness_mm": {
+          "type": "number",
+          "minimum": 3,
+          "maximum": 12
+        },
+        "overlap_mm": {
+          "type": "number",
+          "minimum": 20,
+          "maximum": 160
+        },
+        "open_sash": {
+          "type": "string",
+          "enum": [
+            "none",
+            "left",
+            "right"
+          ]
+        },
+        "open_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "materials": {
+          "type": "object",
+          "properties": {
+            "frame": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "glass": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "seal": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "hardware": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "required": [
+            "frame",
+            "glass",
+            "seal",
+            "hardware"
+          ],
+          "additionalProperties": false
+        },
+        "replace_entity_id": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$",
+          "maxLength": 19
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "name",
+        "origin_mm",
+        "width_mm",
+        "height_mm",
+        "depth_mm",
+        "materials"
+      ],
+      "additionalProperties": false
+    }
   }
 }

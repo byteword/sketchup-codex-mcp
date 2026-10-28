@@ -271,7 +271,7 @@ module SUPipeProbe
         'create_box'=>'박스 생성', 'duplicate_entities'=>'객체 복제',
         'create_rectangle'=>'사각형 생성', 'create_circle'=>'원 생성', 'create_polyline'=>'선 생성',
         'rotate_entities'=>'회전', 'scale_entities'=>'축척', 'erase_entities'=>'삭제',
-        'push_pull'=>'밀기/끌기', 'group_entities'=>'그룹 묶기', 'make_unique'=>'정의 독립화', 'run_self_test'=>'실기 일괄 검사', 'run_batch'=>'일괄 변경'}
+        'push_pull'=>'밀기/끌기', 'group_entities'=>'그룹 묶기', 'make_unique'=>'정의 독립화', 'run_self_test'=>'실기 일괄 검사', 'run_batch'=>'일괄 변경', 'create_sliding_window'=>'미닫이창 일괄 생성'}
       states = {'preview'=>'미리보기 완료', 'completed'=>'완료', 'failed'=>'실패', 'unknown'=>'결과 확인 필요'}
       @last_result = (labels[method] || method) + ': ' + states[result['state']]
       @last_error = result['message'] || ''

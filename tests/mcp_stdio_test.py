@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(39, len(tools))
-        self.assertEqual(39, len({tool["name"] for tool in tools}))
+        self.assertEqual(40, len(tools))
+        self.assertEqual(40, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
         self.assertTrue(next(t for t in tools if t["name"] == "sketchup_ping")["annotations"]["readOnlyHint"])
@@ -245,6 +245,21 @@ class StdioTests(unittest.TestCase):
         for index,(name,fields) in enumerate(cases,50):
             self.send('tools/call',dict(name='sketchup_'+name,arguments=dict(common,**fields)),index)
             self.assertEqual(-32602,self.response()['error']['code'],name)
+
+    def test_window_recipe_schema_and_typed_parameters(self):
+        self.initialize()
+        self.send('tools/list',{},2)
+        tools={t['name']:t for t in self.response()['result']['tools']}
+        schema=tools['sketchup_create_sliding_window']['inputSchema']
+        self.assertFalse(tools['sketchup_create_sliding_window']['annotations']['readOnlyHint'])
+        self.assertNotIn('ruby',schema['properties'])
+        args=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[],name='window',origin_mm=[0,0,0],width_mm=1200,height_mm=900,depth_mm=100,materials=dict(frame='white',glass='glass',seal='seal',hardware='dark'))
+        self.send('tools/call',dict(name='sketchup_create_sliding_window',arguments=args),3)
+        self.assertFalse(self.response()['result']['isError'])
+        changes=[dict(width_mm=True),dict(height_mm=399),dict(depth_mm=301),dict(open_fraction=1.1),dict(open_sash='both'),dict(materials=dict(frame='white',glass='glass')),dict(replace_entity_id='0'),dict(ruby='anything')]
+        for i,change in enumerate(changes,10):
+            self.send('tools/call',dict(name='sketchup_create_sliding_window',arguments=dict(args,**change)),i)
+            self.assertEqual(-32602,self.response()['error']['code'],change)
 
     def test_batch_schema_and_nested_validation(self):
         self.initialize()

@@ -1,0 +1,3 @@
+interface:
+  display_name: "SketchUp 미닫이 창"
+  short_description: "치수·열림·재질을 지정해 두 짝 미닫이 창을 한 번의 요청으로 생성"

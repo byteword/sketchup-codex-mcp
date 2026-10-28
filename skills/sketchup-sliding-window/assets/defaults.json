@@ -1,0 +1,18 @@
+{
+  "recipe": "sliding_two_panel_v1",
+  "width_mm": 1200,
+  "height_mm": 900,
+  "depth_mm": 100,
+  "frame_width_mm": 40,
+  "sash_width_mm": 35,
+  "glass_thickness_mm": 6,
+  "overlap_mm": 40,
+  "open_sash": "none",
+  "open_fraction": 0,
+  "material_hints": {
+    "frame": "1_유리바",
+    "glass": " 1_네모창 유리_02",
+    "seal": "1_유리_백_01",
+    "hardware": "Color M06"
+  }
+}

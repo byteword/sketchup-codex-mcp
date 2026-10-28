@@ -1,4 +1,4 @@
-# SketchUp Local MCP Bridge 0.6.3 (시험 버전)
+# SketchUp Local MCP Bridge 0.7.0 (시험 버전)
 
 Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는 GUI 중개 앱입니다.
 모델 조회·검색, 그룹/컴포넌트·점/선/면 편집, 드로잉·리소스 관리·화면 제어를 제공합니다. 변경 명령은 SketchUp 패널의 실행 허가가 필요합니다. 실제 SketchUp에서 확인한 0.4.x 기능과 0.6.0에서 추가한 개발 검증 범위를 구분합니다. [이전 실기 결과](docs/MANUAL_RESULTS_0.4.0.md)와 아래 최신 지원 범위를 참고하세요.
@@ -6,6 +6,12 @@ Windows의 ChatGPT 로컬 앱에서 여러 SketchUp 인스턴스에 연결하는
 ## 다른 컴퓨터에서 이어가기
 
 현재 작업 기준은 기본 브랜치 `main`입니다. 시험 배포본 설치는 [시험 배포 안내](docs/TEST_RELEASE.md), 구현·검사 이력과 환경 준비는 [작업 인계 기록](docs/HANDOFF.md)을 확인하세요.
+
+## 0.7.0: 매개변수형 미닫이 창·재사용 스킬
+
+- `sketchup_create_sliding_window`를 추가해 도구40개. 치수·열림·재질을 한 요청으로 받아 본틀/두 창짝/유리/매립 손잡이를 만들고 접합선을 정리합니다. 네 그룹·한 번의 Undo, 선택한 기존 창의 원자적 교체를 지원합니다.
+- [창 전용 스킬](skills/sketchup-sliding-window/SKILL.md)에 기본값과 품질 규칙을 저장했습니다. [일괄 전달 방식·인수·한계](docs/WINDOW_RECIPE.md)를 참고하세요.
+- 자동 검사245개 통과. 실행 중인0.6.3은 유지되며 **새0.7.0 설치 후 창 생성 native 실기는 미실행**입니다. 기존56항목 suite와 별도 확인이 필요합니다.
 
 ## 0.6.3: 해제 결과와 원시 형상 이동 판정 수정
 
