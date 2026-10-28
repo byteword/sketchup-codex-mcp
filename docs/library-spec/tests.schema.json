@@ -1,0 +1,125 @@
+{
+  "type": "object",
+  "properties": {
+    "format_version": {
+      "const": "probe-tests/1"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,47}$"
+          },
+          "params": {
+            "type": "object"
+          },
+          "expect": {
+            "type": "object",
+            "properties": {
+              "ok": {
+                "type": "boolean"
+              },
+              "bounds_mm": {
+                "type": "object",
+                "properties": {
+                  "min": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "max": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 3,
+                    "maxItems": 3
+                  }
+                },
+                "required": [
+                  "min",
+                  "max"
+                ],
+                "additionalProperties": false
+              },
+              "groups": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "mesh_faces": {
+                "type": "integer",
+                "minimum": 4
+              },
+              "metrics": {
+                "type": "object",
+                "maxProperties": 64
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "path": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "tolerance_mm": {
+                "type": "number",
+                "minimum": 1e-06,
+                "maximum": 0.1
+              }
+            },
+            "required": [
+              "ok"
+            ],
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "ok": {
+                      "const": false
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "code",
+                    "path"
+                  ]
+                },
+                "else": {
+                  "minProperties": 2
+                }
+              }
+            ]
+          },
+          "inputs": {
+            "type": "object",
+            "maxProperties": 4
+          }
+        },
+        "required": [
+          "id",
+          "params",
+          "expect"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "format_version",
+    "cases"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

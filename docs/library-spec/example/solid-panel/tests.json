@@ -1,0 +1,109 @@
+{
+  "format_version": "probe-tests/1",
+  "cases": [
+    {
+      "id": "default",
+      "params": {},
+      "expect": {
+        "ok": true,
+        "bounds_mm": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            1200,
+            100,
+            900
+          ]
+        },
+        "groups": 2,
+        "mesh_faces": 6
+      }
+    },
+    {
+      "id": "resized",
+      "params": {
+        "width_mm": 1500,
+        "height_mm": 1200,
+        "depth_mm": 80
+      },
+      "expect": {
+        "ok": true,
+        "bounds_mm": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            1500,
+            80,
+            1200
+          ]
+        },
+        "groups": 2,
+        "mesh_faces": 6
+      }
+    },
+    {
+      "id": "minimum",
+      "params": {
+        "width_mm": 1,
+        "height_mm": 1,
+        "depth_mm": 1
+      },
+      "expect": {
+        "ok": true,
+        "bounds_mm": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            1,
+            1,
+            1
+          ]
+        },
+        "groups": 2,
+        "mesh_faces": 6
+      }
+    },
+    {
+      "id": "invalid_width",
+      "params": {
+        "width_mm": 0
+      },
+      "expect": {
+        "ok": false,
+        "code": "input_invalid",
+        "path": "/width_mm"
+      }
+    },
+    {
+      "id": "boolean_width",
+      "params": {
+        "width_mm": true
+      },
+      "expect": {
+        "ok": false,
+        "code": "input_invalid",
+        "path": "/width_mm"
+      }
+    },
+    {
+      "id": "unknown_property",
+      "params": {
+        "width": 1200
+      },
+      "expect": {
+        "ok": false,
+        "code": "input_invalid",
+        "path": "/width"
+      }
+    }
+  ]
+}

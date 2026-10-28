@@ -1,0 +1,36 @@
+{
+  "format_version": "probe-technique/1",
+  "id": "demo.solid-panel",
+  "title": "직육면체 패널 예제",
+  "summary": "가로·세로·깊이로 닫힌 패널 하나를 만드는 규격 예제. 실행 도구는 아직 구현되지 않음.",
+  "keywords": [
+    "패널",
+    "panel",
+    "box"
+  ],
+  "kind": "generator",
+  "entrypoint": "technique.js",
+  "input_schema": "inputs.schema.json",
+  "tests": "tests.json",
+  "runtime": "probe-js/1",
+  "output": "sketchup-plan/1",
+  "requires": [
+    "group/1",
+    "mesh/1",
+    "material-existing/1",
+    "verify/1"
+  ],
+  "material_roles": [
+    "panel"
+  ],
+  "dependencies": [],
+  "reads": [],
+  "budgets": {
+    "plan_ms": 1000,
+    "memory_mib": 64,
+    "max_nodes": 2,
+    "max_points": 8,
+    "max_faces": 6,
+    "max_plan_bytes": 12000
+  }
+}

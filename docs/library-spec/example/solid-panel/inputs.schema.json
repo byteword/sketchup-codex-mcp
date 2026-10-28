@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "width_mm": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 6000,
+      "default": 1200,
+      "description": "모델 X 방향 가로 mm"
+    },
+    "height_mm": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 3600,
+      "default": 900,
+      "description": "모델 Z 방향 세로 mm"
+    },
+    "depth_mm": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 300,
+      "default": 100,
+      "description": "모델 Y 방향 깊이 mm"
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

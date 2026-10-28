@@ -1,0 +1,10 @@
+{
+  "revision": "sha256:f3ac9a30939e0dc77f48f8a4b9c798367e89357c66adc7eecbecdb46f073ce8f",
+  "files": [
+    "inputs.schema.json",
+    "manifest.json",
+    "technique.js",
+    "tests.json"
+  ],
+  "purpose": "Normative draft hash vector for the bundled solid-panel specimen; not a registered runtime revision."
+}
