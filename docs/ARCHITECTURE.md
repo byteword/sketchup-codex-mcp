@@ -1,5 +1,17 @@
 # 연결 구조 및 후속 설계
 
+## 0.6.1 공통 UI 갱신 범위와 원자적 일괄 변경
+
+모델·리소스 변경의 `CommandExecutor.operation`은 `UiUpdateScope`에 native operation 수명을 맡깁니다. 기본 `defer`는 `start_operation(label, true)`, `normal`은 `start_operation(label, false)`를 사용합니다. 작업은 하나의 동기 호출 안에서 닫으며, 동일 모델의 중첩 MCP operation은 시작 전에 거부합니다. 선택·카메라·장면은 이 모델 operation 경로와 별도입니다.
+
+commit/abort가 확인된 뒤 화면 `invalidate`를 요청하고, `defer`에서는 inspector 갱신도 한 번 요청합니다. 중간 단계에는 강제 갱신이 없습니다. commit 후 표시 요청 오류는 완료 결과의 경고이며 모델 명령 재실행 사유가 아닙니다. abort 확인 실패는 `outcome_unknown`으로 처리합니다. 영속적인 UI 잠금 상태나 아웃라이너 창 제어는 추가하지 않았습니다.
+
+`BatchCatalog`는 기존 카탈로그를 재사용해 허용된 모델 변경 18종의 엄격한 단계 스키마를 구성합니다. 생성 원본은 `scripts/ToolkitCatalog.template`과 `scripts/generate_toolkit_catalog.py`이며 결과는 `shared/ToolkitCatalog.cs`에 포함됩니다. Ruby `BatchCommands`는 공통 권한·모델·편집 경로와 하나의 명령 ID 아래 최대 64단계를 실행합니다. 내부 `InlineCommandExecutor`는 각 도구의 검증을 유지하되 개별 operation을 열지 않고 외부 batch의 단일 operation을 사용합니다.
+
+입력 단계는 UTF-8 JSON 48,000바이트 이하이고 실행 예산은 단계 사이에서 검사하는 4초입니다. 단계 실패나 예산 초과는 전체를 rollback합니다. 결과 이력·동일 명령 ID 처리·통신 단절 후 조회 규칙은 기존 경로를 유지합니다. `NativeSelfTest`도 같은 UI 범위를 사용하되 임시 변경을 abort하여 정리합니다. 상세한 제외 항목·진단 필드·API 근거는 [UI_UPDATES.md](UI_UPDATES.md)에 있습니다.
+
+아래는 이전 버전의 도입 기록입니다. 현재 전체 도구 계약은 [기본 도구](BASIC_TOOLKIT.md), [확장 도구](EXTENDED_TOOLKIT.md), [일괄 변경](UI_UPDATES.md)을 함께 확인합니다.
+
 ## 0.4.0 박스 생성·복제
 
 `CommandCatalog`에 `sketchup_create_box`, `sketchup_duplicate_entities`를 추가했습니다. 기존 실행기·권한·ID/결과 캐시·취소 시 결과 불명 처리 경로를 그대로 사용하며, 실행기 내부 `CreationCommands`가 실제 API 호출을 담당합니다.

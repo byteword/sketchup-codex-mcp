@@ -1,5 +1,11 @@
 # 빠른 실제 SketchUp 일괄 검사
 
+## 0.6.1 UI 진단과 별도 확인 항목
+
+검사 수는 `all` 기준 56항목으로 유지됩니다. 임시 작업은 공통 `UiUpdateScope`에서 abort하며 보고서의 `ui_update`에 작업 종료 및 화면·inspector 갱신 요청 상태를 기록합니다. `operation_closed`와 갱신 요청 성공은 실제 화면 그리기 완료나 아웃라이너 CPU 개선을 증명하지 않습니다. `warnings`는 형상 검사 결과와 별도로 확인하고, 표시 경고만으로 검사를 자동 재실행하지 않습니다.
+
+`run_self_test`는 임시 시험을 되돌리는 도구이고, 새 `run_batch`는 요청한 변경을 하나의 Undo로 남기는 도구입니다. 실제 batch의 Undo, 아웃라이너 표시 복구, `defer`/`normal` 성능 비교는 별도 시험으로 기록해야 합니다. 계약·사용 예시는 [UI_UPDATES.md](UI_UPDATES.md), 현재 개발 검사와 실기 확인 범위는 [VALIDATION.md](VALIDATION.md)를 확인하세요.
+
 ## 0.6.0 검사 선택
 
 `sketchup_run_self_test`에 선택 인수 `suite`를 추가했습니다. 생략 시 이전과 같은 `core`입니다. **업데이트 후에는 `suite="all"`**을 사용합니다.
