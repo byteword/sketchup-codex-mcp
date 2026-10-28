@@ -59,7 +59,7 @@ manifest의 필수 필드는 format_version=probe-technique/1, id, title, summar
 | sketchup_library_manage | request_id, action=create_library/activate/archive/restore/tag, action별 참조·비교 조건, 기타 action별 필드 | 포인터/보관/배포 이름 변경. 라이브러리 변경 |
 | sketchup_library_run | request_id, mode=verify/plan/apply, 아래 mode별 인수 | job_id와 확인 경로를 신속 반환. apply만 모델 변경 가능 |
 | sketchup_library_job | action=get/cancel, job_id, cursor?, wait_ms? | 상태·단계·결과·추가 이벤트. cancel은 계산/대기 취소 요청 |
-| sketchup_library_transfer | action=export/open_import/write_chunk/commit_import/read_export, 아래 전송 필드 | 불변 번들 또는 제한된 임시 업로드. import commit은 라이브러리 변경 |
+| sketchup_library_transfer | action=export/open_import/write_chunk/inspect_import/commit_import/read_export, 아래 전송 필드 | 불변 번들 또는 제한된 임시 업로드. import commit은 라이브러리 변경 |
 
 위 도구의 action/mode별 필드 집합을 각각 닫힌 스키마로 검사하고 알려지지 않은 필드는 거부합니다. 라이브러리 핸들/기법 ID/해시는 UUID가 아니므로 현재 ToolCatalog의 모든 *_id=UUID 규칙으로 검사하지 않습니다.
 
@@ -137,7 +137,7 @@ library-only 오류에는 SketchUp 명령 결과 조회를 안내하지 않습�
 
 ## 10. 공유·한도·영속성
 
-transfer는 JSON 텍스트 묶음을 내보내거나 제한된 임시 업로드를 받아 저장합니다. export는 정확한 revision과 고정 의존성을 포함한 bundle_id/해시를 반환하고 read_export로 나눠 읽음. open_import는 요청 ID·전체 크기·기대 digest로 임시 upload_id를 만들고, write_chunk는 offset+base64를 전달. 같은 offset/같은 bytes만 재전송 허용, 빈틈/중복 충돌/크기 초과 거부. commit_import는 전체 해시·경로·기법/의존 스키마를 확인하고 draft로 저장하며 실행/활성화하지 않음.
+transfer는 기법의 JSON/JS 파일을 담은 선택형 ZIP 패키지를 내보내거나 제한된 임시 업로드를 받아 저장합니다. 단일/여러 대표 기법과 선택적 가져오기의 상세 규칙은 부록E를 따릅니다. export는 정확한 revision과 고정 의존성을 포함한 bundle_id/해시를 반환하고 read_export로 나눠 읽음. open_import는 요청 ID·전체 크기·기대 digest로 임시 upload_id를 만들고, write_chunk는 offset+base64를 전달. 같은 offset/같은 bytes만 재전송 허용, 빈틈/중복 충돌/크기 초과 거부. inspect_import로 내용과 선택 계획을 읽고 commit_import는 전체 해시·경로·기법/의존 스키마를 확인해 draft로 저장하며 실행/활성화하지 않음.
 
 내보낸 번들에는 manifest/code/schema/tests와 선택한 preset/helper, 고정 의존 묶음만 포함. 호스트 저장 경로·세션/모델·명령 이력·재질 실물은 제외. import 중 ID가 같고 revision도 같으면 no_change, ID가 같고 revision이 다르면 충돌/새 draft/fork를 명시적으로 선택하고 active를 덮지 않음. 파일 확장자보다 허용 경로와 콘텐츠 계약으로 검사하고 경로 탈출/절대 경로/심볼릭 링크를 허용하지 않음.
 
@@ -187,10 +187,11 @@ revision은 아래 파일 내용 규칙으로 계산합니다. 허용 상대 경
 | run.apply | request_id/plan_id/plan_hash/session_id/model_id/expected_context/command_id 필수. 저장된 bindings와 다르면 plan_binding_mismatch, 다른 입력·revision 필드는 거부 |
 | job.get | job_id 필수. cursor/wait_ms 선택. 변경이 없으면 요약과 unchanged=true, 마지막 성공 문장을 매번 복제하지 않음 |
 | job.cancel | job_id 필수. 같은 job에 반복 요청 가능. 모델 제출 이후라면 중단 가능 여부와 기존 결과 확인 경로 반환 |
-| transfer.export | 전체 참조 필수. include_dependencies 기본true. draft도 내보낼 수 있으나 검증 상태 함께 표시 |
+| transfer.export | selections[1..32] 전체 참조 목록과 package_info 필수. include_dependencies 기본true. 부록E의 선택형 패키지 규칙 적용 |
 | transfer.open_import | request_id/total_bytes/digest 필수. 서버가 upload_id·정확한 chunk 한도·expires_at 반환 |
 | transfer.write_chunk | upload_id/offset/data_base64 필수. 데이터 디코딩 후 실제 길이/위치 검사 |
-| transfer.commit_import | request_id/upload_id/library_id/conflict_policy 필수. policy=fail/stage/fork, fork에는 새 ID 매핑 필수 |
+| transfer.inspect_import | upload_id 필수. library_id/selected_roots/conflict_policy 선택. 내용·의존·충돌 미리보기와 import_plan_id 반환; 실행/등록 없음 |
+| transfer.commit_import | request_id/upload_id/import_plan_id/library_id/conflict_policy 필수. policy=fail/stage/fork, fork에는 새 ID 매핑 필수 |
 | transfer.read_export | bundle_id/offset/max_bytes 필수. digest·total_bytes·next_offset 반환 |
 
 save 결과는 technique_ref/head/active/no_change/file_hashes/catalog_revision, verify는 per_case/code 위치/validation 결과와 선택적 active 전환, plan은 plan_id/hash/ref/input 요약, apply는 native command 매핑/실제 생성 경로·품질/한 Undo 여부를 반환합니다. 각 단계에 같은 필드 이름을 일관되게 사용합니다. 성공 응답의 공통 틀은 ok, request_id(해당 시), job_id(해당 시), effect, data, warnings. 실패는 ok=false, effect, error이며 partial success는 data와 warnings로 구체적으로 설명합니다.
@@ -207,7 +208,7 @@ helpers는 manifest.helpers의 alias/path 목록으로 명시하고 ctx.helper(a
 - **새로 작성**: 유사 기법 검색 → 새 ID로 완전한 파일 묶음 save → verify(필요하면 activate_if_passed) → plan/apply. 생성/시험/활성화는 기존 사용자 요청 안에서 연속 처리.
 - **개선**: 기존 head/source/tests와 실패 진단 읽기 → 기존 시험을 보존하고 새 실패 재현 사례 추가 → base_revision을 포함해 save → verify → 기본본 전환. 실패하면 head 진단을 읽고 다시 수정.
 - **되돌림**: get(history/diff) → 원하는 이전 revision을 manage.activate. 이미 만든 사용자 형상을 자동 삭제하거나 바꾸지 않음.
-- **공유**: export(고정 의존 포함) → 번들 전달 → 다른 호스트 import → verify와 호환성 확인 → 활성화. 받는 호스트의 재질과 실행 허가는 별도 설정.
+- **공유**: 대표 기법1개 이상 선택 → export(고정 의존 포함) → 패키지 전달 → 다른 호스트 inspect_import → 필요한 대표 기법 선택·commit_import → verify와 호환성 확인 → 활성화. 받는 호스트의 재질과 실행 허가는 별도 설정.
 
 ## 부록 C. 현재 코드에서 바꿀 연결 지점
 
@@ -225,3 +226,53 @@ MCP annotations는 라이브러리 동작을 모델 쓰기와 혼동하지 않�
 ## 부록 D. 이번 명세 예제 확인 결과
 
 JSON Schema4개 자체 검사, 정상3입력(기본·치수 변경·최소값)의 JS 계획/외곽·닫힌 외향 메시, 오류3입력(0·불리언·모르는 필드) 거부를 확인했습니다. 계획의 임의 코드 필드 거부와 파일 순서/줄바꿈의 해시 안정성·내용 변경의 해시 변화를 확인했습니다. [해시 테스트 벡터](library-spec/revision-vector.json). 검사는 Python jsonschema4.25.1과 Node의 예제 실행으로 했고 **Probe/Jint/MCP/SketchUp native 구현을 검사한 것은 아닙니다.**
+
+## 부록 E. 선택형 공유 패키지
+
+이 절은 단일 기법 내보내기를 **1개 이상의 기법을 선택하는 패키지**로 확장하며, 앞선 transfer 표의 상세 규칙을 보완합니다. 아직 구현된 기능은 아닙니다.
+
+### E.1 패키지 생성
+
+transfer.export는 package_info와 selections[1..32]를 받습니다. selections의 각 항목은 library_id/technique_id/revision의 전체 참조입니다. 서로 다른 라이브러리에서 선택할 수 있지만 내보낸 파일에는 호스트 library_id와 실제 경로를 넣지 않습니다. “현재 active” 선택은 export 시작 때 정확한 revision으로 고정하고 그 결과를 반환합니다.
+
+같은 ID/revision을 여러 번 선택하면 하나로 합칩니다. 같은 ID의 서로 다른 revision을 둘 다 대표 기법으로 선택하면 selection_conflict로 어느 것을 대표로 할지 정하게 합니다. 의존성 때문에 같은 ID의 구버전과 신버전이 함께 필요한 경우에는 (ID,revision)별로 저장할 수 있습니다.
+
+include_dependencies 기본값은 true입니다. 선택 기법들에 필요한 고정 의존성을 재귀적으로 모으고 같은 ID/revision은 한 번만 넣습니다. false이면 빠진 정확한 의존 목록과 self_contained=false를 기록하며, 가져올 호스트에 같은 revision이 없으면 이용할 수 있다고 표시하지 않습니다. active에 있는 다른 버전을 대신 쓰지 않습니다.
+
+### E.2 파일과 식별
+
+파일 확장자는 .probe-techpack을 제안하며 내부는 ZIP입니다. package.json과 techniques/<technique-id>/<revision-digest>/ 아래에 manifest/code/schema/tests/preset/helper를 담습니다. package.json에는 다음을 넣습니다.
+
+- format_version=probe-techpack/1, package_id(UUID), title/summary, 선택적 배포 label/작성자 표시.
+- roots: 사용자가 직접 선택한 대표 기법의 ID/revision 목록.
+- entries: 대표와 의존 기법의 ID/revision, 상대 디렉터리, 파일별 byte length/SHA256.
+- dependency lock과 빠진 외부 의존성, 요구 runtime/공통 capability 요약, self_contained.
+- 선택적 출처·시험 요약. 출처의 native 통과 기록은 받은 호스트에서 실행했다는 증거가 아니며 imported_evidence로 구분.
+
+패키지 이름/작성자 표시는 고유성이나 신뢰의 증거로 쓰지 않습니다. 실제 기법은 불변 revision으로 고정하고 다운로드/업로드 파일은 별도 archive_digest로 검사합니다. ZIP 생성 시각 등이 다르면 동일 기법 내용이어도 archive_digest는 달라질 수 있습니다.
+
+이전에 언급한 “JSON 텍스트 묶음”은 기법 파일 콘텐츠를 뜻하며, 외부 공유 파일 형식은 이 ZIP 컨테이너로 정합니다. JSON/JS 텍스트 외의 모델·텍스처·실행 파일·계정/현재 모델 정보는 v1 패키지에 포함하지 않습니다. 설치용5파일 ZIP과도 별개의 사용자 자산입니다.
+
+### E.3 읽어보기와 선택적 가져오기
+
+전송 순서는 open_import → write_chunk → inspect_import → commit_import입니다. inspect_import를 기존 transfer 도구의 action에 추가하며 별도 MCP 도구를 늘리지 않습니다.
+
+inspect_import는 upload_id와 대상 library_id(선택)를 받아, 코드를 실행하지 않고 패키지 이름/대표 기법/의존 항목·호환성·검증 상태·로컬 충돌을 페이지로 보여줍니다. 완전한 업로드, 전체 archive_digest, 허용 경로/압축 해제 예산, 파일별 해시와 기법 revision부터 확인합니다. 이 단계는 사용자 라이브러리에 등록하거나 활성화하지 않습니다.
+
+사용자는 대표 기법을 **하나·여러 개·전체** 선택할 수 있습니다. inspect_import에 selected_roots와 conflict_policy를 주면 필요한 의존성 closure와 신규/기존 재사용/새 draft/충돌 항목을 계산한 import_plan_id를 반환합니다. 선택에 필요한 의존성을 빠뜨리는 선택은 허용하지 않으며, 필요 없는 대표 기법·그 의존성은 가져오지 않습니다. 선택하지 않은 대표 기법이라도 선택한 기법의 필수 의존성이면 포함하고 이유를 표시합니다.
+
+commit_import의 필수 인수는 request_id/upload_id/import_plan_id/library_id/conflict_policy입니다. 읽어본 계획의 대상/정책/선택과 다르면 재계산을 요구합니다. 내부 활성본을 즉시 교체하지 않고 선택 항목과 의존성을 draft/불변 저장본으로 등록합니다. 코드를 실행하거나 SketchUp 모델을 바꾸지 않습니다. 그 후 verify/activate를 기존 사용자 요청 범위에서 연속 수행할 수 있습니다.
+
+### E.4 충돌과 묶음 단위 저장
+
+같은 ID와 revision이 있으면 재사용/no_change, ID는 같지만 revision이 다르면 fail/stage/fork 정책을 적용합니다. stage는 새 불변본만 보관하고 active를 유지합니다. 대표 기법이 아닌 의존 revision을 저장할 때도 현재 head/active를 덮지 않습니다. 로컬 기본본과 다른 구버전 의존성은 정확한 revision으로 함께 보관할 수 있습니다.
+
+fork는 새 ID를 만드는 것이므로 manifest와 그 ID를 참조하는 의존 lock이 바뀌며 revision도 새로 계산해야 합니다. 의존 순서대로 새 ID/revision 매핑과 derived_from을 미리 보여주고 원본 해시를 새 파일의 해시인 것처럼 보존하지 않습니다. 임의 문자열 치환으로 JS 소스를 고치지 않습니다.
+
+선택한 묶음의 모든 파일/의존/충돌 조건을 먼저 검사한 뒤 하나의 commit receipt로 등록합니다. 중간 실패 시 일부 기법만 새로 등록됐는데 전체 성공으로 응답하지 않습니다. inspect 이후 관련 로컬 head/active가 바뀌면 import_conflict와 새 계획을 반환합니다. 같은 request_id 재전송은 같은 등록 결과를 돌려줍니다.
+
+### E.5 한도와 확인 조건
+
+초안 한도는 대표32개·의존 포함64개 revision, 압축 파일1MiB, 전체 해제4MiB, 파일2048개입니다. 개별 기법의 파일32개/1MiB 한도도 적용합니다. 한도 초과 시 패키지를 나누거나 호스트 설정 범위를 조정하게 하며 압축 파일 크기만 보고 통과시키지 않습니다. 절대 경로/상위 경로 탈출/중복 경로/심볼릭 링크/암호화 ZIP은 거부하고, 모든 항목을 검증하기 전 코드를 로드하지 않습니다.
+
+구현 확인에는 단일/여러 기법 선택, 공유 의존성 중복 제거, 일부 대표만 가져오기, 누락 의존성·버전 충돌, 같은 패키지 재등록, 중간 실패와 내구성 복구, 경로/해시/압축 크기 오류 거부를 포함합니다. 이 절은 설계 검토이며 패키지 생성·가져오기 런타임 검사를 통과했다고 기록하지 않습니다.
