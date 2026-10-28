@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(38, len(tools))
-        self.assertEqual(38, len({tool["name"] for tool in tools}))
+        self.assertEqual(39, len(tools))
+        self.assertEqual(39, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
         self.assertTrue(next(t for t in tools if t["name"] == "sketchup_ping")["annotations"]["readOnlyHint"])
@@ -245,6 +245,38 @@ class StdioTests(unittest.TestCase):
         for index,(name,fields) in enumerate(cases,50):
             self.send('tools/call',dict(name='sketchup_'+name,arguments=dict(common,**fields)),index)
             self.assertEqual(-32602,self.response()['error']['code'],name)
+
+    def test_batch_schema_and_nested_validation(self):
+        self.initialize()
+        self.send('tools/list',{},2)
+        tools={t['name']:t for t in self.response()['result']['tools']}
+        schema=tools['sketchup_run_batch']['inputSchema']
+        self.assertEqual(18,len(schema['properties']['steps']['items']['oneOf']))
+        self.assertNotIn('ui_updates',schema['required'])
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[],ui_updates='defer')
+        step=dict(method='create_geometry',arguments=dict(kind='polygon',name='polygon',options=dict(origin_mm=[0,0,0],plane='XY',radius_mm=100,sides=6)))
+        self.send('tools/call',dict(name='sketchup_run_batch',arguments=dict(common,steps=[step])),3)
+        self.assertFalse(self.response()['result']['isError'])
+        self.send('tools/call',dict(name='sketchup_create_box',arguments=dict(common,name='box',origin_mm=[0,0,0],size_mm=[1,2,3],ui_updates='normal')),4)
+        self.assertFalse(self.response()['result']['isError'])
+
+    def test_batch_rejects_forbidden_actions_overrides_and_bad_inner_types(self):
+        self.initialize()
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        invalid=[[],[dict(method='scene',arguments={})],[dict(method='run_batch',arguments={})],
+            [dict(method='set_selection',arguments={})],
+            [dict(method='move_entities',arguments=dict(entity_ids=['1'],delta_mm=[True,0,0]))],
+            [dict(method='create_box',arguments=dict(name='b',origin_mm=[0,0,0],size_mm=[1,2,3],command_id=SESSION+':2'))],
+            [dict(method='create_box',arguments=dict(name='b',origin_mm=[0,0,0],size_mm=[1,2,3],ui_updates='normal'))],
+            [dict(method='component',arguments=dict(action='instantiate',options=dict(definition_id='123',origin_mm=[0,0,0])))],
+            [dict(method='create_box',arguments={},ruby='bad')],
+            [dict(method='make_unique',arguments=dict(entity_ids=['1']))]*65]
+        for index,steps in enumerate(invalid,10):
+            self.send('tools/call',dict(name='sketchup_run_batch',arguments=dict(common,steps=steps)),index)
+            self.assertEqual(-32602,self.response()['error']['code'])
+        for index,mode in enumerate(['off',False,None],50):
+            self.send('tools/call',dict(name='sketchup_create_box',arguments=dict(common,name='b',origin_mm=[0,0,0],size_mm=[1,2,3],ui_updates=mode)),index)
+            self.assertEqual(-32602,self.response()['error']['code'])
 
     def test_protocol_negotiation(self):
         self.assertEqual("2025-11-25", self.initialize("unsupported-future-version")["protocolVersion"])

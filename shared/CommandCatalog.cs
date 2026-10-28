@@ -8,7 +8,7 @@ namespace SketchUpPipeProbe
     public static class CommandCatalog
     {
         static readonly string[] Names = { "sketchup_set_selection", "sketchup_set_view", "sketchup_zoom", "sketchup_update_entity_properties", "sketchup_move_entities", "sketchup_create_box", "sketchup_duplicate_entities", "sketchup_create_rectangle", "sketchup_create_circle", "sketchup_create_polyline", "sketchup_rotate_entities", "sketchup_scale_entities", "sketchup_erase_entities", "sketchup_group_entities", "sketchup_make_unique", "sketchup_push_pull", "sketchup_run_self_test", "sketchup_get_command_result" };
-        public static bool Contains(string name) { return Array.IndexOf(Names, name) >= 0 || ToolkitCatalog.Contains(name); }
+        public static bool Contains(string name) { return Array.IndexOf(Names, name) >= 0 || ToolkitCatalog.Contains(name) || BatchCatalog.Contains(name); }
         public static bool IsWrite(string name) { return ToolkitCatalog.Contains(name) ? ToolkitCatalog.IsWrite(name) : Contains(name) && name != "sketchup_get_command_result"; }
         public static string Method(string name) { return name.Substring("sketchup_".Length); }
         static object Text(int maximum, int minimum = 1) { return new { type = "string", minLength = minimum, maxLength = maximum }; }
@@ -25,6 +25,7 @@ namespace SketchUpPipeProbe
             if (!IsWrite(name)) return fields;
             fields["expected_context"] = Ids(32);
             fields["dry_run"] = new { type = "boolean", @default = false, description = "Validate and preview only; consumes this command ID. Execution requires a fresh next_command_id." };
+            fields["ui_updates"] = new { type = "string", @enum = new[] { "defer", "normal" }, @default = "defer", description = "For native model operations: defer suppresses intermediate UI/Outliner updates until commit/abort and requests one final redraw/inspector refresh. normal allows normal updates. No persistent UI freeze or tray visibility changes. Ignored for selection/camera/scenes." };
             switch (name)
             {
                 case "sketchup_set_selection": fields["entity_ids"] = Ids(25); fields["mode"] = Choice("replace", "add", "remove", "clear"); break;
@@ -77,6 +78,7 @@ namespace SketchUpPipeProbe
                 required.Remove("dry_run");
                 required.Remove("segments");
                 required.Remove("suite");
+                required.Remove("ui_updates");
                 string detail = name == "sketchup_get_command_result" ? "Read a cached command result without execution permission. Results retain their original model_id. Evicted IDs are expired and cannot execute again." :
                     "Requires local permission in the SketchUp panel and current session/model/edit context. Existing targets require returned persistent IDs, at most 25 groups/components in the current context. A command ID is consumed once. No automatic retries. dry_run previews without changes. Selection/camera changes have no model Undo; property/move/create/duplicate edits use one Undo operation. Shared edit ancestors and unsupported camera modes are rejected.";
                 switch (name)
@@ -156,10 +158,11 @@ namespace SketchUpPipeProbe
         public static void Validate(string name, Dictionary<string, object> args)
         {
             if (ToolkitCatalog.Contains(name)) { ToolkitCatalog.Validate(name,args); return; }
+            if (BatchCatalog.Contains(name)) { BatchCatalog.Validate(args); return; }
             if (args == null) throw new ArgumentException("arguments must be an object");
             var fields = Fields(name);
             foreach (string key in fields.Keys)
-                if (key != "dry_run" && key != "segments" && key != "suite" && !args.ContainsKey(key)) throw new ArgumentException("Missing argument: " + key);
+                if (key != "dry_run" && key != "segments" && key != "suite" && key != "ui_updates" && !args.ContainsKey(key)) throw new ArgumentException("Missing argument: " + key);
             foreach (var pair in args)
             {
                 if (!fields.ContainsKey(pair.Key)) throw new ArgumentException("Unexpected argument: " + pair.Key);
@@ -180,6 +183,7 @@ namespace SketchUpPipeProbe
                     case "scope": ValidateChoice(pair.Value, "model", "entities"); break;
                     case "plane": ValidateChoice(pair.Value,"XY","XZ","YZ"); break;
                     case "suite": ValidateChoice(pair.Value,"core","extended","all"); break;
+                    case "ui_updates": ValidateChoice(pair.Value,"defer","normal"); break;
                     case "origin_mm": case "delta_mm": case "pivot_mm": Numbers(pair.Value,3,-1000000000,1000000000); break;
                     case "size_mm": Numbers(pair.Value,name == "sketchup_create_rectangle" ? 2 : 3,1,1000000); break;
                     case "factors": Numbers(pair.Value,3,0.001,1000); break;

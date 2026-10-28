@@ -1,5 +1,13 @@
 # 다른 컴퓨터에서 이어가기 — 2026-10-28
 
+## 최신 상태: 0.6.1 UI 갱신과 원자적 일괄 변경
+
+요청한 대량 변경 대비로 UiUpdateScope를 공통 모델 operation에 적용했습니다. 기존 disable_ui=true를 유지하면서 commit/abort 후 invalidate와 refresh_inspectors를 각각 한 번 요청합니다. normal 정책도 선택 가능합니다. 아웃라이너만 독립적으로 freeze하거나 트레이를 닫지 않습니다. 다른 요청/타이머 틱까지 operation을 열지 않습니다.
+
+새 run_batch는39번째 도구로, 기존18종 모델 변경을 최대64단계·48000바이트·협력적4초 범위에서 한 Undo로 실행합니다. 단계 실패/중단은 전체 rollback, 후속 UI 갱신 오류는 완료 결과의 경고입니다. dry_run은 최초 상태 기준이며 생성 ID를 같은 batch의 뒤 단계에서 참조하지 않습니다. [계약·예시·API 근거](UI_UPDATES.md)를 읽으세요.
+
+개발 회귀221개가 통과했습니다. 기존 56항목 native 실기 suite에도 같은 UI 범위를 적용하고 UI 진단을 반환합니다. 실제 사용자 앱의 새 버전 설치/CPU 벤치마크는 아직 미실시입니다. 아래0.6.0/0.5.0은 이력입니다.
+
 ## 최신 상태: 0.6.0 확장 기능
 
 MCP 도구38개. 요청 목록의 구현·제한과 추가로 발견한 기본 기능은 [확장 도구 계약](EXTENDED_TOOLKIT.md)에 있습니다. `shared/ToolkitSchemas.json`과 `ToolkitCatalog.cs`의 원본은 `scripts/generate_toolkit_catalog.py` + `ToolkitCatalog.template`이며 변경 후 생성기를 실행합니다. C#5/.NET4.8을 유지합니다.

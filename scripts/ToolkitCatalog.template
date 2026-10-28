@@ -51,4 +51,47 @@ namespace SketchUpPipeProbe
         }
         static bool Has(IList items,object value) { foreach(object item in items) if(Object.Equals(item,value)) return true; return false; }
     }
+    public static class BatchCatalog
+    {
+        const string Name="sketchup_run_batch";
+        static readonly string[] Methods={"update_entity_properties","move_entities","create_box","duplicate_entities","create_rectangle","create_circle","create_polyline","rotate_entities","scale_entities","erase_entities","group_entities","make_unique","push_pull","manage_resource","component","create_geometry","edit_geometry","mirror_entities"};
+        static readonly string[] Common={"session_id","model_id","command_id","expected_context","dry_run","ui_updates"};
+        public static bool Contains(string name) { return name==Name; }
+        static Dictionary<string,object> Schema()
+        {
+            Dictionary<string,object> common=null;
+            var choices=new List<object>(); var all=new List<object>(CommandCatalog.List()); all.AddRange(ToolkitCatalog.List());
+            foreach(object item in all) {
+                var tool=JsonLines.Parse(JsonLines.Serialize(item)); string method=((string)tool["name"]).Substring(9);
+                if(Array.IndexOf(Methods,method)<0) continue;
+                var schema=JsonLines.Object(tool,"inputSchema"); var props=JsonLines.Object(schema,"properties");
+                if(common==null) { common=new Dictionary<string,object>(); foreach(string key in Common) common[key]=props[key]; }
+                foreach(string key in Common) props.Remove(key);
+                var required=new List<string>(); foreach(string key in (IList)schema["required"]) if(Array.IndexOf(Common,key)<0) required.Add(key);
+                schema["required"]=required.ToArray();
+                choices.Add(new { type="object", properties=new Dictionary<string,object> { {"method",new {type="string",@enum=new[]{method}}},{"arguments",schema} }, required=new[]{"method","arguments"}, additionalProperties=false });
+            }
+            common["steps"]=new { type="array", minItems=1,maxItems=64,items=new {oneOf=choices.ToArray()} };
+            return new Dictionary<string,object> { {"type","object"},{"properties",common},{"required",new[]{"session_id","model_id","command_id","expected_context","steps"}},{"additionalProperties",false} };
+        }
+        public static object[] List() {
+            return new object[] { new {name=Name,description="Run1..64 typed model edits atomically in one synchronous operation/Undo. Default ui_updates=defer suppresses intermediate viewport/inspector/Outliner updates; requests one final invalidate/inspector refresh after commit or rollback. normal allows normal updates. Fixed4s cooperative budget between steps,48000-byte step budget. Stops and rolls back the entire batch on a step failure. No selection, camera, scenes, self-tests, nested batches, permission changes or arbitrary Ruby. Same model/edit context for all steps; arguments omit all transport/context/UI fields. Created IDs cannot be referenced by later steps in this batch. dry_run validates each step against the original model without simulating preceding edits. Returns compact created_ids per step and ui_update diagnostics. No automatic retries: after timeout query get_command_result for this command_id. Requires local panel grant and a fresh next_command_id. Does not hide/close the Outliner or globally freeze the app.",inputSchema=Schema(),annotations=new{readOnlyHint=false,destructiveHint=true,idempotentHint=true,openWorldHint=false}} };
+        }
+        public static void Validate(Dictionary<string,object> args) {
+            if(args==null) throw new ArgumentException("arguments must be an object");
+            var baseline=new Dictionary<string,object>();
+            foreach(var pair in args) { if(pair.Key!="steps" && Array.IndexOf(Common,pair.Key)<0) throw new ArgumentException("Unexpected batch argument"); if(pair.Key!="steps") baseline[pair.Key]=pair.Value; }
+            baseline["entity_ids"]=new[]{"1"}; CommandCatalog.Validate("sketchup_make_unique",baseline); baseline.Remove("entity_ids");
+            object raw; if(!args.TryGetValue("steps",out raw)) throw new ArgumentException("Missing steps"); var steps=raw as IList;
+            if(steps==null || steps.Count<1 || steps.Count>64 || System.Text.Encoding.UTF8.GetByteCount(JsonLines.Serialize(steps))>48000) throw new ArgumentException("Batch outside step/byte limit");
+            foreach(object value in steps) {
+                var step=value as Dictionary<string,object>; object methodValue,argumentsValue;
+                if(step==null || step.Count!=2 || !step.TryGetValue("method",out methodValue) || !step.TryGetValue("arguments",out argumentsValue) || !(methodValue is string) || Array.IndexOf(Methods,(string)methodValue)<0) throw new ArgumentException("Unsupported batch step");
+                var fields=argumentsValue as Dictionary<string,object>; if(fields==null) throw new ArgumentException("Step arguments must be an object");
+                var joined=new Dictionary<string,object>(baseline);
+                foreach(var field in fields) { if(Array.IndexOf(Common,field.Key)>=0) throw new ArgumentException("Step cannot override transport/context/UI policy"); joined[field.Key]=field.Value; }
+                CommandCatalog.Validate("sketchup_"+(string)methodValue,joined);
+            }
+        }
+    }
 }

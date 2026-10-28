@@ -43,6 +43,7 @@ namespace SketchUpPipeProbe
             result.AddRange(CommandCatalog.List());
             result.AddRange(DiscoveryCatalog.List());
             result.AddRange(ToolkitCatalog.List());
+            result.AddRange(BatchCatalog.List());
             return result.ToArray();
         }
 

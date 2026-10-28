@@ -7,6 +7,9 @@ require_relative '../extension/su_pipe_probe/version'
 require_relative '../extension/su_pipe_probe/model_reader'
 require_relative 'support/extended_double'
 require_relative '../extension/su_pipe_probe/model_identity'
+module UI
+  def self.refresh_inspectors; nil; end
+end
 $stdout.sync = true
 control_path = ARGV.fetch(0)
 clients, sessions, metadata, identities = [], [], [], []
@@ -14,6 +17,7 @@ clock = 0.0
 2.times do |index|
   client = SUPipeProbe::PipeClient.new
   model = SketchupDouble::Model.new
+  model.active_view.define_singleton_method(:invalidate) { self }
   building = model.add(1000 + index)
   model.selection.add([building])
   column = model.add_child(building, 2000 + index, 'ComponentInstance')

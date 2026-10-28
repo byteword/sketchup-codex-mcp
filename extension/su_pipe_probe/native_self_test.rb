@@ -46,30 +46,29 @@ module SUPipeProbe
         raise unless error.code == 'unsupported_camera'
       end
       camera_before = camera && @executor.send(:camera_state,camera)
-      started,aborted,restore_ok = false,false,true
+      restore_ok=true
+      scope=UiUpdateScope.new(@model,args.fetch('ui_updates','defer'))
       begin
-        raise 'Could not start test operation' unless @model.start_operation('MCP: temporary native smoke test',true)
-        started = true
-        run_checks(camera) unless suite=='extended'
-        run_extended_checks(camera) unless suite=='core'
-      rescue StandardError => error
-        @checks << {'name'=>'suite','status'=>'failed','message'=>error.message.to_s[0,256]} if @checks.none? { |c| c['status'] == 'failed' }
-      ensure
-        begin
-          @model.selection.clear
-          @model.selection.add(selection_before) unless selection_before.empty?
-          @model.active_view.camera = camera if camera
-        rescue StandardError
-          restore_ok = false
-        ensure
+        scope.run('temporary native smoke test',true) do
           begin
-            aborted = !!@model.abort_operation if started
-          rescue StandardError
-            aborted = false
+            run_checks(camera) unless suite=='extended'
+            run_extended_checks(camera) unless suite=='core'
+          ensure
+            begin
+              @model.selection.clear
+              @model.selection.add(selection_before) unless selection_before.empty?
+              @model.active_view.camera=camera if camera
+            rescue StandardError
+              restore_ok=false
+            end
           end
+          {}
         end
+      rescue StandardError => error
+        raise if error.is_a?(CommandError) && error.code=='outcome_unknown'
+        @checks << {'name'=>'suite','status'=>'failed','message'=>error.message.to_s[0,256]} if @checks.none? { |c| c['status'] == 'failed' }
       end
-      cleanup = aborted && restore_ok && root_before == keys(@model.entities) && definitions_before == keys(@model.definitions) &&
+      cleanup = scope.closed && scope.aborted && restore_ok && root_before == keys(@model.entities) && definitions_before == keys(@model.definitions) &&
         keys(selection_before) == keys(@model.selection) && (!camera || camera_before == @executor.send(:camera_state,@model.active_view.camera)) &&
         (!@model.respond_to?(:active_layer) || active_layer == @model.active_layer)
       cleanup &&= resources_before == [keys(@model.layers),keys(@model.materials),keys(@model.pages)] if resources_before
@@ -83,7 +82,7 @@ module SUPipeProbe
       {'dry_run'=>false,'undoable'=>false,'suite'=>suite,'passed'=>@checks.none? { |c| c['status'] == 'failed' },
        'passed_count'=>@checks.count { |c| c['status'] == 'passed' },'failed_count'=>@checks.count { |c| c['status'] == 'failed' },
        'skipped_count'=>@checks.count { |c| c['status'] == 'skipped' },'checks'=>@checks,
-       'duration_ms'=>((@clock.call-@started_at)*1000).round,'cleanup_verified'=>true,
+       'duration_ms'=>((@clock.call-@started_at)*1000).round,'cleanup_verified'=>true,'ui_update'=>scope.report,
        'modified_before'=>modified_before,'modified_after'=>@model.modified?,
        'individual_undo_tested'=>false,'model_lifecycle_tested'=>false,
        'notes'=>['All edits were temporary and aborted in one operation. Individual command Undo, New/Open and permission revocation require separate acceptance tests.']}

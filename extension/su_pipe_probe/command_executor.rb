@@ -5,6 +5,8 @@ require_relative 'basic_commands'
 require_relative 'extended_geometry'
 require_relative 'resources'
 require_relative 'view_commands'
+require_relative 'ui_update_scope'
+require_relative 'batch_commands'
 
 module SUPipeProbe
   class CommandError < StandardError
@@ -22,7 +24,8 @@ module SUPipeProbe
     include ExtendedGeometry
     include ResourceCommands
     include ViewCommands
-    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene].freeze
+    include BatchCommands
+    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch].freeze
     RESULT_LIMIT = 44_000
     MAX_SELECTION = 1000
 
@@ -35,6 +38,7 @@ module SUPipeProbe
       validate_context(args['expected_context'])
       dry = args.fetch('dry_run', false)
       fail_command('invalid_arguments', 'dry_run must be boolean') unless dry == true || dry == false
+      @ui_updates=UiUpdateScope.validate(args.fetch('ui_updates','defer'))
       case method
       when 'set_selection' then selection(args, dry)
       when 'set_view' then camera_command(args, dry, true)
@@ -53,6 +57,7 @@ module SUPipeProbe
       when 'make_unique' then unique_instances(args,dry)
       when 'push_pull' then push_pull_profile(args,dry)
       when 'run_self_test' then NativeSelfTest.new(@model).call(args,dry)
+      when 'run_batch' then run_batch(args,dry)
       when 'manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
       end
     end
@@ -106,24 +111,9 @@ module SUPipeProbe
     end
 
     def operation(label)
-      started = false
-      begin
-        fail_command('operation_failed', 'Could not start Undo operation') unless @model.start_operation('MCP: ' + label, true)
-        started = true
-        data = checked(yield)
-        fail_command('operation_failed', 'Could not commit Undo operation') unless @model.commit_operation
-        started = false
-        data
-      rescue StandardError => error
-        if started
-          begin
-            raise 'Abort returned false' unless @model.abort_operation
-          rescue StandardError
-            fail_command('outcome_unknown', 'Rollback could not be confirmed; inspect the model before another command')
-          end
-        end
-        raise error
-      end
+      scope=UiUpdateScope.new(@model,@ui_updates || 'defer')
+      data=scope.run(label) { checked(yield) }
+      data.merge('ui_update'=>scope.report)
     end
 
     def selection(args, dry)
@@ -322,6 +312,10 @@ module SUPipeProbe
         raise error
       end
     end
+  end
+  class InlineCommandExecutor < CommandExecutor
+    private
+    def operation(_label); checked(yield); end
   end
 end
 require_relative 'native_self_test'

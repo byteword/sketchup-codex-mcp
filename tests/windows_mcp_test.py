@@ -293,6 +293,26 @@ class WindowsMcpTests(unittest.TestCase):
         replay=self.tool('sketchup_run_self_test',fields)
         self.assertTrue(replay['replayed']); self.assertEqual(report,replay['result']['data'])
 
+    def test_atomic_batch_permission_replay_failure_and_ui_restoration(self):
+        step=lambda method,**args: dict(method=method,arguments=args)
+        steps=[step('create_box',name='A',origin_mm=[0,0,0],size_mm=[100,200,300]),step('create_box',name='B',origin_mm=[1000,0,0],size_mm=[100,200,300])]
+        fields=self.command_args(steps=steps)
+        self.assertEqual('authority_or_model_mismatch',self.tool('sketchup_run_batch',fields,True)['status'])
+        self.command(grant=0)
+        fields=self.command_args(steps=steps)
+        result=self.tool('sketchup_run_batch',fields)['result']['data']
+        self.assertEqual(2,result['step_count']); self.assertTrue(result['ui_update']['operation_closed'])
+        self.assertTrue(result['ui_update']['inspectors_refresh_requested'])
+        self.assertTrue(self.tool('sketchup_run_batch',fields)['replayed'])
+        before=self.tool('sketchup_get_model_summary',self.target(0,True))['data']['top_level_entities']['total']
+        self.assertEqual(3,before)
+        bad=[step('update_entity_properties',entity_ids=['1000'],properties=dict(name='rolled back')),step('move_entities',entity_ids=['999'],delta_mm=[1,0,0])]
+        self.assertEqual('batch_step_failed',self.tool('sketchup_run_batch',self.command_args(steps=bad),True)['status'])
+        items=self.tool('sketchup_get_selection_info',self.target(0,True))['data']['items']
+        self.assertEqual('block',items[0]['name'])
+        next_result=self.tool('sketchup_run_batch',self.command_args(steps=steps))['result']['data']
+        self.assertTrue(next_result['ui_update']['operation_closed'])
+
     def command_args(self, **fields):
         state = self.tool('sketchup_get_instance', self.target(0))['state']
         args = dict(self.target(0, True), command_id=state['next_command_id'], expected_context=[])

@@ -1,5 +1,13 @@
 # 검증 범위
 
+## 0.6.1 UI 갱신·일괄 변경 — 2026-10-28
+
+전체 **221개 통과**: Ruby181개 / 1332 assertions, Python STDIO25개·외부 실행기6개·Win32/MCP/Ruby 통합9개. 실패·오류·생략0. [로그](validation-0.6.1.txt).
+
+추가18개 Ruby 검사는40개 변경을 단일 operation/Undo와 한 번의 명시적 inspector 갱신으로 실행, normal/preview, 단계 오류·예산 초과·중단의 rollback, 시작/commit/abort 실패, 중첩 차단, 완료 후 UI 실패의 경고 처리와 다음 요청의 정상 실행을 확인합니다. STDIO는18개 허용 단계의 엄격한 중첩 schema와 정책/금지 동작/권한 필드 덮어쓰기 거부를 검사합니다. 파이프 통합은 허가·cached replay·중간 실패의 전체 취소·다음 batch 실행을 확인합니다.
+
+**형상·UI·Undo는 API 대역입니다.** 실제 앱/CPU 성능을 측정한 결과가 아닙니다. 공식 API의 disable_ui, invalidate, refresh_inspectors만 사용하며 아웃라이너 단독 잠금/가시성 제어와 전역 redraw 잠금은 사용하지 않습니다. 실제 native 자동 갱신 횟수까지 한 번이라고 보장하지 않습니다. [구현 계약과 한계](UI_UPDATES.md).
+
 ## 0.6.0 확장 회귀 — 2026-10-28
 
 **전체 자동 검사200개 통과**: Ruby163개 / 1173 assertions, Python STDIO23개, 외부 일괄 실행기6개, 실제 Win32/MCP/Ruby 경로 통합8개. 실패·오류·생략0. 환경은 SketchUp2019 Ruby2.5.5 DLL 호스트, Minitest5.15.0, Python3.12.14, .NET4.8/x64입니다. [실행 로그](validation-0.6.0.txt)를 보관합니다.

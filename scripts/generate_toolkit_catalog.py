@@ -20,7 +20,7 @@ def tool(name, description, fields, required, read=False):
     common = dict(session_id=dict(type="string", format="uuid"), model_id=dict(type="string", format="uuid"))
     needed = ["session_id", "model_id"]
     if not read:
-        common.update(command_id=dict(type="string", pattern="^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$", maxLength=48), expected_context=array(pid,0,32), dry_run=boolean)
+        common.update(command_id=dict(type="string", pattern="^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$", maxLength=48), expected_context=array(pid,0,32), dry_run=boolean, ui_updates=dict(type="string",enum=['defer','normal'],default='defer',description='Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes.'))
         needed += ["command_id", "expected_context"]
     common.update(fields)
     specs["sketchup_"+name] = dict(description=description, read=read, schema=obj(common,needed+required))
