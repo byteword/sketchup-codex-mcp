@@ -24,7 +24,7 @@
   "dependencies": [],
   "reads": [],
   "budgets": {
-    "plan_ms": 1000,
+    "plan_ms": 5000,
     "memory_mib": 64,
     "max_nodes": 1,
     "max_points": 169,

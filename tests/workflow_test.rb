@@ -65,11 +65,34 @@ class WorkflowTest < Minitest::Test
   def test_export_rejects_sidecars_empty_and_publish_race
     Dir.mktmpdir do |dir|
       path=File.join(dir,'drawing.dxf');args={'action'=>'export_cad','path'=>path,'options'=>{'acad_version'=>'acad_2010','edges'=>true}}
-      @model.export_sidecar=true;error('unsupported_export') { call('model_file',args) };assert_empty Dir.children(dir)
+      @model.export_sidecar=true
+      failure=assert_raises(SUPipeProbe::CommandError) { call('model_file',args) }
+      assert_equal 'unsupported_export',failure.code
+      assert_equal({'sidecar_count'=>1,'truncated'=>false,'sidecars'=>[{'name'=>'sidecar.bin','name_truncated'=>false,'directory'=>false}]},failure.details)
+      assert_empty Dir.children(dir)
       @model.export_sidecar=false;@model.export_empty=true;error('export_failed') { call('model_file',args) };assert_empty Dir.children(dir)
       @model.export_empty=false;@model.output_race=path
       assert_raises(Errno::EEXIST) { call('model_file',args) };assert_equal 'someone else',File.binread(path)
       assert_equal false,@model.file_call[1][:show_summary]
+    end
+  end
+  def test_export_sidecar_diagnostics_are_bounded_and_do_not_publish
+    @model.define_singleton_method(:export) do |path,native|
+      File.binwrite(path,'CAD')
+      10.times { |i| File.binwrite(File.join(File.dirname(path),'sidecar-'+i.to_s+'x'*110),'data') }
+      Dir.mkdir(File.join(File.dirname(path),'directory'))
+      true
+    end
+    Dir.mktmpdir do |dir|
+      failure=error('unsupported_export') { call('model_file',{'action'=>'export_cad','path'=>File.join(dir,'drawing.dxf'),'options'=>{}}) }
+      assert_equal 11,failure.details['sidecar_count']
+      assert failure.details['truncated']
+      assert_equal 8,failure.details['sidecars'].length
+      assert failure.details['sidecars'].any? { |item| item['directory'] }
+      assert failure.details['sidecars'].any? { |item| item['name_truncated'] }
+      assert failure.details['sidecars'].all? { |item| item['name'].length<=96 }
+      assert_operator JSON.generate(failure.details).bytesize,:<=,4096
+      assert_empty Dir.children(dir)
     end
   end
   def test_file_dry_run_cross_options_and_cad_import_unknown

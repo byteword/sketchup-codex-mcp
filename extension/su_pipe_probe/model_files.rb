@@ -75,7 +75,13 @@ module SUPipeProbe
         begin
           ok=yield(temp)
           fail_command('export_failed','Exporter failed or produced an empty file') unless ok && File.file?(temp) && File.size(temp)>0
-          fail_command('unsupported_export','Exporter produced sidecar files; single-file export required') unless Dir.entries(dir).sort==['.','..',File.basename(path)].sort
+          sidecars=Dir.entries(dir)-['.','..',File.basename(path)]
+          unless sidecars.empty?
+            details={'sidecar_count'=>sidecars.length,'truncated'=>sidecars.length>8,
+              'sidecars'=>sidecars.sort.first(8).map { |name| {'name'=>name[0,96],
+                'name_truncated'=>name.length>96,'directory'=>File.directory?(File.join(dir,name))} }}
+            raise CommandError.new('unsupported_export','Exporter produced sidecar files; single-file export required',details)
+          end
           File.open(path,File::WRONLY|File::CREAT|File::EXCL|File::BINARY) do |output|
             created=true;File.open(temp,'rb') { |input| IO.copy_stream(input,output) }
           end

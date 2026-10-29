@@ -149,11 +149,10 @@ check(output,0);return JSON.stringify(output);
                     // Embedded assembly loading/JIT on a cold Windows process is separate from the
                     // unchanged Jint execution budget. Allow bounded startup/serialization overhead.
                     var watch=Stopwatch.StartNew();int limit=Lib.Int(request,"timeout_ms",1000,10,5000)+5000;
-                    while(!p.HasExited) {
+                    while(true) {
                         token.ThrowIfCancellationRequested();
-                        if(watch.ElapsedMilliseconds>limit||p.PrivateMemorySize64>(Lib.Int(request,"memory_mib",64,16,256)+128L)*1024*1024) {
-                            p.Kill();throw new LibraryFault("budget_exceeded","Script worker exceeded time/memory budget");
-                        }
+                        if(WorkerFinished(()=>p.HasExited,()=>p.PrivateMemorySize64,()=>p.Kill(),
+                            watch.ElapsedMilliseconds,limit,(Lib.Int(request,"memory_mib",64,16,256)+128L)*1024*1024))break;
                         await Task.Delay(20,token).ConfigureAwait(false);p.Refresh();
                     }
                     string text=await output.ConfigureAwait(false);await errors.ConfigureAwait(false);
@@ -166,10 +165,33 @@ check(output,0);return JSON.stringify(output);
                     }
                     return response["result"];
                 }finally {
-                    if(!p.HasExited)p.Kill();
+                    StopWorker(()=>p.HasExited,()=>p.Kill());
                     p.WaitForExit(5000);
                 }
             }
+        }
+        // HasExited is only a snapshot: the child can exit before its memory is
+        // sampled or before Kill. Suppress those races only after confirming exit.
+        internal static bool WorkerFinished(Func<bool> exited,Func<long> memory,Action kill,
+            long elapsedMs,long timeoutMs,long memoryLimit) {
+            if(exited())return true;
+            bool exceeded=elapsedMs>timeoutMs;
+            if(!exceeded) {
+                try {exceeded=memory()>memoryLimit;}
+                catch(InvalidOperationException) {if(exited())return true;throw;}
+                catch(System.ComponentModel.Win32Exception) {if(exited())return true;throw;}
+            }
+            if(exceeded) {
+                StopWorker(exited,kill);
+                throw new LibraryFault("budget_exceeded","Script worker exceeded time/memory budget");
+            }
+            return false;
+        }
+        internal static void StopWorker(Func<bool> exited,Action kill) {
+            if(exited())return;
+            try {kill();}
+            catch(InvalidOperationException) {if(!exited())throw;}
+            catch(System.ComponentModel.Win32Exception) {if(!exited())throw;}
         }
     }
 }

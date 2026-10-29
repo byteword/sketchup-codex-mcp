@@ -6,6 +6,7 @@ static class LibraryHarness
 {
     static int Main(string[] args) {
         if(LibraryWorker.TryMain(args))return 0;
+        if(args.Length==1 && args[0]=="--worker-monitor-tests")return WorkerMonitorTests();
         Console.InputEncoding=new System.Text.UTF8Encoding(false,true);Console.OutputEncoding=new System.Text.UTF8Encoding(false);
         try {
             using(var service=new LibraryService(args[0])) {
@@ -28,5 +29,35 @@ static class LibraryHarness
                 }
             }return 0;
         }catch(Exception e){Console.Error.WriteLine(e);return 1;}
+    }
+    static int WorkerMonitorTests() {
+        int checks=0,kills=0;bool done=false;
+        Action kill=()=>{kills++;done=true;};
+        Action<bool> check=ok=>{if(!ok)throw new Exception("Worker monitor assertion failed");checks++;};
+        check(!LibraryWorker.WorkerFinished(()=>false,()=>5,kill,1,100,10));
+        check(kills==0);
+        check(LibraryWorker.WorkerFinished(()=>true,()=>{throw new Exception("Must not sample exited worker");},kill,1,100,10));
+        check(LibraryWorker.WorkerFinished(()=>done,()=>{done=true;throw new InvalidOperationException("Exited during sample");},kill,1,100,10));
+        done=false;
+        check(LibraryWorker.WorkerFinished(()=>done,()=>{done=true;throw new System.ComponentModel.Win32Exception(6);},kill,1,100,10));
+        foreach(var error in new Exception[]{new InvalidOperationException("live"),new System.ComponentModel.Win32Exception(5)}) {
+            try {LibraryWorker.WorkerFinished(()=>false,()=>{throw error;},kill,1,100,10);throw new Exception("Live sampling error was swallowed");}
+            catch(Exception actual) {check(Object.ReferenceEquals(error,actual));}
+        }
+        foreach(bool time in new[]{false,true}) {
+            done=false;
+            try {LibraryWorker.WorkerFinished(()=>done,()=>time ? 5 : 11,kill,time ? 101 : 1,100,10);throw new Exception("Limit ignored");}
+            catch(LibraryFault error) {check(error.Code=="budget_exceeded");}
+        }
+        check(kills==2);
+        foreach(var error in new Exception[]{new InvalidOperationException("exit"),new System.ComponentModel.Win32Exception(6)}) {
+            done=false;LibraryWorker.StopWorker(()=>done,()=>{done=true;throw error;});check(done);
+            try {LibraryWorker.StopWorker(()=>false,()=>{throw error;});throw new Exception("Live kill error swallowed");}
+            catch(Exception actual) {check(Object.ReferenceEquals(error,actual));}
+        }
+        done=false;
+        try {LibraryWorker.WorkerFinished(()=>done,()=>11,()=>{done=true;throw new InvalidOperationException("exit during kill");},1,100,10);throw new Exception("Observed limit was lost");}
+        catch(LibraryFault error) {check(error.Code=="budget_exceeded");}
+        Console.WriteLine(Lib.Json(Lib.Map("ok",true,"checks",checks)));return 0;
     }
 }

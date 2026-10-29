@@ -19,6 +19,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class LibraryTests(unittest.TestCase):
+    def test_worker_exit_races_preserve_limits_and_live_errors(self):
+        run = subprocess.run([EXE, '--worker-monitor-tests'], capture_output=True, timeout=10)
+        self.assertEqual(0, run.returncode, run.stderr.decode('utf-8', errors='replace'))
+        self.assertEqual(dict(ok=True, checks=15), json.loads(run.stdout))
+
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory(prefix="probe-library-")
         self.start()
