@@ -1354,7 +1354,7 @@
     }
   },
   "sketchup_model_query": {
-    "description": "Read capabilities, bounded recursive physical metrics, ray hits, face point classification or paged custom attributes. No model changes. Metrics/classify require root edit context on2019; return model-axis mm/mm2/mm3. Repeated instances counted; overlapping solids not unioned. face_texture: instance_path only, returns both direct material sides, four UV samples and a model-mm face frame. view_state: empty options, current camera/render/shadow/layers/axes. view_presets: empty options lists names, or name returns the saved state. All three require root context. classification: empty options or offset/limit lists loaded schemas; definition_id+classification_path reads a scalar value. Missing path returns null; choice/tree values rejected.",
+    "description": "Read capabilities, bounded recursive physical metrics, ray hits, face point classification or paged custom attributes. No model changes. Metrics/classify require root edit context on2019; return model-axis mm/mm2/mm3. Repeated instances counted; overlapping solids not unioned. face_texture: instance_path only, returns both direct material sides, four UV samples and a model-mm face frame. view_state: empty options, current camera/render/shadow/layers/axes. view_presets: empty options lists names, or name returns the saved state. All three require root context. classification: empty options or offset/limit lists loaded schemas; definition_id+classification_path reads a scalar value. Missing path returns null; choice/tree values rejected. file_style_support: empty options, reports native Style APIs available on this installation and IFC option generation; translator availability/fidelity still requires real-file verification.",
     "read": true,
     "schema": {
       "type": "object",
@@ -1381,7 +1381,8 @@
             "face_texture",
             "view_state",
             "view_presets",
-            "classification"
+            "classification",
+            "file_style_support"
           ]
         },
         "options": {
@@ -3027,7 +3028,7 @@
     }
   },
   "sketchup_style": {
-    "description": "Load a local .style (2019 Boolean return), select an exact unique style, commit current edited style, or change name/description. options: load path,select(default false); select name; update affect_all_uses=true; metadata name,affect_all_uses=true,new_name/description. Switching with unsaved edits needs discard_style_changes=true or prior update. Affects scenes using the style. Root, dry-run, no reliable2019 Undo. No .style export/public2019 Ruby writer.",
+    "description": "Load a local .style (2019 Boolean return), select an exact unique style, commit current edited style, or change name/description. options: load path,select(default false); select name; update affect_all_uses=true; metadata name,affect_all_uses=true,new_name/description. Switching with unsaved edits needs discard_style_changes=true or prior update. Affects scenes using the style. Root, dry-run, no reliable2019 Undo. No .style export/public2019 Ruby writer. purge_unused: confirm_model_wide=true, rejects pending style edits and verifies selected/scene styles remain. duplicate: name,new_name,optional select/discard_style_changes; requires native duplicate API(SU2026.2+), copies committed style only. delete: name, requires native remove_style(SU2026+) and unused/unselected/not-last style. Neither duplication nor individual deletion is available on2019. export_settings: path(.json),optional name/include_shadows, writes probe-display/1 editable rendering/shadow settings up to16KiB. import_settings: path only, strict JSON and setting validation, applies editable settings with rollback; does not create/switch/commit a Style, no watermark/image assets or full .style export. Query model_query file_style_support first.",
     "read": false,
     "schema": {
       "type": "object",
@@ -3073,7 +3074,12 @@
             "load",
             "select",
             "update",
-            "metadata"
+            "metadata",
+            "purge_unused",
+            "duplicate",
+            "delete",
+            "export_settings",
+            "import_settings"
           ]
         },
         "options": {
@@ -3106,6 +3112,12 @@
             "description": {
               "type": "string",
               "maxLength": 1024
+            },
+            "confirm_model_wide": {
+              "type": "boolean"
+            },
+            "include_shadows": {
+              "type": "boolean"
             }
           },
           "required": [],
@@ -3124,7 +3136,7 @@
     }
   },
   "sketchup_model_file": {
-    "description": "Root-only local SKP/DWG/DXF I/O, input<=64MiB. import_skp loads a definition and places one component at options.origin_mm (default0), optional name, one Undo. import_cad uses2019 Model#import (not2021.1 DefinitionList#import), native translator owns grouping/units/Undo; no atomic rollback promise. CAD needs Pro/installed translator. save_copy saves the whole model to a NEW .skp, version2019(default) or current, keeping current model path. export_cad writes whole model3D DWG/DXF with native options, no2D view exporter. All outputs are new files, no overwrite, no network, SHA256; unexpected sidecars rejected. Dry-run validates path/options only, not file content or translator fidelity. Excluded from batches.",
+    "description": "Root-only local SKP/DWG/DXF I/O, input<=64MiB. import_skp loads a definition and places one component at options.origin_mm (default0), optional name, one Undo. import_cad uses2019 Model#import (not2021.1 DefinitionList#import), native translator owns grouping/units/Undo; no atomic rollback promise. CAD needs Pro/installed translator. save_copy saves the whole model to a NEW .skp, version2019(default) or current, keeping current model path. export_cad writes whole model3D DWG/DXF with native options, no2D view exporter. All outputs are new files, no overwrite, no network, SHA256; unexpected sidecars rejected. Dry-run validates path/options only, not file content or translator fidelity. Excluded from batches. export_selection_skp: options.entity_ids1..25 root groups/components, coordinates=model(default) or first_local; copies references into a temporary wrapper, saves current SKP format and aborts/verifies cleanup before publishing. No raw face selection or version override. export_dxf2d: required plane XY/XZ/YZ, optional entity_ids(root groups/components/edges/faces), origin_mm,include_hidden,include_soft; own DXF2000 writer, projected LINEs in mm/on layer0, max5000 lines/20000 visited entities, no Pro needed, no occlusion/section clipping/perspective. import_ifc: .ifc, empty options, native Pro importer. export_ifc: whole model;2019-2025 accepts hidden_geometry,doublesided_faces,ifc_mapped_items,ifc_types(default all supported);2026+ accepts ifc_version(default IFC 2x3),standard_ifc_hierarchy,hidden_geometry,tessellated_geometry(IFC4 only). Unsupported version options rejected; no silent option loss. All file actions excluded from batches.",
     "read": false,
     "schema": {
       "type": "object",
@@ -3170,7 +3182,11 @@
             "import_skp",
             "import_cad",
             "save_copy",
-            "export_cad"
+            "export_cad",
+            "export_selection_skp",
+            "export_dxf2d",
+            "import_ifc",
+            "export_ifc"
           ]
         },
         "path": {
@@ -3244,6 +3260,95 @@
               "type": "boolean"
             },
             "materials": {
+              "type": "boolean"
+            },
+            "entity_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,18}$",
+                "maxLength": 19
+              },
+              "minItems": 1,
+              "maxItems": 25
+            },
+            "coordinates": {
+              "type": "string",
+              "enum": [
+                "model",
+                "first_local"
+              ]
+            },
+            "plane": {
+              "type": "string",
+              "enum": [
+                "XY",
+                "XZ",
+                "YZ"
+              ]
+            },
+            "include_hidden": {
+              "type": "boolean"
+            },
+            "include_soft": {
+              "type": "boolean"
+            },
+            "hidden_geometry": {
+              "type": "boolean"
+            },
+            "doublesided_faces": {
+              "type": "boolean"
+            },
+            "ifc_mapped_items": {
+              "type": "boolean"
+            },
+            "ifc_types": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "IfcNonDefined",
+                  "IfcBeam",
+                  "IfcBuilding",
+                  "IfcBuildingElementProxy",
+                  "IfcBuildingStorey",
+                  "IfcColumn",
+                  "IfcCurtainWall",
+                  "IfcDoor",
+                  "IfcFooting",
+                  "IfcFurnishingElement",
+                  "IfcMember",
+                  "IfcPile",
+                  "IfcPlate",
+                  "IfcProject",
+                  "IfcRailing",
+                  "IfcRamp",
+                  "IfcRampFlight",
+                  "IfcRoof",
+                  "IfcSite",
+                  "IfcSlab",
+                  "IfcSpace",
+                  "IfcStair",
+                  "IfcStairFlight",
+                  "IfcWall",
+                  "IfcWallStandardCase",
+                  "IfcWindow"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 26
+            },
+            "ifc_version": {
+              "type": "string",
+              "enum": [
+                "IFC 2x3",
+                "IFC 4"
+              ]
+            },
+            "standard_ifc_hierarchy": {
+              "type": "boolean"
+            },
+            "tessellated_geometry": {
               "type": "boolean"
             }
           },

@@ -72,6 +72,8 @@ module SUPipeProbe
       Sketchup::Page.instance_methods.include?(:use_hidden_objects=)
     end
     def style(args,dry)
+      return style_file(args,dry) if %w[export_settings import_settings].include?(args['action'])
+      return style_lifecycle(args,dry) if %w[purge_unused duplicate delete].include?(args['action'])
       root_edit!;action=args['action'];styles=@model.styles
       fail_command('invalid_arguments','Unsupported style action') unless %w[load select update metadata].include?(action)
       allowed=case action;when 'load';%w[path select discard_style_changes];when 'select';%w[name discard_style_changes];when 'update';%w[affect_all_uses];else %w[name new_name description affect_all_uses];end

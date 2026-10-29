@@ -38,7 +38,6 @@ module SketchupDouble
     end
   end
   class WorkflowStyle < TestResource
-    attr_accessor :path
     def initialize(name);super;@path='';end
   end
   class WorkflowStyles < Resources
@@ -46,7 +45,7 @@ module SketchupDouble
     def initialize(model);super(model,'styles');@items=[WorkflowStyle.new('Default')];@selected_style=@items[0];@active_style_changed=false;end
     def add_style(path,select)
       return false if @fail_load
-      s=WorkflowStyle.new(File.basename(path,'.style'));s.path=path;@items<<s;@selected_style=s if select;true
+      s=WorkflowStyle.new(File.basename(path,'.style'));@items<<s;@selected_style=s if select;true
     end
     def update_selected_style;@active_style_changed=false;nil;end
   end

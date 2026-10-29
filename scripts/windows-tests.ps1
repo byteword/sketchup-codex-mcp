@@ -56,6 +56,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Native metrics/annotation tests failed' }
 if ($LASTEXITCODE -ne 0) { throw "Texture/view tests failed" }
 & $Ruby @RubyArguments tests/workflow_test.rb
 if ($LASTEXITCODE -ne 0) { throw "Scene/file/terrain/classification tests failed" }
+& $Ruby @RubyArguments tests/file_style_test.rb
+if ($LASTEXITCODE -ne 0) { throw "File/style extensions failed" }
 & $Ruby @RubyArguments tests/sliding_window_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Sliding window recipe tests failed' }
 & $Ruby @RubyArguments tests/ui_updates_test.rb

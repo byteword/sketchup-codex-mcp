@@ -385,6 +385,26 @@ class StdioTests(unittest.TestCase):
             self.assertIn('expected_context', tools[name]['inputSchema']['required'])
         self.assertTrue(tools['sketchup_get_command_result']['annotations']['readOnlyHint'])
 
+    def test_file_and_style_extensions_contract(self):
+        self.initialize()
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        cases=[('sketchup_model_file',dict(action='export_selection_skp',path='C:/selection.skp',options=dict(entity_ids=['1'],coordinates='first_local'))),
+               ('sketchup_model_file',dict(action='export_dxf2d',path='C:/plan.dxf',options=dict(plane='XY',include_hidden=False))),
+               ('sketchup_model_file',dict(action='export_ifc',path='C:/model.ifc',options=dict(ifc_types=['IfcWall','IfcWindow']))),
+               ('sketchup_style',dict(action='export_settings',options=dict(path='C:/display.json',include_shadows=True))),
+               ('sketchup_style',dict(action='purge_unused',options=dict(confirm_model_wide=True))),
+               ('sketchup_style',dict(action='duplicate',options=dict(name='Default',new_name='Copy')))]
+        for i,(name,fields) in enumerate(cases,10):
+            args=dict(common,**fields);self.send('tools/call',dict(name=name,arguments=args),i)
+            result=self.response()['result'];self.assertFalse(result['isError']);self.assertEqual(args,json.loads(result['content'][0]['text'])['arguments'])
+        for i,(name,fields) in enumerate([
+            ('sketchup_model_file',dict(action='export_dxf2d',path='C:/plan.dxf',options=dict(plane='camera'))),
+            ('sketchup_model_file',dict(action='export_ifc',path='C:/model.ifc',options=dict(ifc_types=[]))),
+            ('sketchup_model_file',dict(action='export_ifc',path='C:/model.ifc',options=dict(ifc_types=['Unknown']))),
+            ('sketchup_style',dict(action='purge_unused',options=dict(confirm_model_wide='true')))],30):
+            self.send('tools/call',dict(name=name,arguments=dict(common,**fields)),i)
+            self.assertEqual(-32602,self.response()['error']['code'])
+
     def test_scene_file_surface_classification_contracts(self):
         self.initialize()
         common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])

@@ -1,0 +1,31 @@
+{
+  "reader": "ezdxf",
+  "version": "1.4.4",
+  "results": [
+    {
+      "plane": "XY",
+      "lines": 3,
+      "units": "mm",
+      "coordinates_match": true,
+      "audit_errors": 0,
+      "audit_fixes": 0
+    },
+    {
+      "plane": "XZ",
+      "lines": 3,
+      "units": "mm",
+      "coordinates_match": true,
+      "audit_errors": 0,
+      "audit_fixes": 0
+    },
+    {
+      "plane": "YZ",
+      "lines": 3,
+      "units": "mm",
+      "coordinates_match": true,
+      "audit_errors": 0,
+      "audit_fixes": 0
+    }
+  ],
+  "native_sketchup": false
+}

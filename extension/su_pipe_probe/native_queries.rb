@@ -38,9 +38,11 @@ module SUPipeProbe
         {'sketchup_version'=>Sketchup.version,'pro'=>Sketchup.is_pro?,
          'library_formats'=>%w[sketchup-plan/1 sketchup-operations/1 probe-report/1],
          'line_styles'=>@model.line_styles.map(&:name),'batch_methods'=>BatchCommands::METHODS,'raw_drawing'=>true,'coordinates'=>'model_axes_mm',
-         'query_modes'=>%w[capabilities metrics raycast classify_point attributes display face_mesh uv face_texture view_state view_presets classification],
+         'query_modes'=>%w[capabilities metrics raycast classify_point attributes display face_mesh uv face_texture view_state view_presets classification file_style_support],
          'effects'=>{'typed_operations'=>'one_model_undo','queries'=>'none','camera_scenes'=>'separate_state','full_scenes_styles'=>'native_non_undo','cad_import'=>'native_translator','file_export'=>'no_overwrite'},
          'minimum_sketchup'=>'2019','native_acceptance'=>'Check installed release validation record'}
+      when 'file_style_support'
+        options(args,[]);CommandExecutor.new(@model).send(:file_style_support)
       when 'classification'
         CommandExecutor.new(@model).send(:classification_query,args)
       when 'face_texture'

@@ -27,7 +27,7 @@ module SUPipeProbe
       when 'tags' then data.merge!('visible'=>entity.visible?,'default'=>entity==@model.layers[0],'active'=>entity==@model.active_layer,'line_style'=>entity.respond_to?(:line_style) && entity.line_style ? entity.line_style.name : nil)
       when 'definitions' then data.merge!('definition_id'=>'definition:'+entity.entityID.to_s,'description'=>entity.description.to_s[0,1024],'group'=>entity.group?,'image'=>entity.image?,'instance_count'=>entity.count_instances)
       when 'styles'
-        data.merge!('description'=>entity.description.to_s[0,1024],'path'=>entity.path.to_s[0,1024],
+        data.merge!('description'=>entity.description.to_s[0,1024],'path'=>entity.respond_to?(:path) ? entity.path.to_s[0,1024] : nil,
           'selected'=>entity==@model.styles.selected_style,'active_style_changed'=>@model.styles.active_style_changed)
       when 'scenes'
         flags=%w[camera axes hidden hidden_layers rendering_options section_planes shadow_info style hidden_geometry hidden_objects]

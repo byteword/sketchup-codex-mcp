@@ -13,6 +13,8 @@ require_relative 'view_commands'
 require_relative 'view_presets'
 require_relative 'scene_styles'
 require_relative 'model_files'
+require_relative 'file_extensions'
+require_relative 'style_files'
 require_relative 'surface_mesh'
 require_relative 'classification_commands'
 require_relative 'ui_update_scope'
@@ -45,6 +47,8 @@ module SUPipeProbe
     include ViewPresets
     include SceneStyles
     include ModelFiles
+    include FileExtensions
+    include StyleFiles
     include SurfaceMesh
     include ClassificationCommands
     include BatchCommands

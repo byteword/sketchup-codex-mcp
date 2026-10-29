@@ -7,6 +7,9 @@ module SUPipeProbe
     CAD_IMPORT_BOOL=%w[import_materials merge_coplanar_faces orient_faces preserve_origin].freeze
     CAD_EXPORT_BOOL=%w[faces_flag construction_geometry dimensions text edges materials].freeze
     def model_file(args,dry)
+      return ifc_file(args,dry) if %w[import_ifc export_ifc].include?(args['action'])
+      return export_selection_skp(args,dry) if args['action']=='export_selection_skp'
+      return export_dxf2d(args,dry) if args['action']=='export_dxf2d'
       root_edit!;action=args['action'];o=options(args,[],case action
         when 'import_skp';%w[origin_mm name]
         when 'import_cad';CAD_IMPORT_BOOL

@@ -1,5 +1,23 @@
 # 검증 범위
 
+## 0.12.0 독립 파일·스타일 — 2026-10-29
+
+E 기준 검사 복사본에서 **364개 통과**, 실패/오류/생략0. [전체 로그](validation-0.12.0.txt), [DXF 독립 판독](validation-0.12.0-dxf.json), [배포본 검사](validation-0.12.0-package.json), [사용법·한계](FEATURES_0.12.0.md).
+
+| 범위 | 결과 |
+| --- | --- |
+| SketchUp2020 Ruby2.5.5 DLL + SketchUp API 대역 |282개 /2111 assertions |
+| 라이브러리·Jint·선택 패키지 |19개 |
+| 텍스처 계산 / 지형 계산 — 실제 Jint |7개 /6개 |
+| MCP STDIO 계약·입력 검사 |31개 |
+| 독립 native runner |6개 |
+| Win32 pipe/GUI 허브/MCP/Ruby 연동 |13개 |
+
+새16개 Ruby 검사는2019 Style#path 부재·버전 제한, 미사용 정리/장면 참조, 최신 스타일 복제/삭제 대역, 표시 설정 파일 왕복/검증/복구를 확인한다. 선택 SKP 임시 복사/좌표/원본 선택과 메타데이터 보존/실패 정리/복구 불일치 시 출력 금지, IFC 버전별 옵션/Pro 조건/실패 불확정, DXF 중첩 변환/원점/필터/중복선 제거/예산도 검사했다. 새 STDIO 검사는 도구 스키마와 typed 전달/잘못된 입력을 확인한다.
+
+추가로 production DXF writer가 만든 XY/XZ/YZ 파일을 독립 ezdxf1.4.4로 읽고 각각3선의 mm 좌표·Z=0·AC1015와 audit 오류0/수정0을 확인했다. 이3방향 검사는 위364개와 별도이며 SketchUp/CAD 앱에서의 실기가 아니다. ezdxf는 개발 검사에만 쓰며 필수 런타임이나 기본 CI 의존성이 아니다. `tests/dxf_interop_test.py <Ruby 실행기와 인수>`로 재현한다.
+
+환경은 Windows/.NET Framework x64/Python3.13/Minitest5.15.0/Jint3.1.6. ZIP5파일, RBZ42소스 바이트 일치, SHA-256, 빈 추출 폴더에서 외부 DLL 없이 Jint 실행까지 확인했다. **사용자 요청으로 native SketchUp 수용 검사는 보류**했다. 설치 파일/현재 앱/모델은 교체하지 않았다. 실제 selected SKP의 abort/Undo 및 왕복, IFC 번역 정확도, 스타일 실제 표시/장면 보존은 남아 있다.2026 스타일 API는 대역 검사만 통과한 상태다.
 
 ## 0.11.0 전체 장면·스타일/파일/지형/분류 — 2026-10-29
 
