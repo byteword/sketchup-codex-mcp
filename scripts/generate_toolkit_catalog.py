@@ -80,6 +80,28 @@ tool('texture_resource','Load an existing local SKM, or create a new material fr
 specs['sketchup_edit_geometry']['schema']['required'].remove('container_id')
 specs['sketchup_edit_geometry']['description']+=' Omit container_id to edit raw geometry directly in the current edit context, including model root, without grouping. Shared edit ancestors remain rejected. Current context budget2048 direct entities.'
 
+
+# 0.10: face-local texture editing and reversible view-state bundles.
+camera=specs['sketchup_configure_camera']['schema']['properties']
+camera.update(aspect_ratio=number(0,10),focal_length_mm=number(1,2000),image_width_mm=number(0,1000))
+specs['sketchup_configure_camera']['description']+=' aspect_ratio=0 follows viewport; otherwise0.1..10. Omitted aspect/image width retain the current values. focal_length_mm is an alternative to fov_degrees; image_width_mm is the physical film width in mm (0 means36mm, default current). No2-point perspective setter.'
+face=specs['sketchup_face_texture']
+face['schema']['properties']['action']=choice('position','clear')
+face['schema']['required']=[k for k in face['schema']['required'] if k not in ('material','mapping')]
+face['description']+=' action defaults position (requires material/mapping). clear takes no material/mapping and clears only the chosen face side; inherited parent material can remain visible. For rotate/scale/tile/tilt use library authoring texture_example and a face-texture/1 read.'
+q=specs['sketchup_model_query']['schema']['properties']
+q['query']['enum']+=['face_texture','view_state','view_presets']
+q['options']['properties']['name']=dict(type='string',minLength=1,maxLength=128)
+specs['sketchup_model_query']['description']+=' face_texture: instance_path only, returns both direct material sides, four UV samples and a model-mm face frame. view_state: empty options, current camera/render/shadow/layers/axes. view_presets: empty options lists names, or name returns the saved state. All three require root context.'
+render.update(Texture=boolean,DisplayFog=boolean,SkyColor=array(integer(0,255),3,3),GroundColor=array(integer(0,255),3,3),FogColor=array(integer(0,255),3,3))
+state_camera={k:v for k,v in camera.items() if k not in ('session_id','model_id','command_id','expected_context','dry_run','ui_updates')}
+view_state=obj(dict(camera=obj(state_camera,['eye_mm','target_mm','up','perspective']),rendering=obj(render),shadows=obj(shadow),tags=array(obj(dict(name=text(),visible=boolean),['name','visible']),0,128),axes=obj(dict(origin_mm=vector,xaxis=vector,yaxis=vector,zaxis=vector),['origin_mm','xaxis','yaxis','zaxis'])))
+tool('view_preset','Save/delete up to16 named camera/render/shadow/layer/axes presets inside the model, or apply a saved name or explicit partial state. save/delete use model Undo; apply has no reliable model Undo and restores all captured state on failure. Root context; at most128 layers and12KB state. Layer0/active layer cannot be hidden. Does not save per-object hidden flags, section activation, named Styles or SketchUp Pages. Axes are drawing axes, not geometry transforms. Read via model_query view_state/view_presets. Excluded from typed batches.',dict(action=choice('save','apply','delete'),name=dict(type='string',minLength=1,maxLength=128),state=view_state),['action'])
+t=specs['sketchup_texture_resource']
+t['schema']['properties'].update(action=choice('create_texture','load_skm','replace_image','remove_image','set_size','copy'),tile_size_mm=array(number(0.01,1e6),2,2),source_name=text(),affect_all_uses=boolean)
+t['schema']['required'].remove('path')
+t['description']='Create a PNG/JPEG material or load SKM; replace_image/remove_image/set_size edit an existing named material and require affect_all_uses=true because every use is affected. copy(source_name,new name) creates an independent material with embedded pixels. tile_size_mm=[width,height] sets physical repeat size; replacement/copy retain existing dimensions when omitted. remove_image retains color/alpha. Paths required only for create_texture/load_skm/replace_image; local files <=64MiB. copy/remove/size need no source file. No image generation/network calls. File reads excluded from batches. One model Undo.'
+
 target=ROOT/'shared/ToolkitSchemas.json'
 target.write_text(json.dumps(specs,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 source=json.dumps(specs,ensure_ascii=True,separators=(',',':')).replace('"','""')

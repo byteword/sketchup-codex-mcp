@@ -43,8 +43,11 @@ class LibraryTests(unittest.TestCase):
         self.stop()
         self.directory.cleanup()
 
-    def call(self, name, **args):
-        self.proc.stdin.write((json.dumps(dict(tool="sketchup_library_" + name, arguments=args),
+    def call(self, name, _native_snapshot=None, **args):
+        request=dict(tool="sketchup_library_" + name, arguments=args)
+        if _native_snapshot is not None:
+            request['native_snapshot']=_native_snapshot
+        self.proc.stdin.write((json.dumps(request,
                                           ensure_ascii=False) + "\n").encode("utf-8"))
         self.proc.stdin.flush()
         return json.loads(self.lines.get(timeout=15))
@@ -134,6 +137,28 @@ class LibraryTests(unittest.TestCase):
         result=self.verify(ref)
         self.assertEqual("succeeded",result["state"],result)
         self.assertEqual(3,len(result["result"]["cases"]))
+
+    def test_bundled_texture_example_verifies_and_shares(self):
+        files=self.ok(self.call("get",kind="authoring",sections=["texture_example"]))["texture_files"]
+        ref=self.ok(self.save(id="demo.face-texture",files=files))["technique_ref"]
+        result=self.verify(ref)
+        self.assertEqual("succeeded",result["state"],result)
+        self.assertEqual(6,len(result["result"]["cases"]))
+        native=self.verify(ref,environment='native')
+        self.assertEqual('failed',native['state'])
+        self.assertEqual('native_fixture_required',native['error']['code'])
+        self.assertTrue(self.export([ref]))
+        manifest=json.loads(files["manifest.json"])
+        self.assertEqual("face-texture/1",manifest["reads"][0]["query"])
+        snapshot=json.loads(files['tests.json'])['cases'][0]['inputs']['face']['target']
+        bindings=dict(session_id=str(uuid.uuid4()),model_id=str(uuid.uuid4()),expected_context=[],targets=dict(face=snapshot['instance_path']))
+        planned=self.wait(self.call('run',request_id=str(uuid.uuid4()),mode='plan',params=dict(rotation_degrees=90),bindings=bindings,_native_snapshot=snapshot,**ref))
+        self.assertEqual('succeeded',planned['state'],planned)
+        record=json.loads((Path(self.directory.name)/'plans'/(planned['result']['plan_id']+'.json')).read_text(encoding='utf-8'))
+        self.assertEqual('face-texture/1',record['fingerprints'][0]['query'])
+        self.assertEqual(snapshot['instance_path'],record['plan']['steps'][0]['arguments']['instance_path'])
+        point=record['plan']['steps'][0]['arguments']['mapping'][1]['point_mm']
+        self.assertAlmostEqual(1000,point[1],places=6)
 
     def test_operations_reject_non_model_effects_and_transport_override(self):
         base = None

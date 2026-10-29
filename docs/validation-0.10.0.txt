@@ -1,0 +1,270 @@
+Built: dist\SketchUpPipeProbe.exe and dist\SketchUpMcp.exe
+test_archive_path_and_content_hash_validation (__main__.LibraryTests.test_archive_path_and_content_hash_validation) ... ok
+test_authoring_bootstrap_with_empty_library (__main__.LibraryTests.test_authoring_bootstrap_with_empty_library) ... ok
+test_budget_schema_and_source_isolation (__main__.LibraryTests.test_budget_schema_and_source_isolation) ... ok
+test_bundled_raw_drawing_example (__main__.LibraryTests.test_bundled_raw_drawing_example) ... ok
+test_bundled_texture_example_verifies_and_shares (__main__.LibraryTests.test_bundled_texture_example_verifies_and_shares) ... ok
+test_create_verify_activate_plan_and_restart (__main__.LibraryTests.test_create_verify_activate_plan_and_restart) ... ok
+test_import_rechecks_local_state_and_chunk_replay (__main__.LibraryTests.test_import_rechecks_local_state_and_chunk_replay) ... ok
+test_import_updates_clean_workspace_and_preserves_dirty_files (__main__.LibraryTests.test_import_updates_clean_workspace_and_preserves_dirty_files) ... ok
+test_long_source_byte_pages_and_plan_integrity (__main__.LibraryTests.test_long_source_byte_pages_and_plan_integrity) ... ok
+test_missing_dependency_and_tampered_archive_rejected (__main__.LibraryTests.test_missing_dependency_and_tampered_archive_rejected) ... ok
+test_multiple_roots_selective_import_and_no_automatic_execution (__main__.LibraryTests.test_multiple_roots_selective_import_and_no_automatic_execution) ... ok
+test_operations_plan_verified_and_packaged (__main__.LibraryTests.test_operations_plan_verified_and_packaged) ... ok
+test_operations_reject_non_model_effects_and_transport_override (__main__.LibraryTests.test_operations_reject_non_model_effects_and_transport_override) ... ok
+test_save_replay_conflict_and_failed_revision_keeps_active (__main__.LibraryTests.test_save_replay_conflict_and_failed_revision_keeps_active) ... ok
+test_shared_dependency_import_closure_and_fork (__main__.LibraryTests.test_shared_dependency_import_closure_and_fork) ... ok
+test_sliding_window_script_matches_approved_prototype (__main__.LibraryTests.test_sliding_window_script_matches_approved_prototype) ... ok
+test_source_unicode_state_conflict_cursor_and_archive (__main__.LibraryTests.test_source_unicode_state_conflict_cursor_and_archive) ... ok
+test_working_files_reload_without_restart_and_optional_auto_activation (__main__.LibraryTests.test_working_files_reload_without_restart_and_optional_auto_activation) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 68.891s
+
+OK
+test_fit_and_back_clear (__main__.TextureMathTest.test_fit_and_back_clear) ... ok
+test_folded_pins_rejected_and_no_direct_texture_relative_rejected (__main__.TextureMathTest.test_folded_pins_rejected_and_no_direct_texture_relative_rejected) ... ok
+test_rotation_offset_and_existing_projective_uv_preserved (__main__.TextureMathTest.test_rotation_offset_and_existing_projective_uv_preserved) ... ok
+test_scale_mirror_shear_pivot (__main__.TextureMathTest.test_scale_mirror_shear_pivot) ... ok
+test_tile_mm_independent_from_image_pixels (__main__.TextureMathTest.test_tile_mm_independent_from_image_pixels) ... ok
+test_tilt_uses_projective_divisor (__main__.TextureMathTest.test_tilt_uses_projective_divisor) ... ok
+test_tilted_world_face_keeps_geometry_plane (__main__.TextureMathTest.test_tilted_world_face_keeps_geometry_plane) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 10.014s
+
+OK
+test_basic_commands_reject_bad_vectors_ranges_and_unconfirmed_batch (__main__.StdioTests.test_basic_commands_reject_bad_vectors_ranges_and_unconfirmed_batch) ... ok
+test_basic_drawing_edit_query_and_batch_contract (__main__.StdioTests.test_basic_drawing_edit_query_and_batch_contract) ... ok
+test_batch_rejects_forbidden_actions_overrides_and_bad_inner_types (__main__.StdioTests.test_batch_rejects_forbidden_actions_overrides_and_bad_inner_types) ... ok
+test_batch_schema_and_nested_validation (__main__.StdioTests.test_batch_schema_and_nested_validation) ... ok
+test_command_tool_annotations_and_result_schema (__main__.StdioTests.test_command_tool_annotations_and_result_schema) ... ok
+test_command_validation_and_nested_input (__main__.StdioTests.test_command_validation_and_nested_input) ... ok
+test_concurrent_calls_and_cancellation (__main__.StdioTests.test_concurrent_calls_and_cancellation) ... ok
+test_creation_and_duplication_contract_and_arguments (__main__.StdioTests.test_creation_and_duplication_contract_and_arguments) ... ok
+test_creation_and_duplication_reject_invalid_geometry_and_targets (__main__.StdioTests.test_creation_and_duplication_reject_invalid_geometry_and_targets) ... ok
+test_discovery_contract_and_nested_arguments (__main__.StdioTests.test_discovery_contract_and_nested_arguments) ... ok
+test_discovery_rejects_invalid_filters_paths_and_limits (__main__.StdioTests.test_discovery_rejects_invalid_filters_paths_and_limits) ... ok
+test_duplicate_active_id_closes_without_repeating_tool (__main__.StdioTests.test_duplicate_active_id_closes_without_repeating_tool) ... ok
+test_eof_cancels_pending_call (__main__.StdioTests.test_eof_cancels_pending_call) ... ok
+test_extended_tools_accept_typed_contracts (__main__.StdioTests.test_extended_tools_accept_typed_contracts) ... ok
+test_extended_tools_reject_untyped_nested_options_and_unknown_keys (__main__.StdioTests.test_extended_tools_reject_untyped_nested_options_and_unknown_keys) ... ok
+test_initialization_and_tool_contract (__main__.StdioTests.test_initialization_and_tool_contract) ... ok
+test_library_tools_accept_model_free_lifecycle_and_reject_mode_mixing (__main__.StdioTests.test_library_tools_accept_model_free_lifecycle_and_reject_mode_mixing) ... ok
+test_oversized_frame_closes_connection (__main__.StdioTests.test_oversized_frame_closes_connection) ... ok
+test_parse_error_and_invalid_request_do_not_break_session (__main__.StdioTests.test_parse_error_and_invalid_request_do_not_break_session) ... ok
+test_protocol_negotiation (__main__.StdioTests.test_protocol_negotiation) ... ok
+test_raw_drawing_and_2019_contracts (__main__.StdioTests.test_raw_drawing_and_2019_contracts) ... ok
+test_read_query_validation_and_paging (__main__.StdioTests.test_read_query_validation_and_paging) ... ok
+test_requires_initialized_notification (__main__.StdioTests.test_requires_initialized_notification) ... ok
+test_runtime_failure_is_tool_error (__main__.StdioTests.test_runtime_failure_is_tool_error) ... ok
+test_texture_and_view_contracts (__main__.StdioTests.test_texture_and_view_contracts) ... ok
+test_unicode_and_fragmented_input (__main__.StdioTests.test_unicode_and_fragmented_input) ... ok
+test_unknown_notification_has_no_response (__main__.StdioTests.test_unknown_notification_has_no_response) ... ok
+test_validation_and_unknown_methods (__main__.StdioTests.test_validation_and_unknown_methods) ... ok
+test_window_recipe_schema_and_typed_parameters (__main__.StdioTests.test_window_recipe_schema_and_typed_parameters) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 7.033s
+
+OK
+test_lost_response_uses_result_lookup_without_rerunning (__main__.NativeRunnerTest.test_lost_response_uses_result_lookup_without_rerunning) ... ok
+test_missing_permission_stops_before_mutation (__main__.NativeRunnerTest.test_missing_permission_stops_before_mutation) ... ok
+test_old_schema_is_blocked_before_submitting_extended_test (__main__.NativeRunnerTest.test_old_schema_is_blocked_before_submitting_extended_test) ... ok
+test_one_batch_command_writes_a_structured_report (__main__.NativeRunnerTest.test_one_batch_command_writes_a_structured_report) ... ok
+test_stale_model_never_runs_a_test (__main__.NativeRunnerTest.test_stale_model_never_runs_a_test) ... ok
+test_version_mismatch_stops_before_mutation (__main__.NativeRunnerTest.test_version_mismatch_stops_before_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 3.027s
+
+OK
+Run options: --seed 60530
+
+# Running:
+
+...................
+
+Finished in 0.006920s, 2745.5060 runs/s, 12138.0266 assertions/s.
+
+19 runs, 84 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 34365
+
+# Running:
+
+............
+
+Finished in 0.008680s, 1382.4566 runs/s, 6336.2596 assertions/s.
+
+12 runs, 55 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 38950
+
+# Running:
+
+.............
+
+Finished in 0.017900s, 726.2448 runs/s, 5586.4986 assertions/s.
+
+13 runs, 100 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 17273
+
+# Running:
+
+..................
+
+Finished in 0.008152s, 2208.1013 runs/s, 12267.2295 assertions/s.
+
+18 runs, 100 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 8023
+
+# Running:
+
+................
+
+Finished in 0.015928s, 1004.5393 runs/s, 9229.2044 assertions/s.
+
+16 runs, 147 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 39747
+
+# Running:
+
+.......................
+
+Finished in 0.580017s, 39.6540 runs/s, 234.4760 assertions/s.
+
+23 runs, 136 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 47168
+
+# Running:
+
+........
+
+Finished in 0.030354s, 263.5532 runs/s, 7906.5968 assertions/s.
+
+8 runs, 240 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 39066
+
+# Running:
+
+...........................
+
+Finished in 1.550514s, 17.4136 runs/s, 87.0679 assertions/s.
+
+27 runs, 135 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 59312
+
+# Running:
+
+........
+
+Finished in 0.051199s, 156.2524 runs/s, 761.7307 assertions/s.
+
+8 runs, 39 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 16006
+
+# Running:
+
+.........
+
+Finished in 0.012004s, 749.7376 runs/s, 3332.1671 assertions/s.
+
+9 runs, 40 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 2462
+
+# Running:
+
+...............
+
+Finished in 0.036630s, 409.5060 runs/s, 2074.8304 assertions/s.
+
+15 runs, 76 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 11388
+
+# Running:
+
+.............
+
+Finished in 0.035690s, 364.2456 runs/s, 1877.2660 assertions/s.
+
+13 runs, 67 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 27647
+
+# Running:
+
+.............
+
+Finished in 0.587100s, 22.1428 runs/s, 466.7011 assertions/s.
+
+13 runs, 274 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 62633
+
+# Running:
+
+..................
+
+Finished in 0.149910s, 120.0721 runs/s, 1060.6371 assertions/s.
+
+18 runs, 159 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 14484
+
+# Running:
+
+..........
+
+Finished in 0.025125s, 398.0052 runs/s, 2069.6270 assertions/s.
+
+10 runs, 52 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 30739
+
+# Running:
+
+................
+
+Finished in 0.014196s, 1127.1098 runs/s, 6551.3257 assertions/s.
+
+16 runs, 93 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 55591
+
+# Running:
+
+..
+
+Finished in 0.001579s, 1267.0256 runs/s, 2534.0513 assertions/s.
+
+2 runs, 4 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 44330
+
+# Running:
+
+.....
+
+Finished in 0.005992s, 834.3763 runs/s, 4171.8816 assertions/s.
+
+5 runs, 25 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 43232
+
+# Running:
+
+...
+
+Finished in 1.224449s, 2.4501 runs/s, 36.7512 assertions/s.
+
+3 runs, 45 assertions, 0 failures, 0 errors, 0 skips
+test_atomic_batch_permission_replay_failure_and_ui_restoration (__main__.WindowsMcpTests.test_atomic_batch_permission_replay_failure_and_ui_restoration) ... ok
+test_basic_geometry_and_native_suite_use_real_pipe_with_one_request (__main__.WindowsMcpTests.test_basic_geometry_and_native_suite_use_real_pipe_with_one_request) ... ok
+test_commands_round_trip_through_real_executor_without_duplicates (__main__.WindowsMcpTests.test_commands_round_trip_through_real_executor_without_duplicates) ... ok
+test_create_duplicate_and_replay_flow_returns_discoverable_ids (__main__.WindowsMcpTests.test_create_duplicate_and_replay_flow_returns_discoverable_ids) ... ok
+test_discovery_routes_nested_occurrences_and_connects_to_selection (__main__.WindowsMcpTests.test_discovery_routes_nested_occurrences_and_connects_to_selection) ... ok
+test_extended_suite_and_resource_query_cross_real_pipe (__main__.WindowsMcpTests.test_extended_suite_and_resource_query_cross_real_pipe) ... ok
+test_jobs_history_and_adapter_restart_still_work (__main__.WindowsMcpTests.test_jobs_history_and_adapter_restart_still_work) ... ok
+test_library_native_verification_aborts_and_snapshot_staleness (__main__.WindowsMcpTests.test_library_native_verification_aborts_and_snapshot_staleness) ... ok
+test_library_plan_apply_permission_replay_and_native_history (__main__.WindowsMcpTests.test_library_plan_apply_permission_replay_and_native_history) ... ok
+test_reads_route_to_exact_model_in_user_mode (__main__.WindowsMcpTests.test_reads_route_to_exact_model_in_user_mode) ... ok
+test_same_wrapper_new_and_open_reject_stale_commands_and_revoke_permission (__main__.WindowsMcpTests.test_same_wrapper_new_and_open_reject_stale_commands_and_revoke_permission) ... ok
+test_window_recipe_invalid_native_parameters_do_not_change_model (__main__.WindowsMcpTests.test_window_recipe_invalid_native_parameters_do_not_change_model) ... ok
+test_window_recipe_is_one_command_with_permission_and_replay (__main__.WindowsMcpTests.test_window_recipe_is_one_command_with_permission_and_replay) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 24.492s
+
+OK

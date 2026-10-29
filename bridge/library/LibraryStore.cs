@@ -286,6 +286,7 @@ namespace SketchUpPipeProbe
                     "capabilities",Capabilities);
                 if(authoringSections.Contains("example"))data["files"]=new[]{"manifest.json","inputs.schema.json","technique.js","tests.json"}.ToDictionary(name=>name,name=>(object)Lib.Resource("example."+name));
                 if(authoringSections.Contains("window_example"))data["window_files"]=new[]{"manifest.json","inputs.schema.json","technique.js","tests.json"}.ToDictionary(name=>name,name=>(object)Lib.Resource("window."+name));
+                if(authoringSections.Contains("texture_example"))data["texture_files"]=new[]{"manifest.json","inputs.schema.json","technique.js","tests.json"}.ToDictionary(name=>name,name=>(object)Lib.Resource("texture."+name));
                 if(authoringSections.Contains("operations_example"))data["operations_files"]=new[]{"manifest.json","inputs.schema.json","technique.js","tests.json"}.ToDictionary(name=>name,name=>(object)Lib.Resource("raw."+name));
                 foreach(string name in new[]{"manifest","plan","operations","report","tests","package"})if(authoringSections.Contains(name+"_schema"))data[name+"_schema"]=LibrarySchema.Bundled(name);
                 Lib.TextBudget(data,32768);return Success(data);

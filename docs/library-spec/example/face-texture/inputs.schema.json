@@ -1,0 +1,161 @@
+{
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "transform",
+        "tile",
+        "fit",
+        "clear"
+      ],
+      "default": "transform",
+      "minLength": 1,
+      "maxLength": 16
+    },
+    "side": {
+      "type": "string",
+      "enum": [
+        "front",
+        "back"
+      ],
+      "default": "front",
+      "minLength": 1,
+      "maxLength": 16
+    },
+    "material": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "rotation_degrees": {
+      "type": "number",
+      "minimum": -3600,
+      "maximum": 3600,
+      "default": 0
+    },
+    "scale": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0.001,
+        "maximum": 1000
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "default": [
+        1,
+        1
+      ]
+    },
+    "offset_mm": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": -1000000.0,
+        "maximum": 1000000.0
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "default": [
+        0,
+        0
+      ]
+    },
+    "tile_size_mm": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0.01,
+        "maximum": 1000000.0
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "default": [
+        300,
+        300
+      ]
+    },
+    "pivot_fraction": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": -10,
+        "maximum": 10
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "default": [
+        0,
+        0
+      ]
+    },
+    "shear_degrees": {
+      "type": "number",
+      "minimum": -80,
+      "maximum": 80,
+      "default": 0
+    },
+    "tilt": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": -0.9,
+        "maximum": 0.9
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "default": [
+        0,
+        0
+      ]
+    },
+    "flip_u": {
+      "type": "boolean",
+      "default": false
+    },
+    "flip_v": {
+      "type": "boolean",
+      "default": false
+    },
+    "corner_offsets_mm": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number",
+          "minimum": -1000000.0,
+          "maximum": 1000000.0
+        },
+        "minItems": 2,
+        "maxItems": 2,
+        "default": [
+          0,
+          0
+        ]
+      },
+      "minItems": 4,
+      "maxItems": 4,
+      "default": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

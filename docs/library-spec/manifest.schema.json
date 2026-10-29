@@ -121,7 +121,8 @@
             "type": "string",
             "enum": [
               "target-summary/1",
-              "target-subtree/1"
+              "target-subtree/1",
+              "face-texture/1"
             ]
           },
           "binding": {

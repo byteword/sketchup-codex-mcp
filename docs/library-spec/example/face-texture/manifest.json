@@ -1,0 +1,42 @@
+{
+  "format_version": "probe-technique/1",
+  "id": "demo.face-texture",
+  "title": "면 텍스처 배치 편집",
+  "summary": "기존 배치를 읽고 이동·회전·축척·실제 크기·맞춤·기울임·네 핀 왜곡을 Probe에서 계산합니다.",
+  "keywords": [
+    "texture",
+    "UV",
+    "회전",
+    "타일",
+    "재질"
+  ],
+  "kind": "generator",
+  "entrypoint": "technique.js",
+  "input_schema": "inputs.schema.json",
+  "tests": "tests.json",
+  "runtime": "probe-js/1",
+  "output": "sketchup-operations/1",
+  "requires": [
+    "commands/1",
+    "face-texture/1",
+    "verify/1"
+  ],
+  "material_roles": [],
+  "dependencies": [],
+  "reads": [
+    {
+      "name": "face",
+      "query": "face-texture/1",
+      "binding": "face",
+      "max_entities": 1
+    }
+  ],
+  "budgets": {
+    "plan_ms": 1000,
+    "memory_mib": 64,
+    "max_nodes": 2,
+    "max_points": 8,
+    "max_faces": 6,
+    "max_plan_bytes": 12000
+  }
+}

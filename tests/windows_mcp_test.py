@@ -36,8 +36,9 @@ class WindowsMcpTests(unittest.TestCase):
         self.fixture = subprocess.Popen(RUBY + ['tests/windows_session_fixture.rb', str(self.control)],
                                         cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.fixture_lines, self.fixture_reader = capture(self.fixture.stdout)
-        self.instances = self.fixture_lines.get(timeout=10)['instances']
         self.adapter = None
+        self.addCleanup(self.cleanup_fixture)
+        self.instances = self.fixture_lines.get(timeout=10)['instances']
         self.request_id = 0
         self.start_adapter()
         deadline = time.monotonic() + 5
@@ -50,7 +51,17 @@ class WindowsMcpTests(unittest.TestCase):
         data = dict(fields, sequence=self.sequence)
         temporary = self.control.with_suffix('.tmp')
         temporary.write_text(json.dumps(data), encoding='utf-8')
-        temporary.replace(self.control)
+        # Ruby's short File.read can briefly hold a Windows handle without
+        # delete-sharing. Retry only this idempotent test-control replacement.
+        deadline = time.monotonic() + 2
+        while True:
+            try:
+                temporary.replace(self.control)
+                break
+            except PermissionError:
+                if time.monotonic() >= deadline:
+                    raise
+                time.sleep(.01)
 
     def command(self, **fields):
         self.sequence += 1
@@ -90,12 +101,17 @@ class WindowsMcpTests(unittest.TestCase):
             self.adapter.stderr.close()
             self.adapter = None
 
-    def tearDown(self):
+    def cleanup_fixture(self):
         try:
             self.stop_adapter()
         finally:
             self.sequence += 1
-            self.write_control({'stop': True})
+            try:
+                self.write_control({'stop': True})
+            except OSError:
+                # Cleanup must run even when setUp or control-file writing failed.
+                if self.fixture.poll() is None:
+                    self.fixture.kill()
             try:
                 self.fixture.wait(timeout=5)
             except subprocess.TimeoutExpired:

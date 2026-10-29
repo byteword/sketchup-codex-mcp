@@ -10,6 +10,7 @@ require_relative 'display_commands'
 require_relative 'extended_geometry'
 require_relative 'resources'
 require_relative 'view_commands'
+require_relative 'view_presets'
 require_relative 'ui_update_scope'
 require_relative 'batch_commands'
 require_relative 'sliding_window_commands'
@@ -37,11 +38,12 @@ module SUPipeProbe
     include ExtendedGeometry
     include ResourceCommands
     include ViewCommands
+    include ViewPresets
     include BatchCommands
     include SlidingWindowCommands
     include LibraryPlanCommands
     include LibraryOperationCommands
-    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch create_sliding_window apply_library_plan draw_geometry entity_attributes annotation edit_annotation solid_operation intersect_faces face_texture component_behavior configure_display export_view texture_resource].freeze
+    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch create_sliding_window apply_library_plan draw_geometry entity_attributes annotation edit_annotation solid_operation intersect_faces face_texture component_behavior configure_display export_view texture_resource view_preset].freeze
     RESULT_LIMIT = 44_000
     MAX_SELECTION = 1000
 
@@ -76,7 +78,7 @@ module SUPipeProbe
       when 'run_batch' then run_batch(args,dry)
       when 'create_sliding_window' then create_sliding_window(args,dry)
       when 'apply_library_plan' then apply_library_plan(args,dry)
-      when 'configure_display','export_view','texture_resource','solid_operation','intersect_faces','face_texture','component_behavior','annotation','edit_annotation','entity_attributes','draw_geometry','manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
+      when 'view_preset','configure_display','export_view','texture_resource','solid_operation','intersect_faces','face_texture','component_behavior','annotation','edit_annotation','entity_attributes','draw_geometry','manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
       end
     end
 
@@ -273,12 +275,14 @@ module SUPipeProbe
        'up' => camera.up.to_a, 'perspective' => camera.perspective?,
        'fov_degrees' => camera.perspective? ? camera.fov : nil,
        'height_mm' => camera.perspective? ? nil : camera.height.to_f * 25.4,
-       'aspect_ratio' => camera.aspect_ratio}
+       'aspect_ratio' => camera.aspect_ratio,
+       'image_width_mm' => camera.respond_to?(:image_width) ? camera.image_width.to_f : nil}
     end
 
     def camera_copy(camera)
       fail_command('unsupported_camera', 'Two-point perspective and matched-photo cameras are not supported') if camera.is_2d?
       copy = Sketchup::Camera.new(camera.eye, camera.target, camera.up, camera.perspective?, camera.fov)
+      copy.image_width = camera.image_width if camera.respond_to?(:image_width)
       copy.aspect_ratio = camera.aspect_ratio
       copy.height = camera.height unless camera.perspective?
       copy.description = camera.description

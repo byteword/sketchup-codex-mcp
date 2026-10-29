@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(59, len(tools))
-        self.assertEqual(59, len({tool["name"] for tool in tools}))
+        self.assertEqual(60, len(tools))
+        self.assertEqual(60, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
             self.assertEqual("object",tool["inputSchema"]["type"])
@@ -384,6 +384,27 @@ class StdioTests(unittest.TestCase):
             self.assertIn('command_id', tools[name]['inputSchema']['required'])
             self.assertIn('expected_context', tools[name]['inputSchema']['required'])
         self.assertTrue(tools['sketchup_get_command_result']['annotations']['readOnlyHint'])
+
+    def test_texture_and_view_contracts(self):
+        self.initialize()
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        cases=[('sketchup_face_texture',dict(action='clear',instance_path=['10','11'],front=False)),
+               ('sketchup_texture_resource',dict(action='set_size',name='wood',tile_size_mm=[300,600],affect_all_uses=True)),
+               ('sketchup_texture_resource',dict(action='copy',source_name='wood',name='copy')),
+               ('sketchup_view_preset',dict(action='apply',state=dict(tags=[dict(name='Walls',visible=False)]))),
+               ('sketchup_configure_camera',dict(eye_mm=[1000,0,1000],target_mm=[0,0,0],up=[0,0,1],perspective=True,aspect_ratio=1.5,focal_length_mm=50,image_width_mm=0))]
+        for index,(name,fields) in enumerate(cases,10):
+            args=dict(common,**fields)
+            self.send('tools/call',dict(name=name,arguments=args),index)
+            result=self.response()['result']
+            self.assertFalse(result['isError'])
+            self.assertEqual(args,json.loads(result['content'][0]['text'])['arguments'])
+        for index,(name,fields) in enumerate([
+            ('sketchup_texture_resource',dict(action='set_size',name='wood',tile_size_mm=[0,600])),
+            ('sketchup_view_preset',dict(action='apply',state=dict(exposure=2))),
+            ('sketchup_face_texture',dict(instance_path=[],action='clear'))],30):
+            self.send('tools/call',dict(name=name,arguments=dict(common,**fields)),index)
+            self.assertEqual(-32602,self.response()['error']['code'])
 
     def test_creation_and_duplication_contract_and_arguments(self):
         self.initialize()

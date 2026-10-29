@@ -731,7 +731,7 @@
     }
   },
   "sketchup_configure_camera": {
-    "description": "Set eye/target/up in model coordinates, perspective and FOV (degrees) or orthographic height (mm). Camera change has no model Undo and restores the previous camera on failure. Requires normal camera mode.",
+    "description": "Set eye/target/up in model coordinates, perspective and FOV (degrees) or orthographic height (mm). Camera change has no model Undo and restores the previous camera on failure. Requires normal camera mode. aspect_ratio=0 follows viewport; otherwise0.1..10. Omitted aspect/image width retain the current values. focal_length_mm is an alternative to fov_degrees; image_width_mm is the physical film width in mm (0 means36mm, default current). No2-point perspective setter.",
     "read": false,
     "schema": {
       "type": "object",
@@ -813,6 +813,21 @@
           "type": "number",
           "minimum": 1,
           "maximum": 1000000000.0
+        },
+        "aspect_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "focal_length_mm": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 2000
+        },
+        "image_width_mm": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000
         }
       },
       "required": [
@@ -1292,7 +1307,7 @@
     }
   },
   "sketchup_model_query": {
-    "description": "Read capabilities, bounded recursive physical metrics, ray hits, face point classification or paged custom attributes. No model changes. Metrics/classify require root edit context on2019; return model-axis mm/mm2/mm3. Repeated instances counted; overlapping solids not unioned.",
+    "description": "Read capabilities, bounded recursive physical metrics, ray hits, face point classification or paged custom attributes. No model changes. Metrics/classify require root edit context on2019; return model-axis mm/mm2/mm3. Repeated instances counted; overlapping solids not unioned. face_texture: instance_path only, returns both direct material sides, four UV samples and a model-mm face frame. view_state: empty options, current camera/render/shadow/layers/axes. view_presets: empty options lists names, or name returns the saved state. All three require root context.",
     "read": true,
     "schema": {
       "type": "object",
@@ -1315,7 +1330,10 @@
             "attributes",
             "display",
             "face_mesh",
-            "uv"
+            "uv",
+            "face_texture",
+            "view_state",
+            "view_presets"
           ]
         },
         "options": {
@@ -1404,6 +1422,11 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 25
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
             }
           },
           "required": [],
@@ -1968,7 +1991,7 @@
     }
   },
   "sketchup_face_texture": {
-    "description": "Position an existing textured material on a face, using1..4 model point(mm)/UV(unitless) pairs. Root context, unique unlocked ancestors required. Uses2019 position_material overload; no deprecated projection setter.",
+    "description": "Position an existing textured material on a face, using1..4 model point(mm)/UV(unitless) pairs. Root context, unique unlocked ancestors required. Uses2019 position_material overload; no deprecated projection setter. action defaults position (requires material/mapping). clear takes no material/mapping and clears only the chosen face side; inherited parent material can remain visible. For rotate/scale/tile/tilt use library authoring texture_example and a face-texture/1 read.",
     "read": false,
     "schema": {
       "type": "object",
@@ -2060,6 +2083,13 @@
           },
           "minItems": 1,
           "maxItems": 4
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "position",
+            "clear"
+          ]
         }
       },
       "required": [
@@ -2067,9 +2097,7 @@
         "model_id",
         "command_id",
         "expected_context",
-        "instance_path",
-        "material",
-        "mapping"
+        "instance_path"
       ],
       "additionalProperties": false
     }
@@ -2284,6 +2312,42 @@
               },
               "minItems": 3,
               "maxItems": 3
+            },
+            "Texture": {
+              "type": "boolean"
+            },
+            "DisplayFog": {
+              "type": "boolean"
+            },
+            "SkyColor": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "GroundColor": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "FogColor": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              },
+              "minItems": 3,
+              "maxItems": 3
             }
           },
           "required": [],
@@ -2430,7 +2494,7 @@
     }
   },
   "sketchup_texture_resource": {
-    "description": "Load an existing local SKM, or create a new material from a PNG/JPEG texture with an explicit new name. Input <=64MiB, existing folder, root context. File reads are excluded from library operations/batches. Model material change uses one Undo.",
+    "description": "Create a PNG/JPEG material or load SKM; replace_image/remove_image/set_size edit an existing named material and require affect_all_uses=true because every use is affected. copy(source_name,new name) creates an independent material with embedded pixels. tile_size_mm=[width,height] sets physical repeat size; replacement/copy retain existing dimensions when omitted. remove_image retains color/alpha. Paths required only for create_texture/load_skm/replace_image; local files <=64MiB. copy/remove/size need no source file. No image generation/network calls. File reads excluded from batches. One model Undo.",
     "read": false,
     "schema": {
       "type": "object",
@@ -2474,7 +2538,11 @@
           "type": "string",
           "enum": [
             "create_texture",
-            "load_skm"
+            "load_skm",
+            "replace_image",
+            "remove_image",
+            "set_size",
+            "copy"
           ]
         },
         "path": {
@@ -2486,6 +2554,24 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 256
+        },
+        "tile_size_mm": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 1000000.0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "source_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "affect_all_uses": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -2493,8 +2579,386 @@
         "model_id",
         "command_id",
         "expected_context",
-        "action",
-        "path"
+        "action"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_view_preset": {
+    "description": "Save/delete up to16 named camera/render/shadow/layer/axes presets inside the model, or apply a saved name or explicit partial state. save/delete use model Undo; apply has no reliable model Undo and restores all captured state on failure. Root context; at most128 layers and12KB state. Layer0/active layer cannot be hidden. Does not save per-object hidden flags, section activation, named Styles or SketchUp Pages. Axes are drawing axes, not geometry transforms. Read via model_query view_state/view_presets. Excluded from typed batches.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "save",
+            "apply",
+            "delete"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "state": {
+          "type": "object",
+          "properties": {
+            "camera": {
+              "type": "object",
+              "properties": {
+                "eye_mm": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1000000000.0,
+                    "maximum": 1000000000.0
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "target_mm": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1000000000.0,
+                    "maximum": 1000000000.0
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "up": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1000000000.0,
+                    "maximum": 1000000000.0
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "perspective": {
+                  "type": "boolean"
+                },
+                "fov_degrees": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 120
+                },
+                "height_mm": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 1000000000.0
+                },
+                "aspect_ratio": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "focal_length_mm": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 2000
+                },
+                "image_width_mm": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1000
+                }
+              },
+              "required": [
+                "eye_mm",
+                "target_mm",
+                "up",
+                "perspective"
+              ],
+              "additionalProperties": false
+            },
+            "rendering": {
+              "type": "object",
+              "properties": {
+                "ModelTransparency": {
+                  "type": "boolean"
+                },
+                "MaterialTransparency": {
+                  "type": "boolean"
+                },
+                "DrawHidden": {
+                  "type": "boolean"
+                },
+                "DrawBackEdges": {
+                  "type": "boolean"
+                },
+                "DisplaySectionPlanes": {
+                  "type": "boolean"
+                },
+                "DisplaySectionCuts": {
+                  "type": "boolean"
+                },
+                "SectionCutFilled": {
+                  "type": "boolean"
+                },
+                "DisplayColorByLayer": {
+                  "type": "boolean"
+                },
+                "DisplayDims": {
+                  "type": "boolean"
+                },
+                "DisplayText": {
+                  "type": "boolean"
+                },
+                "DisplaySketchAxes": {
+                  "type": "boolean"
+                },
+                "DrawGround": {
+                  "type": "boolean"
+                },
+                "DrawHorizon": {
+                  "type": "boolean"
+                },
+                "RenderMode": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                "EdgeDisplayMode": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2
+                },
+                "BackgroundColor": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "Texture": {
+                  "type": "boolean"
+                },
+                "DisplayFog": {
+                  "type": "boolean"
+                },
+                "SkyColor": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "GroundColor": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "FogColor": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            },
+            "shadows": {
+              "type": "object",
+              "properties": {
+                "DisplayShadows": {
+                  "type": "boolean"
+                },
+                "DisplayOnGroundPlane": {
+                  "type": "boolean"
+                },
+                "DisplayOnAllFaces": {
+                  "type": "boolean"
+                },
+                "UseSunForAllShading": {
+                  "type": "boolean"
+                },
+                "EdgesCastShadows": {
+                  "type": "boolean"
+                },
+                "DaylightSavings": {
+                  "type": "boolean"
+                },
+                "Light": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "Dark": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "Latitude": {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                "Longitude": {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                "TZOffset": {
+                  "type": "number",
+                  "minimum": -14,
+                  "maximum": 14
+                },
+                "NorthAngle": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                "ShadowTime": {
+                  "type": "string",
+                  "minLength": 20,
+                  "maxLength": 25
+                }
+              },
+              "required": [],
+              "additionalProperties": false
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "visible": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "visible"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 128
+            },
+            "axes": {
+              "type": "object",
+              "properties": {
+                "origin_mm": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1000000000.0,
+                    "maximum": 1000000000.0
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "xaxis": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1000000000.0,
+                    "maximum": 1000000000.0
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "yaxis": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1000000000.0,
+                    "maximum": 1000000000.0
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "zaxis": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": -1000000000.0,
+                    "maximum": 1000000000.0
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                }
+              },
+              "required": [
+                "origin_mm",
+                "xaxis",
+                "yaxis",
+                "zaxis"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "action"
       ],
       "additionalProperties": false
     }

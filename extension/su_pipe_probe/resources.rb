@@ -19,6 +19,10 @@ module SUPipeProbe
       case kind
       when 'materials'
         data.merge!('color_rgb'=>[entity.color.red,entity.color.green,entity.color.blue],'alpha'=>entity.alpha,'textured'=>!entity.texture.nil?)
+        t=entity.texture
+        if t && t.respond_to?(:width)
+          data['texture']={'width_mm'=>t.width.to_f*25.4,'height_mm'=>t.height.to_f*25.4,'image_width'=>t.image_width,'image_height'=>t.image_height,'filename'=>t.filename.to_s}
+        end
       when 'tags' then data.merge!('visible'=>entity.visible?,'default'=>entity==@model.layers[0],'active'=>entity==@model.active_layer,'line_style'=>entity.respond_to?(:line_style) && entity.line_style ? entity.line_style.name : nil)
       when 'definitions' then data.merge!('definition_id'=>'definition:'+entity.entityID.to_s,'description'=>entity.description.to_s[0,1024],'group'=>entity.group?,'image'=>entity.image?,'instance_count'=>entity.count_instances)
       when 'scenes'

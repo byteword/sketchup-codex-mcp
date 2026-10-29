@@ -11,7 +11,7 @@ namespace SketchUpPipeProbe
     public sealed partial class LibraryService
     {
         readonly SemaphoreSlim workers=new SemaphoreSlim(2,2);
-        static readonly string[] Capabilities={"commands/1","group/1","mesh/1","material-existing/1","verify/1","cleanup/1","target-summary/1","target-subtree/1"};
+        static readonly string[] Capabilities={"commands/1","group/1","mesh/1","material-existing/1","verify/1","cleanup/1","target-summary/1","target-subtree/1","face-texture/1"};
         void Graph(string id,string rev,Dictionary<string,object> packages,HashSet<string> visiting,int depth=0,bool checkCapabilities=true) {
             string key=id+"@"+rev;
             if(visiting.Contains(key))throw new LibraryFault("dependency_cycle","Cyclic pinned dependency");
@@ -250,6 +250,9 @@ namespace SketchUpPipeProbe
         }
         async Task<object> Verify(string library,string id,string rev,Dictionary<string,object>a,NativeCall native,string jobId,CancellationToken token) {
             var files=ReadFiles(rev);var cases=Lib.Arr(Lib.Parse(files["tests.json"])["cases"]).Cast<object>().Select(Lib.Obj).ToArray();
+            // Offline snapshot fixtures contain sample entity IDs, never live targets.
+            if(Lib.Str(a,"environment","offline")=="native" && Lib.Arr(Lib.Parse(files["manifest.json"])["reads"]).Count>0)
+                throw new LibraryFault("native_fixture_required","Declared-read techniques use offline snapshot fixtures. Plan against live bindings for model acceptance; sample entity IDs are never submitted to SketchUp.");
             if(a.ContainsKey("tests"))cases=cases.Where(c=>Lib.Arr(a["tests"]).Contains(c["id"])).ToArray();
             if(cases.Length==0)throw new LibraryFault("test_not_found","No selected cases");
             var results=new List<object>();var plans=new List<object>();bool passed=true;

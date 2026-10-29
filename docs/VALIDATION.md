@@ -1,5 +1,24 @@
 # 검증 범위
 
+## 0.10.0 텍스처·화면 프리셋 — 2026-10-29
+
+E 소스를 ASCII 검사 복사본에서 빌드·검증했다. 전체 **321개 통과**, 실패/오류/생략0. [전체 로그](validation-0.10.0.txt), [사용법과 native 수용 검사](FEATURES_0.10.0.md).
+
+| 범위 | 결과 |
+| --- | --- |
+| Ruby2.5.5/SketchUp API 대역 | 248개 / 1871 assertions |
+| Probe 라이브러리·Jint·공유 패키지 | 18개 |
+| 실제 Jint에서 텍스처 배치 수학 | 7개 |
+| MCP STDIO 계약·검증 | 29개 |
+| 독립 native runner | 6개 |
+| Win32 pipe/GUI 허브/MCP/Ruby 연동 | 13개 |
+
+후속 재검사에서 시험 통제 파일 교체가 Windows 공유 잠금(WinError5)으로 실패해 종료되지 않은 시험 피어가 후속 등록 검사에 영향을 줬다. 시험 파일 교체만 최대2초 재시도하고 setUp 실패에도 정리하도록 도우미를 수정했다. 사용자 모델 명령의 재시도 정책은 바꾸지 않았다. 잔여 시험 피어를 정리한 후 아래 전체321개를 다시 통과했다.
+
+새 검사는 부모의 비균일 축척과 UVQ 정규화, UV 변경 후 오래된 계획 거부, 면 앞뒤 분리와 batch rollback, 임베드 이미지 복사·교체·제거·실제 크기·Undo, 카메라 필름폭mm/초점거리/화면 비율, 프리셋 저장·삭제Undo·레이어·작업축·실패 후 전체복구를 확인했다. 텍스처 JS 계산은 회전/기준점/뒤집기/기울임/원근/실제 크기/기울어진 면/잘못된 핀을 별도 수치 기대값으로 검사했다. 새 선언형 읽기가 실제 LibraryService 계획과 fingerprint 기록을 거치는 것도 확인했다.
+
+환경: Windows/.NET Framework x64, Python3.13, 설치된 SketchUp2020 Ruby2.5.5 DLL 별도 실행기, Minitest5.15.0, Jint3.1.6. **실제 SketchUp API의 이미지 디코딩·position_material·화면·2019 Undo 실기는 하지 않았다.** 현재 앱을 교체하거나 사용자 모델을 변경하지 않았다. 배포 ZIP은 실행 필수5개 파일만 포함한다.
+
 ## 0.9.0 그룹 없는 그리기·2019 공통 기능 — 2026-10-29
 
 전체 **299개 통과**, 실패·오류·생략0. Ruby235개/1804 assertions, 라이브러리/Jint17개, MCP STDIO28개, 외부 실행기6개, Win32/MCP/Ruby13개. [최종 로그](validation-0.9.0.txt). Windows/.NET4.8 x64, SketchUp2020 Ruby2.5.5 DLL 호스트/Minitest5.15.0/Python3.13. 원본 E와 ASCII 검사 복사본의 소스·빌드 입력 일치를 확인했다. 설치 ZIP의5개 파일과 체크섬, RBZ의34개 소스 일치, 외부 DLL 없는 추출 폴더에서 내장 엔진의4단계 원시 도면 계획 실행을 확인했다. [패키지 검사](validation-0.9.0-package.json).

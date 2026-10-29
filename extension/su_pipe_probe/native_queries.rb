@@ -2,9 +2,11 @@
 require_relative 'geometry_plan'
 require_relative 'batch_commands'
 require_relative 'display_commands'
+require_relative 'texture_snapshot'
 module SUPipeProbe
   class NativeQueries
     include GeometryPlan
+    include TextureSnapshot
     def initialize(model);@model=model;end
     def fail_command(code,message);raise ArgumentError,code+': '+message;end
     def finite_number(v,lo,hi)
@@ -36,9 +38,14 @@ module SUPipeProbe
         {'sketchup_version'=>Sketchup.version,'pro'=>Sketchup.is_pro?,
          'library_formats'=>%w[sketchup-plan/1 sketchup-operations/1 probe-report/1],
          'line_styles'=>@model.line_styles.map(&:name),'batch_methods'=>BatchCommands::METHODS,'raw_drawing'=>true,'coordinates'=>'model_axes_mm',
-         'query_modes'=>%w[capabilities metrics raycast classify_point attributes display face_mesh uv],
+         'query_modes'=>%w[capabilities metrics raycast classify_point attributes display face_mesh uv face_texture view_state view_presets],
          'effects'=>{'typed_operations'=>'one_model_undo','queries'=>'none','camera_scenes'=>'separate_state'},
          'minimum_sketchup'=>'2019','native_acceptance'=>'Check installed release validation record'}
+      when 'face_texture'
+        o=options(args,['instance_path']);texture_snapshot(o['instance_path'])
+      when 'view_state','view_presets'
+        o=options(args,[],query=='view_presets' ? ['name'] : [])
+        CommandExecutor.new(@model).send(:view_query,query,o['name'])
       when 'display'
         options(args,[]);DisplayContract.snapshot(@model)
       when 'raycast'

@@ -1,5 +1,19 @@
 # 다른 컴퓨터에서 이어가기 — 2026-10-28
 
+## 최신 상태: 0.10.0 텍스처·화면 설정 — 2026-10-29
+
+작업 기준은 E: OneDrive 저장소/main. 로컬 커밋만 하며 원격 푸시는 하지 않는다. 새 view_preset을 포함해60개 도구. face-texture/1 선언형 읽기와 stale 검사를 추가하고, Probe의 demo.face-texture 기법으로 이동/회전/축척/타일mm/fit/flip/shear/tilt/4핀/clear를 처리한다. 재질 복사·이미지 교체/제거·반복 크기, 카메라 비율/초점거리/필름폭, 텍스처·안개 표시와 화면 프리셋도 구현했다. [상세 계약](FEATURES_0.10.0.md).
+
+자동321개 통과(실패/오류/생략0): Ruby248개/1871 assertions, 라이브러리18개, 텍스처 수학7개, STDIO29개, runner6개, Win32 연동13개. Ruby는 SketchUp2020의2.5.5 DLL 별도 호스트+API 대역이며 실제 모델 검증이 아니다. [로그](validation-0.10.0.txt), [검증](VALIDATION.md). C의 dist/validation-0.10.0은 검사 복사본이고 개발 기준은 E다.
+
+시험 설치 ZIP은 필수5개 파일. 현재 실행 앱/모델은 변경하지 않았다. 다음은 0.10.0 Probe/MCP/RBZ 설치·재시작 후 시험 모델에서 텍스처·프리셋·Ctrl+Z 수용 검사다. image_width API는mm이며0이36mm 의미인 점을 유지한다. 공유 재질 변경은 affect_all_uses:true, 면별 변경은 유일한 조상을 요구한다.
+
+선언형 읽기가 있는 기법의 native verify는 오프라인 예제PID를 실제 모델에 보내지 않도록 native_fixture_required로 거부한다. 실제 대상 bindings로 plan/apply하여 확인한다. 프리셋은 모델 속성에 저장하며 Pages/전체스타일/개별객체 숨김까지 저장하지 않는다. 이미지 생성은 ChatGPT→로컬PNG/JPEG→재질 등록 흐름; Probe 내 서비스 호출과 techpack 이미지 바이너리 포장은 미구현이다.
+
+OneDrive 저장소에서 Git 객체 파일 작성이 Permission denied로 실패하면 이번처럼 `git -c core.createObject=rename add ...` / `git -c core.createObject=rename commit ...`을 사용할 수 있다. 이번에는 명령별 설정으로 해결했으며 폴더 ACL이나 전역 Git 설정은 바꾸지 않았다.
+
+후속 구현은 전체 SketchUp Page 속성·.style 파일 → SKP/CAD → 지형/분류. 아래0.9.0 이하 기록은 이전 상태다.
+
 ## 최신 상태: 0.9.0 우선순위 기능 구현 — 2026-10-29
 
 E: OneDrive 소스/main, 로컬 커밋만 하고 푸시하지 않는다.0.8.0의47개→59개 MCP 도구. 그룹 없는 그리기/직접 편집, `sketchup-operations/1` 기법 계획, 기능·물량·충돌·속성 조회, 치수·주석·단면·점선, 원본 보존 Boolean·교차선·UV·개구부, 텍스처 읽기·이미지 출력·표시/그림자를 구현했다. [상세 사용법·한도·후속 순서](FEATURES_0.9.0.md).

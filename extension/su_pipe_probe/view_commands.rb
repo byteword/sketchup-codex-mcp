@@ -9,7 +9,7 @@ module SUPipeProbe
       begin
         @model.active_view.camera=desired
         after=camera_state(@model.active_view.camera)
-        fail_command('postcondition_failed','Camera did not retain projection/position') unless same_numbers(after['eye_mm'],data['planned']['eye_mm']) && same_numbers(after['target_mm'],data['planned']['target_mm']) && after['perspective']==data['planned']['perspective']
+        fail_command('postcondition_failed','Camera did not retain projection/position') unless view_fields_match?(after,data['planned'])
         data.merge('after'=>after)
       rescue StandardError => error
         begin
@@ -23,12 +23,22 @@ module SUPipeProbe
     end
     def configure_camera(args,dry)
       perspective=args['perspective']; fail_command('invalid_arguments','perspective must be boolean') unless perspective==true || perspective==false
-      fail_command('invalid_arguments','Use FOV for perspective or height for orthographic projection') if perspective && args.key?('height_mm') || !perspective && args.key?('fov_degrees')
+      fail_command('invalid_arguments','Use FOV for perspective or height for orthographic projection') if perspective && args.key?('height_mm') || !perspective && (args.key?('fov_degrees') || args.key?('focal_length_mm'))
       eye,target,up=vector(args['eye_mm']),vector(args['target_mm']),unit(vector(args['up']))
       direction=unit(sub(target,eye)); fail_command('invalid_geometry','Up vector is parallel to view direction') if norm(cross(direction,up))<1e-6
+      fail_command('invalid_arguments','Choose FOV or focal_length_mm, not both') if args.key?('fov_degrees') && args.key?('focal_length_mm')
+      ratio=finite_number(args.fetch('aspect_ratio',@model.active_view.camera.aspect_ratio),0,10)
+      fail_command('invalid_arguments','Aspect ratio must be0(viewport) or0.1..10') if ratio>0 && ratio<0.1
+      image_width=finite_number(args.fetch('image_width_mm',@model.active_view.camera.respond_to?(:image_width) ? @model.active_view.camera.image_width.to_f : 0),0,1000)
+      focal=finite_number(args['focal_length_mm'],1,2000) if args.key?('focal_length_mm')
       fov=finite_number(args.fetch('fov_degrees',35),1,120)
       height=finite_number(args.fetch('height_mm',10000),1,1_000_000_000)
       desired=Sketchup::Camera.new(Geom::Point3d.new(eye.map { |x| x/25.4 }),Geom::Point3d.new(target.map { |x| x/25.4 }),Geom::Vector3d.new(up),perspective,fov)
+      desired.aspect_ratio=ratio
+      desired.image_width=image_width if desired.respond_to?(:image_width=)
+      desired.focal_length=focal if focal
+      # Coupled film-width/focal inputs must stay in the same restorable FOV range.
+      finite_number(desired.fov,1,120) if perspective
       desired.height=height/25.4 unless perspective
       apply_camera(desired,dry)
     end

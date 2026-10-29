@@ -24,6 +24,10 @@ module SUPipeProbe
       [entity,world]
     end
     def library_snapshot_data(args)
+      if args['query']=='face-texture/1'
+        target=NativeQueries.new(@model).texture_snapshot(args['instance_path'])
+        return {'snapshot'=>{'target'=>target,'entities'=>[target]},'fingerprint'=>'sha256:'+Digest::SHA256.hexdigest(JSON.generate(target))}
+      end
       kind=args['query']; raise ArgumentError,'Unsupported snapshot query' unless %w[target-summary/1 target-subtree/1].include?(kind)
       target,world=library_resolve(args['instance_path'])
       limit=args.fetch('max_entities',2048); raise ArgumentError,'Invalid snapshot entity budget' unless limit.is_a?(Integer) && limit.between?(1,2048)

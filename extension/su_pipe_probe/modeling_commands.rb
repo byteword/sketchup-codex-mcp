@@ -54,6 +54,17 @@ module SUPipeProbe
         e=@model.find_entity_by_persistent_id(id.to_i);editable([e])
         fail_command('shared_definition','Make all face ancestors unique before changing UV mapping') unless e.definition.instances.length==1
       end
+      action=args.fetch('action','position');fail_command('invalid_arguments','Unknown face texture action') unless %w[position clear].include?(action)
+      if action=='clear'
+        fail_command('invalid_arguments','Clear takes no material/mapping') if args.key?('material') || args.key?('mapping')
+        front=bool_option(args,'front',true);data=checked('dry_run'=>dry,'undoable'=>!dry,'instance_path'=>path,'front'=>front,'note'=>'Clears direct assignment; a parent material can become visible.')
+        return data if dry
+        return operation('Clear face material') do
+          front ? face.material=nil : face.back_material=nil
+          fail_command('postcondition_failed','Face material was not cleared') unless (front ? face.material : face.back_material).nil?
+          data
+        end
+      end
       material=material_value(args['material']);fail_command('invalid_material','Choose an existing textured material') unless material && material.texture
       front=bool_option(args,'front',true);pairs=args['mapping']
       fail_command('invalid_arguments','mapping needs1..4 point/UV pairs') unless pairs.is_a?(Array) && pairs.length.between?(1,4)
