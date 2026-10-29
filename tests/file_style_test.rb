@@ -18,6 +18,12 @@ class FileStyleTest < Minitest::Test
   def add_style(name)
     p=File.join(@dir,name+'.style');File.binwrite(p,'style fixture');style('load',{'path'=>p});@model.styles[name]
   end
+  def test_unsaved_copy_rejected_before_file_io_including_preview
+    [true,false].each { |dry| error('model_unsaved') { file('save_copy','unsaved.skp',{},dry) } }
+    assert_nil @model.file_call
+    assert_empty Dir.children(@dir)
+    assert_equal 0,@model.starts
+  end
   def test_2019_missing_style_path_and_gated_lifecycle
     r=SUPipeProbe::ResourceReader.new(@model).call('kind'=>'styles');assert_nil r['items'][0]['path']
     support=SUPipeProbe::NativeQueries.new(@model).call('query'=>'file_style_support','options'=>{})

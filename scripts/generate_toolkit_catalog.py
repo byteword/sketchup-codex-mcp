@@ -130,6 +130,8 @@ s['description']+=' purge_unused: confirm_model_wide=true, rejects pending style
 specs['sketchup_model_query']['schema']['properties']['query']['enum'].append('file_style_support')
 specs['sketchup_model_query']['description']+=' file_style_support: empty options, reports native Style APIs available on this installation and IFC option generation; translator availability/fidelity still requires real-file verification.'
 
+specs['sketchup_model_file']['description']+=' save_copy requires the model to have been saved once in SketchUp; model_unsaved is returned before native file I/O otherwise.'
+
 target=ROOT/'shared/ToolkitSchemas.json'
 target.write_text(json.dumps(specs,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 source=json.dumps(specs,ensure_ascii=True,separators=(',',':')).replace('"','""')

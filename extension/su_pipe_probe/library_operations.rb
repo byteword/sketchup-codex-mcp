@@ -30,7 +30,7 @@ module SUPipeProbe
       before=library_model_stamp if verify
       scope=UiUpdateScope.new(@model,@ui_updates || 'defer')
       result=scope.run(verify ? 'Verify typed library plans' : 'Apply typed library plan',verify) { checked(execute.call) }
-      fail_command('outcome_unknown','Typed plan verification failed to restore model stamp') if verify && library_model_stamp!=before
+      library_assert_restored(before) if verify
       result.merge('ui_update'=>scope.report)
     end
   end

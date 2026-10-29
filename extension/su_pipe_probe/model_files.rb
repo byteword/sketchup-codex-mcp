@@ -32,6 +32,7 @@ module SUPipeProbe
       else
         version=o.fetch('version','2019')
         fail_command('invalid_arguments','SKP copy version must be current or2019') unless %w[current 2019].include?(version)
+        fail_command('model_unsaved','Save the model once in SketchUp before save_copy; its current path will be preserved') if @model.path.to_s.empty?
       end
       data=checked('dry_run'=>dry,'action'=>action,'path'=>path,'undoable'=>!dry && action=='import_skp',
         'effect'=>input ? 'model_import' : 'file_output','options'=>o)

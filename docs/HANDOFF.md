@@ -1,5 +1,17 @@
 # 다른 컴퓨터에서 이어가기 — 2026-10-28
 
+## 최신 상태: 0.12.1 실기 발견 사항·진단 업데이트 — 2026-10-29
+
+E/main 기준, 로컬 커밋만 하고 푸시하지 않는다. 검사 복사본은 C의 `dist/validation-0.12.1`. 도구63개. [0.12 실제 결과와 남은 검사](MANUAL_RESULTS_0.12.0.md), [원시 기록](native-test-0.12.0-2026-10-29.json).
+
+사용자가 테스트 준비/허가를 확인했다. SketchUp Pro2020 20.0.363과0.12.0에서 suite all56/56 및 features2019 13/13 통과(46ms/20ms, cleanup true, modified false 유지, UI 경고0). 선택 SKP 왕복의 체적·면적/2D DXF/표시 JSON/스타일 로드·수정/전체 장면 A-B 복원/프리셋/텍스처 자원도 확인했다. 개별 Undo·전체 신규 범위를 통과했다고 보지 않는다.
+
+panel native verify command36은 `Library verification cleanup did not restore the model stamp`로 outcome_unknown. 명령 결과 조회로 확인 후 변경을 멈췄다. 모델 조회는 루트4/정의5/재질10/태그2/장면2·선택0이며 QA 시험물은 그대로 두었다. 사용자에게 앞서 저장 요청 대신 새 작은 시험 모델과 허가를 요청했다. 최초 panel verify의 command_id_conflict는 검사 진행 중 비동기 제출을 기다리지 않은 호출 순서 문제이며 후속은 완료를 기다렸다.
+
+0.12.1은 cleanup 비교를 완화하지 않고 changed_fields·제한된 추가/제거 ID와 bounds/modified 전후 차이를 error.details로 저장한다. 일반/typed plan 공통이며 결과 재조회도 보존한다. save_copy는 미저장 모델이면 model_unsaved로 사전 거부한다. 자동370개(Ruby288/2139 assertions 포함) 통과,5파일 패키지/42소스 일치와 내장 Jint 확인. **실제 연결 앱은0.12.0 유지,0.12.1 실기와 복구 원인 확인은 미완료다.**
+
+재개는0.12.1 설치·재시작과 새 모델/허가 확인 → 복구 차이 진단 → 원인 수정/검증 → 라이브러리 창·raw·terrain·face texture·Undo 및 IFC/CAD/분류 순서다. 이전 session/model/command ID를 재사용하지 않는다. 사용자 기존 작업을 덮어쓰거나 불확정 검사를 자동 반복하지 않는다. 출력 파일과 체크무늬 PNG는 C의 `dist/native-acceptance-0.12.0-20261029-1932`. QA 초안은 user의 `qa.native012-*-20261029`5개로 미활성 상태다.
+
 ## 최신 상태: 0.12.0 독립 파일·스타일 — 2026-10-29
 
 E: OneDrive 소스/main 기준. C의 `dist/validation-0.12.0`은 검사 복사본이다. 로컬 커밋만 하고 푸시하지 않는다. 도구63개. [0.12 계약·예시·남은 범위](FEATURES_0.12.0.md), [검증](VALIDATION.md), [배포](TEST_RELEASE.md).

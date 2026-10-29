@@ -1,4 +1,10 @@
-# SketchUp Local MCP Bridge 0.12.0 (시험 버전)
+# SketchUp Local MCP Bridge 0.12.1 (시험 버전)
+
+## 0.12.1: 실제 검사 결과와 복구 진단 보강
+
+실제 SketchUp2020/0.12.0에서 고정 검사69개와 선택 SKP·DXF·표시 설정·스타일·장면·텍스처 자원의 개별 실행을 확인했습니다. 라이브러리 native verify는 복구 stamp 불일치로 중단했습니다. [통과/실패/미실행 및 모델 상태](docs/MANUAL_RESULTS_0.12.0.md).
+
+0.12.1은 미저장 모델의 save_copy 사전 안내와 복구 불일치 세부 기록을 추가합니다. **복구 오류의 원인 해결이나 재시험 통과를 뜻하지 않습니다.** 자동370개 통과, 새 진단 설치 후 실제 확인은 대기 중입니다. [검증](docs/VALIDATION.md), [시험 배포](docs/TEST_RELEASE.md). 아래 내용은 이전 버전 이력입니다.
 
 ## 0.12.0: 선택 SKP·2D DXF·IFC와 스타일 관리
 

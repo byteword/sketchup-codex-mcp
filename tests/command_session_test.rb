@@ -102,6 +102,24 @@ class CommandSessionTest < Minitest::Test
     refute_equal id, @session.snapshot['next_command_id']
     assert command['ok']
   end
+  def test_unknown_cleanup_details_survive_result_lookup_without_reexecution
+    details={'changed_fields'=>['bounds'],'differences'=>{'bounds'=>{'before'=>nil,'after'=>[[0,0,0],[1,2,3]]}}}
+    @session.grant
+    @executor=lambda { |*_args| @calls<<:failed;raise SUPipeProbe::CommandError.new('outcome_unknown','Cleanup mismatch',details) }
+    first=command
+    assert_equal 'unknown',first['result']['state']
+    assert_equal details,first['result']['details']
+    @session.revoke
+    assert_equal first['result'],request('get_command_result','command_id'=>first['command_id'])['result']
+    assert_equal 1,@calls.length
+  end
+  def test_oversized_error_details_do_not_break_cached_failure
+    @session.grant
+    @executor=lambda { |*_args| raise SUPipeProbe::CommandError.new('outcome_unknown','Cleanup mismatch',{'large'=>'x'*5000}) }
+    result=command['result']
+    assert_equal 'unknown',result['state']
+    refute result.key?('details')
+  end
   def test_other_owner_is_rejected_and_only_matching_disconnect_revokes
     @session.grant
     command

@@ -142,6 +142,25 @@ module SUPipeProbe
        'selection'=>keys.call(@model.selection),'context'=>(@model.active_path || []).map { |e| e.persistent_id.to_s },
        'modified'=>@model.modified?,'bounds'=>box.empty? ? nil : [library_point(box.min),library_point(box.max)]}
     end
+    def library_assert_restored(before)
+      after=library_model_stamp
+      changed=before.keys.select { |key| before[key]!=after[key] }
+      return if changed.empty?
+      differences={}
+      changed.each do |key|
+        if %w[bounds modified].include?(key)
+          differences[key]={'before'=>before[key],'after'=>after[key]}
+        else
+          a,b=before[key],after[key];removed=a-b;added=b-a
+          differences[key]={'before_count'=>a.length,'after_count'=>b.length,
+            'removed'=>removed.first(2),'added'=>added.first(2),'truncated'=>removed.length>2 || added.length>2}
+        end
+      end
+      # Keep the strict unknown result. Diagnostics never waive cleanup checks
+      # or retry a model mutation; get_command_result preserves this evidence.
+      raise CommandError.new('outcome_unknown','Library verification cleanup changed: '+changed.join(','),
+        {'cleanup_verified'=>false,'changed_fields'=>changed,'differences'=>differences})
+    end
     def apply_library_plan(args,dry)
       if args['plans'].is_a?(Array) && !args['plans'].empty? && args['plans'].all? { |p| p.is_a?(Hash) && p['format_version']=='sketchup-operations/1' }
         return apply_operation_plans(args,dry)
@@ -253,7 +272,7 @@ module SUPipeProbe
         checked('dry_run'=>false,'verify_only'=>verify,'undoable'=>!verify,'created'=>created,'plans'=>reports,
                 'duration_ms'=>((window_clock-started)*1000).round(3),'cleanup_verified'=>verify)
       end
-      fail_command('outcome_unknown','Library verification cleanup did not restore the model stamp') if verify && library_model_stamp!=before
+      library_assert_restored(before) if verify
       data['cleanup_scope']=%w[root_entities definitions materials tags selection edit_context modified bounds] if verify
       data.merge('ui_update'=>scope.report)
     end

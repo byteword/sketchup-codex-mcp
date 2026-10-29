@@ -25,9 +25,9 @@ require_relative 'library_operations'
 
 module SUPipeProbe
   class CommandError < StandardError
-    attr_reader :code
-    def initialize(code, message)
-      @code = code
+    attr_reader :code, :details
+    def initialize(code, message, details=nil)
+      @code, @details = code, details
       super(message)
     end
   end

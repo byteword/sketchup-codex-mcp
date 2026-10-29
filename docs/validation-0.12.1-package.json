@@ -1,0 +1,16 @@
+{
+  "version": "0.12.1",
+  "runtime_file_count": 5,
+  "rbz_source_files": 42,
+  "source_bytes_match": true,
+  "checksums_match": true,
+  "embedded_worker_without_external_dlls": "passed",
+  "sha256": {
+    "SketchUpMcp.exe": "154d414feb1cd124811578653e6d88580af5613c96a55db21ba77fd820106322",
+    "SketchUpMcp.exe.config": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5",
+    "SketchUpPipeProbe.exe": "5a1aa743124f9749f63078ccb6d3208bd0a0c719d4c7fd5e751e1152f127c2f3",
+    "SketchUpPipeProbe.exe.config": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5",
+    "su_pipe_probe-0.12.1.rbz": "0213c7419043dd6948fb1e5aca336f4f4932c1e0f9c86309bc52437ab6c8acf3"
+  },
+  "native_sketchup_acceptance": "not_run"
+}

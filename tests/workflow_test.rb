@@ -54,9 +54,10 @@ class WorkflowTest < Minitest::Test
     call('style',{'action'=>'update','options'=>{'affect_all_uses'=>true},'dry_run'=>true});assert @model.styles.active_style_changed
   end
   def test_save_copy_no_overwrite_and_default2019
+    @model.define_singleton_method(:path) { "C:/saved-model.skp" }
     Dir.mktmpdir do |dir|
       path=File.join(dir,'copy.skp');r=call('model_file',{'action'=>'save_copy','path'=>path,'options'=>{}})
-      assert_equal [19],@model.file_call[1];assert_equal Digest::SHA256.file(path).hexdigest,r['sha256'];assert_equal '',@model.path
+      assert_equal [19],@model.file_call[1];assert_equal Digest::SHA256.file(path).hexdigest,r['sha256'];assert_equal 'C:/saved-model.skp',@model.path
       error('file_exists') { call('model_file',{'action'=>'save_copy','path'=>path,'options'=>{}}) }
       assert_equal ['copy.skp'],Dir.children(dir)
     end

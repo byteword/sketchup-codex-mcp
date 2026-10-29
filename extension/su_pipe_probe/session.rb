@@ -262,6 +262,9 @@ module SUPipeProbe
         code = error.is_a?(CommandError) ? error.code : 'api_error'
         result.merge!('state' => code == 'outcome_unknown' ? 'unknown' : 'failed',
           'error' => code, 'message' => error.message.to_s[0, 256])
+        if error.is_a?(CommandError) && error.details.is_a?(Hash) && JSON.generate(error.details).bytesize<=4096
+          result['details']=error.details
+        end
       end
       result['finished_at'] = Time.now.utc.iso8601(3)
       result = JSON.parse(JSON.generate(result))

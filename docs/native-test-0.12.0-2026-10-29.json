@@ -1,0 +1,3900 @@
+{
+  "date": "2026-10-29",
+  "installed_version": "0.12.0",
+  "ids": {
+    "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+    "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525"
+  },
+  "baseline": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"fd1064f7-3e52-404b-80a1-93308a70aad7\",\"ok\":true,\"status\":\"model_summary\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"data\":{\"queried_at\":\"2026-10-29T10:31:43.359Z\",\"measurement_unit\":\"mm\",\"model_units\":{\"length_unit_code\":2,\"length_unit\":\"mm\",\"length_format_code\":0,\"length_precision\":0},\"title\":\"\",\"path\":\"\",\"saved\":false,\"modified\":false,\"bounds\":{\"empty\":false,\"axes\":\"model_axes\",\"min\":[-67.623181,-181.923181,-0.683933],\"max\":[1007.423181,893.123181,1701.733117],\"size\":[1075.046363,1075.046363,1702.41705]},\"top_level_entities\":{\"total\":1,\"by_type\":{\"ComponentInstance\":1},\"scanned\":1,\"complete\":true,\"scope\":\"direct_children\"},\"collection_counts\":{\"tags\":1,\"materials\":8,\"definitions\":1,\"scenes\":0},\"selection_count\":0,\"edit_context\":{\"depth\":0,\"path\":[],\"path_truncated\":false,\"name_character_limit\":64},\"notes\":[\"Entity counts cover the model root only, including hidden objects. They do not recurse into definitions.\",\"Collection counts include unused entries. All numeric lengths and coordinates are millimeters.\",\"Bounds are bounding-box extents, not measured edges or usable floor dimensions.\"]}}"
+      }
+    ],
+    "isError": false
+  },
+  "all": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"0a926144-7479-46f0-8045-0592c03da029\",\"ok\":true,\"status\":\"command_completed\",\"command_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914:1\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"next_command_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914:2\",\"result\":{\"command_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914:1\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"command\":\"run_self_test\",\"expected_context\":[],\"finished_at\":\"2026-10-29T10:31:48.409Z\",\"state\":\"completed\",\"data\":{\"dry_run\":false,\"undoable\":false,\"suite\":\"all\",\"passed\":true,\"passed_count\":56,\"failed_count\":0,\"skipped_count\":0,\"checks\":[{\"name\":\"box\",\"status\":\"passed\"},{\"name\":\"rectangle\",\"status\":\"passed\"},{\"name\":\"circle\",\"status\":\"passed\"},{\"name\":\"polyline\",\"status\":\"passed\"},{\"name\":\"entity_info\",\"status\":\"passed\"},{\"name\":\"face_edge_metrics\",\"status\":\"passed\"},{\"name\":\"push_pull\",\"status\":\"passed\"},{\"name\":\"rotate\",\"status\":\"passed\"},{\"name\":\"scale\",\"status\":\"passed\"},{\"name\":\"move\",\"status\":\"passed\"},{\"name\":\"duplicate\",\"status\":\"passed\"},{\"name\":\"selection\",\"status\":\"passed\"},{\"name\":\"properties\",\"status\":\"passed\"},{\"name\":\"locked_rejection\",\"status\":\"passed\"},{\"name\":\"unlock\",\"status\":\"passed\"},{\"name\":\"erase\",\"status\":\"passed\"},{\"name\":\"group\",\"status\":\"passed\"},{\"name\":\"make_unique\",\"status\":\"passed\"},{\"name\":\"nested_query\",\"status\":\"passed\"},{\"name\":\"view_top\",\"status\":\"passed\"},{\"name\":\"view_front\",\"status\":\"passed\"},{\"name\":\"view_right\",\"status\":\"passed\"},{\"name\":\"view_isometric\",\"status\":\"passed\"},{\"name\":\"zoom\",\"status\":\"passed\"},{\"name\":\"polygon\",\"status\":\"passed\"},{\"name\":\"planar_face\",\"status\":\"passed\"},{\"name\":\"construction_points\",\"status\":\"passed\"},{\"name\":\"freehand\",\"status\":\"passed\"},{\"name\":\"bezier\",\"status\":\"passed\"},{\"name\":\"arc_center\",\"status\":\"passed\"},{\"name\":\"arc_two_point\",\"status\":\"passed\"},{\"name\":\"arc_three_point\",\"status\":\"passed\"},{\"name\":\"offset\",\"status\":\"passed\"},{\"name\":\"polyhedron\",\"status\":\"passed\"},{\"name\":\"revolution\",\"status\":\"passed\"},{\"name\":\"sweep\",\"status\":\"passed\"},{\"name\":\"component_convert\",\"status\":\"passed\"},{\"name\":\"component_instantiate\",\"status\":\"passed\"},{\"name\":\"component_replace\",\"status\":\"passed\"},{\"name\":\"shared_component_edit\",\"status\":\"passed\"},{\"name\":\"component_metadata\",\"status\":\"passed\"},{\"name\":\"component_explode\",\"status\":\"passed\"},{\"name\":\"raw_group\",\"status\":\"passed\"},{\"name\":\"raw_point_move\",\"status\":\"passed\"},{\"name\":\"raw_vertex_move\",\"status\":\"passed\"},{\"name\":\"raw_face_rebuild\",\"status\":\"passed\"},{\"name\":\"raw_reverse\",\"status\":\"passed\"},{\"name\":\"raw_properties\",\"status\":\"passed\"},{\"name\":\"smoothing\",\"status\":\"passed\"},{\"name\":\"surface_simplify\",\"status\":\"passed\"},{\"name\":\"material_lifecycle\",\"status\":\"passed\"},{\"name\":\"tag_lifecycle\",\"status\":\"passed\"},{\"name\":\"resource_query\",\"status\":\"passed\"},{\"name\":\"mirror\",\"status\":\"passed\"},{\"name\":\"camera_configure\",\"status\":\"passed\"},{\"name\":\"cleanup\",\"status\":\"passed\"}],\"duration_ms\":46,\"cleanup_verified\":true,\"ui_update\":{\"mode\":\"defer\",\"suppression_requested\":true,\"operation_closed\":true,\"view_redraw_requested\":true,\"inspectors_refresh_requested\":true,\"outliner_control\":\"operation_disable_ui\",\"outliner_visibility_changed\":false,\"warnings\":[]},\"modified_before\":false,\"modified_after\":false,\"individual_undo_tested\":false,\"model_lifecycle_tested\":false,\"notes\":[\"All edits were temporary and aborted in one operation. Individual command Undo, New/Open and permission revocation require separate acceptance tests.\"]}}}"
+      }
+    ],
+    "isError": false
+  },
+  "features2019": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"746104cd-e758-44a9-a95f-50ed702313ed\",\"ok\":true,\"status\":\"command_completed\",\"command_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914:2\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"next_command_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914:3\",\"result\":{\"command_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914:2\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"command\":\"run_self_test\",\"expected_context\":[],\"finished_at\":\"2026-10-29T10:31:54.130Z\",\"state\":\"completed\",\"data\":{\"dry_run\":false,\"undoable\":false,\"suite\":\"features2019\",\"passed\":true,\"passed_count\":13,\"failed_count\":0,\"skipped_count\":0,\"checks\":[{\"name\":\"raw_face\",\"status\":\"passed\"},{\"name\":\"raw_reuse\",\"status\":\"passed\"},{\"name\":\"raw_arc\",\"status\":\"passed\"},{\"name\":\"linear_dimension\",\"status\":\"passed\"},{\"name\":\"radial_dimension\",\"status\":\"passed\"},{\"name\":\"leader_text\",\"status\":\"passed\"},{\"name\":\"text3d\",\"status\":\"passed\"},{\"name\":\"section_state\",\"status\":\"passed\"},{\"name\":\"entity_attributes\",\"status\":\"passed\"},{\"name\":\"native_volume\",\"status\":\"passed\"},{\"name\":\"classify_face\",\"status\":\"passed\"},{\"name\":\"solid_subtract\",\"status\":\"passed\"},{\"name\":\"cleanup\",\"status\":\"passed\"}],\"duration_ms\":20,\"cleanup_verified\":true,\"ui_update\":{\"mode\":\"defer\",\"suppression_requested\":true,\"operation_closed\":true,\"view_redraw_requested\":true,\"inspectors_refresh_requested\":true,\"outliner_control\":\"operation_disable_ui\",\"outliner_visibility_changed\":false,\"warnings\":[]},\"modified_before\":false,\"modified_after\":false,\"individual_undo_tested\":false,\"model_lifecycle_tested\":false,\"notes\":[\"All edits were temporary and aborted in one operation. Individual command Undo, New/Open and permission revocation require separate acceptance tests.\"]}}}"
+      }
+    ],
+    "isError": false
+  },
+  "records": [
+    {
+      "name": "sketchup_model_query",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "query": "view_state",
+        "options": {}
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"8ba96c65-3fc8-4917-95b0-d1788d5a6664\",\"ok\":true,\"status\":\"model_query\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"data\":{\"rendering\":{\"ModelTransparency\":false,\"MaterialTransparency\":true,\"DrawHidden\":false,\"DrawBackEdges\":false,\"DisplaySectionPlanes\":false,\"DisplaySectionCuts\":true,\"SectionCutFilled\":true,\"DisplayColorByLayer\":false,\"DisplayDims\":true,\"DisplayText\":true,\"DisplaySketchAxes\":true,\"DrawGround\":false,\"DrawHorizon\":true,\"Texture\":true,\"DisplayFog\":false,\"BackgroundColor\":[204,204,201],\"SkyColor\":[198,205,208],\"GroundColor\":[210,208,185],\"FogColor\":[204,204,201],\"RenderMode\":2,\"EdgeDisplayMode\":1},\"shadows\":{\"DisplayShadows\":false,\"DisplayOnGroundPlane\":true,\"DisplayOnAllFaces\":true,\"UseSunForAllShading\":false,\"EdgesCastShadows\":false,\"DaylightSavings\":false,\"Light\":80,\"Dark\":45,\"Latitude\":37.5,\"Longitude\":127.0,\"TZOffset\":9.0,\"NorthAngle\":0.0,\"ShadowTime\":\"2026-11-08T13:30:00Z\"},\"camera\":{\"eye_mm\":[8224.054753,-7360.182895,3490.828636],\"target_mm\":[682.056533,3813.478919,77.292911],\"up\":[-0.13732942314234511,0.20345702643967736,0.9694049040167454],\"perspective\":true,\"fov_degrees\":35.0,\"aspect_ratio\":0.0,\"image_width_mm\":0.0},\"tags\":[{\"name\":\"Layer0\",\"visible\":true}],\"axes\":{\"origin_mm\":[0.0,0.0,0.0],\"xaxis\":[1.0,0.0,0.0],\"yaxis\":[0.0,1.0,0.0],\"zaxis\":[0.0,0.0,1.0]}}}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "name": "sketchup_get_resources",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "kind": "styles"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"1cccb01e-a3c7-46ae-b0df-61898a2ca422\",\"ok\":true,\"status\":\"resources\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"data\":{\"kind\":\"styles\",\"items\":[{\"name\":\"[Architectural Design Style]\",\"resource_id\":\"styles:3916\",\"description\":\"[Default face colors. Profile edges. Light blue sky and gray background color.]\",\"path\":null,\"selected\":true,\"active_style_changed\":false}],\"offset\":0,\"next_offset\":null,\"collection_length\":1,\"live_page\":true}}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "name": "sketchup_get_resources",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "kind": "materials"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"c6a1478e-87ce-47a3-a3df-10f85ae15334\",\"ok\":true,\"status\":\"resources\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"data\":{\"kind\":\"materials\",\"items\":[{\"name\":\"Laura_Skin\",\"resource_id\":\"materials:26\",\"color_rgb\":[210,184,168],\"alpha\":1.0,\"textured\":false},{\"name\":\"Laura_Pants\",\"resource_id\":\"materials:27\",\"color_rgb\":[40,61,76],\"alpha\":1.0,\"textured\":false},{\"name\":\"Laura_Shirt\",\"resource_id\":\"materials:28\",\"color_rgb\":[165,29,37],\"alpha\":1.0,\"textured\":false},{\"name\":\"Laura_Shoes\",\"resource_id\":\"materials:29\",\"color_rgb\":[147,103,74],\"alpha\":1.0,\"textured\":false},{\"name\":\"Laura_Shirt2\",\"resource_id\":\"materials:30\",\"color_rgb\":[87,18,22],\"alpha\":1.0,\"textured\":false},{\"name\":\"Laura_Belt\",\"resource_id\":\"materials:31\",\"color_rgb\":[95,75,62],\"alpha\":1.0,\"textured\":false},{\"name\":\"Laura_Hair\",\"resource_id\":\"materials:32\",\"color_rgb\":[160,135,94],\"alpha\":1.0,\"textured\":false},{\"name\":\"Laura_Glasses\",\"resource_id\":\"materials:33\",\"color_rgb\":[100,102,120],\"alpha\":1.0,\"textured\":false}],\"offset\":0,\"next_offset\":null,\"collection_length\":8,\"live_page\":true}}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "name": "sketchup_get_resources",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "kind": "scenes"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"54d06923-8f2b-44ae-bbf7-c68d0bb46620\",\"ok\":true,\"status\":\"resources\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"data\":{\"kind\":\"scenes\",\"items\":[],\"offset\":0,\"next_offset\":null,\"collection_length\":0,\"live_page\":true}}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "name": "sketchup_model_query",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "query": "classification",
+        "options": {}
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"89a50249-da98-4e0d-a64d-8eb9bf650f9d\",\"ok\":true,\"status\":\"model_query\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"data\":{\"items\":[{\"name\":\"IFC 2x3\",\"namespace\":\"http://www.iai-tech.org/ifcXML/IFC2x3/FINAL\"}],\"next_offset\":null,\"type_catalog_available\":false,\"note\":\"2019 public API lists schemas only; supply schema-defined type/property paths from its documentation.\"}}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "name": "sketchup_model_file",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "save_copy",
+        "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/baseline-2019.skp",
+        "options": {
+          "version": "2019"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:3"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "f2409e4f-9145-412e-a3f2-c06c393dd831",
+        "ok": false,
+        "status": "api_error",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:3",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:4",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:3",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "model_file",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:33:36.614Z",
+          "state": "failed",
+          "error": "api_error",
+          "message": "Model must be saved before copying."
+        }
+      }
+    },
+    {
+      "name": "sketchup_style",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "export_settings",
+        "options": {
+          "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/baseline-display.json",
+          "name": "Acceptance baseline",
+          "include_shadows": true
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:4"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "2934e143-43b8-4890-bf5d-206674bac8b6",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:4",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:5",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:4",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "style",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:34:30.435Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "effect": "file_output",
+            "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/baseline-display.json",
+            "fields": [
+              "rendering",
+              "shadows"
+            ],
+            "format_version": "probe-display/1",
+            "bytes": 1181,
+            "sha256": "2a0f4afc673f220e89b371d8b266fb67eddeb931a404e810428afdbd16abff2a"
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_configure_display",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "rendering": {
+          "BackgroundColor": [
+            90,
+            110,
+            130
+          ],
+          "Texture": false
+        },
+        "shadows": {
+          "Light": 65,
+          "Dark": 30
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:5"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "5870f300-8f0b-445d-8568-df7631261cfa",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:5",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:6",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:5",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "configure_display",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:34:33.491Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "effect": "display_state",
+            "before": {
+              "rendering": {
+                "ModelTransparency": false,
+                "MaterialTransparency": true,
+                "DrawHidden": false,
+                "DrawBackEdges": false,
+                "DisplaySectionPlanes": false,
+                "DisplaySectionCuts": true,
+                "SectionCutFilled": true,
+                "DisplayColorByLayer": false,
+                "DisplayDims": true,
+                "DisplayText": true,
+                "DisplaySketchAxes": true,
+                "DrawGround": false,
+                "DrawHorizon": true,
+                "Texture": true,
+                "DisplayFog": false,
+                "BackgroundColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "SkyColor": [
+                  198,
+                  205,
+                  208
+                ],
+                "GroundColor": [
+                  210,
+                  208,
+                  185
+                ],
+                "FogColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "RenderMode": 2,
+                "EdgeDisplayMode": 1
+              },
+              "shadows": {
+                "DisplayShadows": false,
+                "DisplayOnGroundPlane": true,
+                "DisplayOnAllFaces": true,
+                "UseSunForAllShading": false,
+                "EdgesCastShadows": false,
+                "DaylightSavings": false,
+                "Light": 80,
+                "Dark": 45,
+                "Latitude": 37.5,
+                "Longitude": 127,
+                "TZOffset": 9,
+                "NorthAngle": 0,
+                "ShadowTime": "2026-11-08T13:30:00Z"
+              }
+            },
+            "after": {
+              "rendering": {
+                "ModelTransparency": false,
+                "MaterialTransparency": true,
+                "DrawHidden": false,
+                "DrawBackEdges": false,
+                "DisplaySectionPlanes": false,
+                "DisplaySectionCuts": true,
+                "SectionCutFilled": true,
+                "DisplayColorByLayer": false,
+                "DisplayDims": true,
+                "DisplayText": true,
+                "DisplaySketchAxes": true,
+                "DrawGround": false,
+                "DrawHorizon": true,
+                "Texture": false,
+                "DisplayFog": false,
+                "BackgroundColor": [
+                  90,
+                  110,
+                  130
+                ],
+                "SkyColor": [
+                  198,
+                  205,
+                  208
+                ],
+                "GroundColor": [
+                  210,
+                  208,
+                  185
+                ],
+                "FogColor": [
+                  90,
+                  110,
+                  130
+                ],
+                "RenderMode": 2,
+                "EdgeDisplayMode": 1
+              },
+              "shadows": {
+                "DisplayShadows": false,
+                "DisplayOnGroundPlane": true,
+                "DisplayOnAllFaces": true,
+                "UseSunForAllShading": false,
+                "EdgesCastShadows": false,
+                "DaylightSavings": false,
+                "Light": 65,
+                "Dark": 30,
+                "Latitude": 37.5,
+                "Longitude": 127,
+                "TZOffset": 9,
+                "NorthAngle": 0,
+                "ShadowTime": "2026-11-08T13:30:00Z"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_style",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "import_settings",
+        "options": {
+          "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/baseline-display.json"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:6"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "189c47dc-4f19-4d5f-82c6-6d6442cdab2a",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:6",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:7",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:6",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "style",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:34:36.246Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "effect": "display_state",
+            "before": {
+              "rendering": {
+                "ModelTransparency": false,
+                "MaterialTransparency": true,
+                "DrawHidden": false,
+                "DrawBackEdges": false,
+                "DisplaySectionPlanes": false,
+                "DisplaySectionCuts": true,
+                "SectionCutFilled": true,
+                "DisplayColorByLayer": false,
+                "DisplayDims": true,
+                "DisplayText": true,
+                "DisplaySketchAxes": true,
+                "DrawGround": false,
+                "DrawHorizon": true,
+                "Texture": false,
+                "DisplayFog": false,
+                "BackgroundColor": [
+                  90,
+                  110,
+                  130
+                ],
+                "SkyColor": [
+                  198,
+                  205,
+                  208
+                ],
+                "GroundColor": [
+                  210,
+                  208,
+                  185
+                ],
+                "FogColor": [
+                  90,
+                  110,
+                  130
+                ],
+                "RenderMode": 2,
+                "EdgeDisplayMode": 1
+              },
+              "shadows": {
+                "DisplayShadows": false,
+                "DisplayOnGroundPlane": true,
+                "DisplayOnAllFaces": true,
+                "UseSunForAllShading": false,
+                "EdgesCastShadows": false,
+                "DaylightSavings": false,
+                "Light": 65,
+                "Dark": 30,
+                "Latitude": 37.5,
+                "Longitude": 127,
+                "TZOffset": 9,
+                "NorthAngle": 0,
+                "ShadowTime": "2026-11-08T13:30:00Z"
+              }
+            },
+            "after": {
+              "rendering": {
+                "ModelTransparency": false,
+                "MaterialTransparency": true,
+                "DrawHidden": false,
+                "DrawBackEdges": false,
+                "DisplaySectionPlanes": false,
+                "DisplaySectionCuts": true,
+                "SectionCutFilled": true,
+                "DisplayColorByLayer": false,
+                "DisplayDims": true,
+                "DisplayText": true,
+                "DisplaySketchAxes": true,
+                "DrawGround": false,
+                "DrawHorizon": true,
+                "Texture": true,
+                "DisplayFog": false,
+                "BackgroundColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "SkyColor": [
+                  198,
+                  205,
+                  208
+                ],
+                "GroundColor": [
+                  210,
+                  208,
+                  185
+                ],
+                "FogColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "RenderMode": 2,
+                "EdgeDisplayMode": 1
+              },
+              "shadows": {
+                "DisplayShadows": false,
+                "DisplayOnGroundPlane": true,
+                "DisplayOnAllFaces": true,
+                "UseSunForAllShading": false,
+                "EdgesCastShadows": false,
+                "DaylightSavings": false,
+                "Light": 80,
+                "Dark": 45,
+                "Latitude": 37.5,
+                "Longitude": 127,
+                "TZOffset": 9,
+                "NorthAngle": 0,
+                "ShadowTime": "2026-11-08T13:30:00Z"
+              }
+            },
+            "name": "Acceptance baseline",
+            "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/baseline-display.json",
+            "format_version": "probe-display/1",
+            "note": "Applies editable display settings; does not create, switch or commit a native Style. Textures/watermarks are not embedded."
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_create_box",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "name": "QA_012_File_Box",
+        "origin_mm": [
+          5000,
+          0,
+          0
+        ],
+        "size_mm": [
+          1000,
+          600,
+          400
+        ],
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:7"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "45ad977e-cfc2-471e-a5d6-71c984f79810",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:7",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:8",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:7",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "create_box",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:34:36.753Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "kind": "box",
+            "planned": {
+              "name": "QA_012_File_Box",
+              "origin_mm": [
+                5000,
+                0,
+                0
+              ],
+              "size_mm": [
+                1000,
+                600,
+                400
+              ],
+              "parent_path": []
+            },
+            "created": [
+              {
+                "persistent_id": "14947",
+                "model_origin_mm": [
+                  5000,
+                  0,
+                  0
+                ],
+                "type": "Group",
+                "name": {
+                  "value": "QA_012_File_Box",
+                  "truncated": false
+                },
+                "parent_path": [],
+                "instance_path": [
+                  "14947"
+                ],
+                "model_bounds": {
+                  "min": [
+                    5000,
+                    0,
+                    0
+                  ],
+                  "max": [
+                    6000,
+                    600,
+                    400
+                  ]
+                }
+              }
+            ],
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_model_file",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "export_selection_skp",
+        "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/selected-box.skp",
+        "options": {
+          "entity_ids": [
+            "14947"
+          ],
+          "coordinates": "first_local"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:8"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "81f28396-dc65-4563-9a32-93abebd9710c",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:8",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:9",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:8",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "model_file",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:34:59.622Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "effect": "file_output",
+            "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/selected-box.skp",
+            "coordinates": "first_local",
+            "source_ids": [
+              "14947"
+            ],
+            "skp_version": "current",
+            "note": "Exports one temporary wrapper containing component instances; originals and current selection remain unchanged.",
+            "model_unchanged": true,
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            },
+            "bytes": 11689,
+            "sha256": "a5a5689380ae11cca4e3be2dcf3e0a9a1a1ca75fab5bd88715912e146fa3dd16"
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_model_file",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "export_dxf2d",
+        "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/box-front.dxf",
+        "options": {
+          "entity_ids": [
+            "14947"
+          ],
+          "plane": "XZ",
+          "origin_mm": [
+            5000,
+            0,
+            0
+          ]
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:9"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "31c2b6c6-0819-45bd-8d33-fc131bcbe9ac",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:9",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:10",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:9",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "model_file",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:35:02.134Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "effect": "file_output",
+            "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/box-front.dxf",
+            "plane": "XZ",
+            "origin_mm": [
+              5000,
+              0,
+              0
+            ],
+            "line_count": 4,
+            "units": "mm",
+            "projection": "orthographic_wireframe",
+            "hidden_line_removal": false,
+            "section_clipping": false,
+            "layers": "all exported lines on0",
+            "bytes": 547,
+            "sha256": "9b4b2edee405c5b9514398aad1e594688b19b6819962abb85454ed09caa1dd67"
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_model_file",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "import_skp",
+        "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/selected-box.skp",
+        "options": {
+          "origin_mm": [
+            8000,
+            0,
+            0
+          ],
+          "name": "QA_012_SKP_Roundtrip"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:10"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "6370130a-baee-4806-ba0d-bad1c11b44ba",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:10",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:11",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:10",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "model_file",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:35:05.522Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "action": "import_skp",
+            "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/selected-box.skp",
+            "undoable": true,
+            "effect": "model_import",
+            "options": {
+              "origin_mm": [
+                8000,
+                0,
+                0
+              ],
+              "name": "QA_012_SKP_Roundtrip"
+            },
+            "created": [
+              {
+                "persistent_id": "15041",
+                "instance_path": [
+                  "15041"
+                ],
+                "type": "ComponentInstance"
+              }
+            ],
+            "definition_id": "definition:17976",
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_texture_resource",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "create_texture",
+        "name": "QA_012_Checker",
+        "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/checker.png",
+        "tile_size_mm": [
+          300,
+          600
+        ],
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:11"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "97fa9c95-81dc-4069-ba04-6f255f24365a",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:11",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:12",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:11",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "texture_resource",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:36:03.140Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "action": "create_texture",
+            "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/checker.png",
+            "scope": "new_material",
+            "item": {
+              "name": "QA_012_Checker",
+              "resource_id": "materials:17986",
+              "color_rgb": [
+                127,
+                127,
+                127
+              ],
+              "alpha": 1,
+              "textured": true,
+              "texture": {
+                "width_mm": 300,
+                "height_mm": 600,
+                "image_width": 128,
+                "image_height": 128,
+                "filename": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/checker.png"
+              }
+            },
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_draw_geometry",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "kind": "rectangle",
+        "grouping": "group",
+        "name": "QA_012_TexturePanel",
+        "options": {
+          "origin_mm": [
+            5000,
+            2000,
+            0
+          ],
+          "size_mm": [
+            1200,
+            900
+          ],
+          "plane": "XY"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:12"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "f40ed35c-eb60-4c07-83ff-12794afb7605",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:12",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:13",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:12",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "draw_geometry",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:36:08.264Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "kind": "rectangle",
+            "planned": {
+              "plane": "XY",
+              "size_mm": [
+                1200,
+                900
+              ],
+              "name": "QA_012_TexturePanel",
+              "origin_mm": [
+                5000,
+                2000,
+                0
+              ],
+              "parent_path": []
+            },
+            "created": [
+              {
+                "persistent_id": "15042",
+                "model_origin_mm": [
+                  5000,
+                  2000,
+                  0
+                ],
+                "type": "Group",
+                "name": {
+                  "value": "QA_012_TexturePanel",
+                  "truncated": false
+                },
+                "parent_path": [],
+                "instance_path": [
+                  "15042"
+                ],
+                "model_bounds": {
+                  "min": [
+                    5000,
+                    2000,
+                    0
+                  ],
+                  "max": [
+                    6200,
+                    2900,
+                    0
+                  ]
+                }
+              }
+            ],
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "library_get_bulk",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"ok\":false,\"effect\":\"none\",\"error\":{\"code\":\"budget_exceeded\",\"message\":\"JSON byte budget exceeded\",\"path\":\"\",\"retry\":\"never\"}}"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "name": "sketchup_face_texture",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "instance_path": [
+          "15042",
+          "15051"
+        ],
+        "front": true,
+        "material": "QA_012_Checker",
+        "mapping": [
+          {
+            "point_mm": [
+              5000,
+              2000,
+              0
+            ],
+            "uv": [
+              0,
+              0
+            ]
+          },
+          {
+            "point_mm": [
+              5300,
+              2000,
+              0
+            ],
+            "uv": [
+              1,
+              0
+            ]
+          },
+          {
+            "point_mm": [
+              5000,
+              2600,
+              0
+            ],
+            "uv": [
+              0,
+              1
+            ]
+          }
+        ],
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:13"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "8bef7725-d0e7-4040-9a02-590461fa962c",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:13",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:14",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:13",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "face_texture",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:37:26.513Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "instance_path": [
+              "15042",
+              "15051"
+            ],
+            "front": true,
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "model_query",
+      "query": "face_texture",
+      "options": {
+        "instance_path": [
+          "15042",
+          "15051"
+        ]
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "a8267ef5-c38c-4ef6-8de4-edba55ecd2a7",
+        "ok": true,
+        "status": "model_query",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "data": {
+          "instance_path": [
+            "15042",
+            "15051"
+          ],
+          "type": "Face",
+          "frame": {
+            "origin_mm": [
+              5000,
+              2000,
+              0
+            ],
+            "u": [
+              1,
+              0,
+              0
+            ],
+            "v": [
+              0,
+              1,
+              0
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "width_mm": 1200,
+            "height_mm": 900
+          },
+          "points_mm": [
+            [
+              5000,
+              2000,
+              0
+            ],
+            [
+              6200,
+              2000,
+              0
+            ],
+            [
+              6200,
+              2900,
+              0
+            ],
+            [
+              5000,
+              2900,
+              0
+            ]
+          ],
+          "sides": {
+            "front": {
+              "material": "QA_012_Checker",
+              "texture": {
+                "width_mm": 300,
+                "height_mm": 600,
+                "image_width": 128,
+                "image_height": 128,
+                "filename": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/checker.png"
+              },
+              "uv": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  3.999999999999995,
+                  0
+                ],
+                [
+                  3.999999999999995,
+                  1.5
+                ],
+                [
+                  0,
+                  1.5
+                ]
+              ]
+            },
+            "back": {
+              "material": null,
+              "texture": null,
+              "uv": null
+            }
+          },
+          "ancestors": [
+            {
+              "id": "15042",
+              "locked": false,
+              "instances": 1,
+              "transform": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                196.8503937007874,
+                78.74015748031496,
+                0,
+                1
+              ]
+            }
+          ],
+          "loops_mm": [
+            [
+              [
+                5000,
+                2000,
+                0
+              ],
+              [
+                6200,
+                2000,
+                0
+              ],
+              [
+                6200,
+                2900,
+                0
+              ],
+              [
+                5000,
+                2900,
+                0
+              ]
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "sketchup_texture_resource",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "copy",
+        "source_name": "QA_012_Checker",
+        "name": "QA_012_CheckerCopy",
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:14"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "1995cdab-c991-412d-ab0c-5d4d95662bb8",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:14",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:15",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:14",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "texture_resource",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:37:29.199Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "action": "copy",
+            "path": null,
+            "scope": "new_material",
+            "item": {
+              "name": "QA_012_CheckerCopy",
+              "resource_id": "materials:18018",
+              "color_rgb": [
+                127,
+                127,
+                127
+              ],
+              "alpha": 1,
+              "textured": true,
+              "texture": {
+                "width_mm": 300,
+                "height_mm": 600,
+                "image_width": 128,
+                "image_height": 128,
+                "filename": ""
+              }
+            },
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_texture_resource",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "replace_image",
+        "name": "QA_012_CheckerCopy",
+        "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/checker-red.png",
+        "affect_all_uses": true,
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:15"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "e4a0aa3c-36a2-4d6b-a8b5-fffc5fb937bd",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:15",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:16",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:15",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "texture_resource",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:37:32.201Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "action": "replace_image",
+            "path": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/checker-red.png",
+            "scope": "all_material_uses",
+            "item": {
+              "name": "QA_012_CheckerCopy",
+              "resource_id": "materials:18018",
+              "color_rgb": [
+                255,
+                127,
+                127
+              ],
+              "alpha": 1,
+              "textured": true,
+              "texture": {
+                "width_mm": 300,
+                "height_mm": 600,
+                "image_width": 128,
+                "image_height": 128,
+                "filename": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/checker-red.png"
+              }
+            },
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_texture_resource",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "set_size",
+        "name": "QA_012_CheckerCopy",
+        "tile_size_mm": [
+          150,
+          200
+        ],
+        "affect_all_uses": true,
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:16"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "b4a50790-cd7d-47ef-81be-0e439241f44e",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:16",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:17",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:16",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "texture_resource",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:37:35.640Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "action": "set_size",
+            "path": null,
+            "scope": "all_material_uses",
+            "item": {
+              "name": "QA_012_CheckerCopy",
+              "resource_id": "materials:18018",
+              "color_rgb": [
+                255,
+                127,
+                127
+              ],
+              "alpha": 1,
+              "textured": true,
+              "texture": {
+                "width_mm": 150,
+                "height_mm": 200,
+                "image_width": 128,
+                "image_height": 128,
+                "filename": "C:/Users/bytew/Documents/ChatGPT/sketchup-codex-mcp/dist/native-acceptance-0.12.0-20261029-1932/checker-red.png"
+              }
+            },
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_texture_resource",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "remove_image",
+        "name": "QA_012_CheckerCopy",
+        "affect_all_uses": true,
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:17"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "ca8ced1b-1118-43cd-ad61-f86d01b650b4",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:17",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:18",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:17",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "texture_resource",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:37:38.452Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "action": "remove_image",
+            "path": null,
+            "scope": "all_material_uses",
+            "item": {
+              "name": "QA_012_CheckerCopy",
+              "resource_id": "materials:18018",
+              "color_rgb": [
+                255,
+                127,
+                127
+              ],
+              "alpha": 1,
+              "textured": false
+            },
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_style",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "load",
+        "options": {
+          "path": "C:/ProgramData/SketchUp/SketchUp 2020/SketchUp/Styles/Default Styles/02HiddenLine.style",
+          "select": false
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:18"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "7fd0717c-e142-41fa-acfa-8ba2d7c98824",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:18",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:19",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:18",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "style",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:39:02.204Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "action": "load",
+            "effect": "native_style",
+            "path": "C:/ProgramData/SketchUp/SketchUp 2020/SketchUp/Styles/Default Styles/02HiddenLine.style",
+            "item": {
+              "name": "[HiddenLine]",
+              "resource_id": "styles:18021",
+              "description": "[Hidden line facestyle. White background.]",
+              "path": null,
+              "selected": false,
+              "active_style_changed": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_manage_resource",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "kind": "tags",
+        "action": "create",
+        "options": {
+          "name": "QA_012_Tag",
+          "visible": true
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:19"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "fa0704ea-d43a-4f79-8f22-65013d8448db",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:19",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:20",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:19",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "manage_resource",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:39:54.583Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "kind": "tags",
+            "action": "create",
+            "before_count": 1,
+            "item": {
+              "name": "QA_012_Tag",
+              "resource_id": "tags:18024",
+              "visible": true,
+              "default": false,
+              "active": false,
+              "line_style": null
+            },
+            "after_count": 2,
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_style",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "metadata",
+        "options": {
+          "name": "[HiddenLine]",
+          "new_name": "QA_012_Hidden",
+          "description": "Native acceptance style",
+          "affect_all_uses": true
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:20"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "4d1ce5d7-4b2c-41be-81f7-76fdf56d9817",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:20",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:21",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:20",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "style",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:39:57.751Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "action": "metadata",
+            "effect": "native_style",
+            "path": null,
+            "item": {
+              "name": "QA_012_Hidden",
+              "resource_id": "styles:18021",
+              "description": "Native acceptance style",
+              "path": null,
+              "selected": false,
+              "active_style_changed": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_scene",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "create",
+        "name": "QA_012_A",
+        "options": {
+          "scope": "full",
+          "transition_seconds": 1.25,
+          "delay_seconds": 2,
+          "include_in_animation": false
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:21"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "7eaf1789-a746-4ecf-8161-42bb27aa2cea",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:21",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:22",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:21",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "scene",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:00.941Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "scope": "full",
+            "action": "create",
+            "name": "QA_012_A",
+            "note": "Native2019 scene state/metadata is not reliably Undoable. On failure inspect before retry.",
+            "item": {
+              "name": "QA_012_A",
+              "resource_id": "scenes:18026",
+              "saved_properties": [
+                "camera",
+                "axes",
+                "hidden",
+                "hidden_layers",
+                "rendering_options",
+                "section_planes",
+                "shadow_info",
+                "style"
+              ],
+              "selected": true,
+              "style_name": "[Architectural Design Style]",
+              "transition_seconds": 1.25,
+              "delay_seconds": 2,
+              "include_in_animation": false,
+              "description": "",
+              "use_camera": true,
+              "camera_only": false,
+              "camera": {
+                "eye_mm": [
+                  8224.054752775317,
+                  -7360.182894670983,
+                  3490.8286356333106
+                ],
+                "target_mm": [
+                  682.0565330729603,
+                  3813.478918525935,
+                  77.29291067809987
+                ],
+                "perspective": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_style",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "select",
+        "options": {
+          "name": "QA_012_Hidden"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:22"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "a73def12-8cd1-4a94-b164-69f270bf7d85",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:22",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:23",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:22",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "style",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:03.938Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "action": "select",
+            "effect": "native_style",
+            "path": null,
+            "item": {
+              "name": "QA_012_Hidden",
+              "resource_id": "styles:18021",
+              "description": "Native acceptance style",
+              "path": null,
+              "selected": true,
+              "active_style_changed": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_view_preset",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "save",
+        "name": "QA_012_Preset",
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:23"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "4f23754c-af1c-4709-89e0-10cd753fceeb",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:23",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:24",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:23",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "view_preset",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:09.333Z",
+          "state": "completed",
+          "data": {
+            "action": "save",
+            "name": "QA_012_Preset",
+            "dry_run": false,
+            "undoable": true,
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_view_preset",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "apply",
+        "state": {
+          "axes": {
+            "origin_mm": [
+              100,
+              200,
+              300
+            ],
+            "xaxis": [
+              0,
+              1,
+              0
+            ],
+            "yaxis": [
+              -1,
+              0,
+              0
+            ],
+            "zaxis": [
+              0,
+              0,
+              1
+            ]
+          },
+          "tags": [
+            {
+              "name": "QA_012_Tag",
+              "visible": false
+            }
+          ],
+          "camera": {
+            "eye_mm": [
+              7500,
+              -4500,
+              5000
+            ],
+            "target_mm": [
+              5500,
+              1500,
+              0
+            ],
+            "up": [
+              0,
+              0,
+              1
+            ],
+            "perspective": false,
+            "height_mm": 6000,
+            "aspect_ratio": 1.6
+          },
+          "shadows": {
+            "DisplayShadows": true,
+            "Light": 70,
+            "Dark": 20
+          },
+          "rendering": {
+            "BackgroundColor": [
+              240,
+              230,
+              220
+            ]
+          }
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:24"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "2dda256f-4319-4d93-9dbd-e425858a026f",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:24",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:25",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:24",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "view_preset",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:12.136Z",
+          "state": "completed",
+          "data": {
+            "action": "apply",
+            "name": null,
+            "dry_run": false,
+            "undoable": false,
+            "effect": "view_state",
+            "before": {
+              "rendering": {
+                "ModelTransparency": false,
+                "MaterialTransparency": true,
+                "DrawHidden": false,
+                "DrawBackEdges": false,
+                "DisplaySectionPlanes": false,
+                "DisplaySectionCuts": true,
+                "SectionCutFilled": true,
+                "DisplayColorByLayer": false,
+                "DisplayDims": true,
+                "DisplayText": true,
+                "DisplaySketchAxes": true,
+                "DrawGround": false,
+                "DrawHorizon": false,
+                "Texture": true,
+                "DisplayFog": false,
+                "BackgroundColor": [
+                  255,
+                  255,
+                  255
+                ],
+                "SkyColor": [
+                  189,
+                  209,
+                  208
+                ],
+                "GroundColor": [
+                  210,
+                  208,
+                  185
+                ],
+                "FogColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "RenderMode": 1,
+                "EdgeDisplayMode": 1
+              },
+              "shadows": {
+                "DisplayShadows": false,
+                "DisplayOnGroundPlane": true,
+                "DisplayOnAllFaces": true,
+                "UseSunForAllShading": false,
+                "EdgesCastShadows": false,
+                "DaylightSavings": false,
+                "Light": 80,
+                "Dark": 45,
+                "Latitude": 37.5,
+                "Longitude": 127,
+                "TZOffset": 9,
+                "NorthAngle": 0,
+                "ShadowTime": "2026-11-08T13:30:00Z"
+              },
+              "camera": {
+                "eye_mm": [
+                  8224.054753,
+                  -7360.182895,
+                  3490.828636
+                ],
+                "target_mm": [
+                  682.056533,
+                  3813.478919,
+                  77.292911
+                ],
+                "up": [
+                  -0.13732942314234511,
+                  0.20345702643967736,
+                  0.9694049040167454
+                ],
+                "perspective": true,
+                "fov_degrees": 35,
+                "aspect_ratio": 0,
+                "image_width_mm": 0
+              },
+              "tags": [
+                {
+                  "name": "Layer0",
+                  "visible": true
+                },
+                {
+                  "name": "QA_012_Tag",
+                  "visible": true
+                }
+              ],
+              "axes": {
+                "origin_mm": [
+                  0,
+                  0,
+                  0
+                ],
+                "xaxis": [
+                  1,
+                  0,
+                  0
+                ],
+                "yaxis": [
+                  0,
+                  1,
+                  0
+                ],
+                "zaxis": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            },
+            "after": {
+              "rendering": {
+                "ModelTransparency": false,
+                "MaterialTransparency": true,
+                "DrawHidden": false,
+                "DrawBackEdges": false,
+                "DisplaySectionPlanes": false,
+                "DisplaySectionCuts": true,
+                "SectionCutFilled": true,
+                "DisplayColorByLayer": false,
+                "DisplayDims": true,
+                "DisplayText": true,
+                "DisplaySketchAxes": true,
+                "DrawGround": false,
+                "DrawHorizon": false,
+                "Texture": true,
+                "DisplayFog": false,
+                "BackgroundColor": [
+                  240,
+                  230,
+                  220
+                ],
+                "SkyColor": [
+                  189,
+                  209,
+                  208
+                ],
+                "GroundColor": [
+                  210,
+                  208,
+                  185
+                ],
+                "FogColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "RenderMode": 1,
+                "EdgeDisplayMode": 1
+              },
+              "shadows": {
+                "DisplayShadows": true,
+                "DisplayOnGroundPlane": true,
+                "DisplayOnAllFaces": true,
+                "UseSunForAllShading": false,
+                "EdgesCastShadows": false,
+                "DaylightSavings": false,
+                "Light": 70,
+                "Dark": 20,
+                "Latitude": 37.5,
+                "Longitude": 127,
+                "TZOffset": 9,
+                "NorthAngle": 0,
+                "ShadowTime": "2026-11-08T13:30:00Z"
+              },
+              "camera": {
+                "eye_mm": [
+                  7500,
+                  -4500,
+                  5000
+                ],
+                "target_mm": [
+                  5500,
+                  1500,
+                  0
+                ],
+                "up": [
+                  -0.196116135138184,
+                  0.5883484054145522,
+                  0.7844645405527362
+                ],
+                "perspective": false,
+                "height_mm": 6000,
+                "aspect_ratio": 1.6,
+                "image_width_mm": 0
+              },
+              "tags": [
+                {
+                  "name": "Layer0",
+                  "visible": true
+                },
+                {
+                  "name": "QA_012_Tag",
+                  "visible": false
+                }
+              ],
+              "axes": {
+                "origin_mm": [
+                  100,
+                  200,
+                  300
+                ],
+                "xaxis": [
+                  0,
+                  1,
+                  0
+                ],
+                "yaxis": [
+                  -1,
+                  0,
+                  0
+                ],
+                "zaxis": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_style",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "update",
+        "options": {
+          "affect_all_uses": true
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:25"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "956315df-0937-4ee9-b3f9-4c9c96a2071c",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:25",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:26",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:25",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "style",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:15.376Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "action": "update",
+            "effect": "native_style",
+            "path": null,
+            "item": {
+              "name": "QA_012_Hidden",
+              "resource_id": "styles:18021",
+              "description": "Native acceptance style",
+              "path": null,
+              "selected": true,
+              "active_style_changed": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_update_entity_properties",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "entity_ids": [
+          "14947"
+        ],
+        "properties": {
+          "hidden": true
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:26"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "c0e15d07-561d-4361-ac58-ba7d05ee14fc",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:26",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:27",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:26",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "update_entity_properties",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:15.776Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": true,
+            "before": [
+              {
+                "persistent_id": "14947",
+                "properties": {
+                  "hidden": false
+                }
+              }
+            ],
+            "planned": {
+              "hidden": true
+            },
+            "after": [
+              {
+                "persistent_id": "14947",
+                "properties": {
+                  "hidden": true
+                }
+              }
+            ],
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_scene",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "create",
+        "name": "QA_012_B",
+        "options": {
+          "scope": "full",
+          "transition_seconds": 2.5,
+          "delay_seconds": 3,
+          "include_in_animation": true
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:27"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "e829c19f-fcec-4b10-972e-d9515e4530cb",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:27",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:28",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:27",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "scene",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:18.564Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "scope": "full",
+            "action": "create",
+            "name": "QA_012_B",
+            "note": "Native2019 scene state/metadata is not reliably Undoable. On failure inspect before retry.",
+            "item": {
+              "name": "QA_012_B",
+              "resource_id": "scenes:18035",
+              "saved_properties": [
+                "camera",
+                "axes",
+                "hidden",
+                "hidden_layers",
+                "rendering_options",
+                "section_planes",
+                "shadow_info",
+                "style"
+              ],
+              "selected": true,
+              "style_name": "QA_012_Hidden",
+              "transition_seconds": 2.5,
+              "delay_seconds": 3,
+              "include_in_animation": true,
+              "description": "",
+              "use_camera": true,
+              "camera_only": false,
+              "camera": {
+                "eye_mm": [
+                  7499.999999999999,
+                  -4500,
+                  5000
+                ],
+                "target_mm": [
+                  5500,
+                  1500,
+                  0
+                ],
+                "perspective": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "model_query",
+      "query": "view_state",
+      "options": {},
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "115a9b42-1621-4068-b118-7dc1db715761",
+        "ok": true,
+        "status": "model_query",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "data": {
+          "rendering": {
+            "ModelTransparency": false,
+            "MaterialTransparency": true,
+            "DrawHidden": false,
+            "DrawBackEdges": false,
+            "DisplaySectionPlanes": false,
+            "DisplaySectionCuts": true,
+            "SectionCutFilled": true,
+            "DisplayColorByLayer": false,
+            "DisplayDims": true,
+            "DisplayText": true,
+            "DisplaySketchAxes": true,
+            "DrawGround": false,
+            "DrawHorizon": false,
+            "Texture": true,
+            "DisplayFog": false,
+            "BackgroundColor": [
+              240,
+              230,
+              220
+            ],
+            "SkyColor": [
+              189,
+              209,
+              208
+            ],
+            "GroundColor": [
+              210,
+              208,
+              185
+            ],
+            "FogColor": [
+              204,
+              204,
+              201
+            ],
+            "RenderMode": 1,
+            "EdgeDisplayMode": 1
+          },
+          "shadows": {
+            "DisplayShadows": true,
+            "DisplayOnGroundPlane": true,
+            "DisplayOnAllFaces": true,
+            "UseSunForAllShading": false,
+            "EdgesCastShadows": false,
+            "DaylightSavings": false,
+            "Light": 70,
+            "Dark": 20,
+            "Latitude": 37.5,
+            "Longitude": 127,
+            "TZOffset": 9,
+            "NorthAngle": 0,
+            "ShadowTime": "2026-11-08T13:30:00Z"
+          },
+          "camera": {
+            "eye_mm": [
+              7500,
+              -4500,
+              5000
+            ],
+            "target_mm": [
+              5500,
+              1500,
+              0
+            ],
+            "up": [
+              -0.196116135138184,
+              0.5883484054145522,
+              0.7844645405527362
+            ],
+            "perspective": false,
+            "height_mm": 6000,
+            "aspect_ratio": 1.6,
+            "image_width_mm": 0
+          },
+          "tags": [
+            {
+              "name": "Layer0",
+              "visible": true
+            },
+            {
+              "name": "QA_012_Tag",
+              "visible": false
+            }
+          ],
+          "axes": {
+            "origin_mm": [
+              100,
+              200,
+              300
+            ],
+            "xaxis": [
+              0,
+              1,
+              0
+            ],
+            "yaxis": [
+              -1,
+              0,
+              0
+            ],
+            "zaxis": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_scene",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "apply",
+        "name": "QA_012_A",
+        "options": {
+          "scope": "full"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:28"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "eef601fd-23f9-4bef-9279-f30d91cf1505",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:28",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:29",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:28",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "scene",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:33.632Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "scope": "full",
+            "action": "apply",
+            "name": "QA_012_A",
+            "note": "Native2019 scene state/metadata is not reliably Undoable. On failure inspect before retry.",
+            "selected_scene": "QA_012_A",
+            "verification": "native_selection_acknowledged; inspect view_state for resulting view"
+          }
+        }
+      }
+    },
+    {
+      "name": "model_query",
+      "query": "view_state",
+      "options": {},
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "bc93aec1-bb6e-43a9-b11c-dd81b1ea2226",
+        "ok": true,
+        "status": "model_query",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "data": {
+          "rendering": {
+            "ModelTransparency": false,
+            "MaterialTransparency": true,
+            "DrawHidden": false,
+            "DrawBackEdges": false,
+            "DisplaySectionPlanes": false,
+            "DisplaySectionCuts": true,
+            "SectionCutFilled": true,
+            "DisplayColorByLayer": false,
+            "DisplayDims": true,
+            "DisplayText": true,
+            "DisplaySketchAxes": true,
+            "DrawGround": false,
+            "DrawHorizon": true,
+            "Texture": true,
+            "DisplayFog": false,
+            "BackgroundColor": [
+              204,
+              204,
+              201
+            ],
+            "SkyColor": [
+              198,
+              205,
+              208
+            ],
+            "GroundColor": [
+              210,
+              208,
+              185
+            ],
+            "FogColor": [
+              204,
+              204,
+              201
+            ],
+            "RenderMode": 2,
+            "EdgeDisplayMode": 1
+          },
+          "shadows": {
+            "DisplayShadows": false,
+            "DisplayOnGroundPlane": true,
+            "DisplayOnAllFaces": true,
+            "UseSunForAllShading": false,
+            "EdgesCastShadows": false,
+            "DaylightSavings": false,
+            "Light": 80,
+            "Dark": 45,
+            "Latitude": 37.5,
+            "Longitude": 127,
+            "TZOffset": 9,
+            "NorthAngle": 0,
+            "ShadowTime": "2026-11-08T13:30:00Z"
+          },
+          "camera": {
+            "eye_mm": [
+              8224.054753,
+              -7360.182895,
+              3490.828636
+            ],
+            "target_mm": [
+              682.056533,
+              3813.478919,
+              77.292911
+            ],
+            "up": [
+              -0.13732942314234511,
+              0.20345702643967736,
+              0.9694049040167454
+            ],
+            "perspective": true,
+            "fov_degrees": 35,
+            "aspect_ratio": 0,
+            "image_width_mm": 0
+          },
+          "tags": [
+            {
+              "name": "Layer0",
+              "visible": true
+            },
+            {
+              "name": "QA_012_Tag",
+              "visible": true
+            }
+          ],
+          "axes": {
+            "origin_mm": [
+              0,
+              0,
+              0
+            ],
+            "xaxis": [
+              1,
+              0,
+              0
+            ],
+            "yaxis": [
+              0,
+              1,
+              0
+            ],
+            "zaxis": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_scene",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "apply",
+        "name": "QA_012_B",
+        "options": {
+          "scope": "full"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:29"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "501f820d-76b1-4eec-8bb2-af5472ba770e",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:29",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:30",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:29",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "scene",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:40:36.692Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "scope": "full",
+            "action": "apply",
+            "name": "QA_012_B",
+            "note": "Native2019 scene state/metadata is not reliably Undoable. On failure inspect before retry.",
+            "selected_scene": "QA_012_B",
+            "verification": "native_selection_acknowledged; inspect view_state for resulting view"
+          }
+        }
+      }
+    },
+    {
+      "name": "model_query",
+      "query": "view_state",
+      "options": {},
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "fccd6ada-7feb-4990-b41e-06e717e79992",
+        "ok": true,
+        "status": "model_query",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "data": {
+          "rendering": {
+            "ModelTransparency": false,
+            "MaterialTransparency": true,
+            "DrawHidden": false,
+            "DrawBackEdges": false,
+            "DisplaySectionPlanes": false,
+            "DisplaySectionCuts": true,
+            "SectionCutFilled": true,
+            "DisplayColorByLayer": false,
+            "DisplayDims": true,
+            "DisplayText": true,
+            "DisplaySketchAxes": true,
+            "DrawGround": false,
+            "DrawHorizon": false,
+            "Texture": true,
+            "DisplayFog": false,
+            "BackgroundColor": [
+              240,
+              230,
+              220
+            ],
+            "SkyColor": [
+              189,
+              209,
+              208
+            ],
+            "GroundColor": [
+              210,
+              208,
+              185
+            ],
+            "FogColor": [
+              204,
+              204,
+              201
+            ],
+            "RenderMode": 1,
+            "EdgeDisplayMode": 1
+          },
+          "shadows": {
+            "DisplayShadows": true,
+            "DisplayOnGroundPlane": true,
+            "DisplayOnAllFaces": true,
+            "UseSunForAllShading": false,
+            "EdgesCastShadows": false,
+            "DaylightSavings": false,
+            "Light": 70,
+            "Dark": 20,
+            "Latitude": 37.5,
+            "Longitude": 127,
+            "TZOffset": 9,
+            "NorthAngle": 0,
+            "ShadowTime": "2026-11-08T13:30:00Z"
+          },
+          "camera": {
+            "eye_mm": [
+              7500,
+              -4500,
+              5000
+            ],
+            "target_mm": [
+              5500,
+              1500,
+              0
+            ],
+            "up": [
+              -0.196116135138184,
+              0.5883484054145522,
+              0.7844645405527362
+            ],
+            "perspective": false,
+            "height_mm": 6000,
+            "aspect_ratio": 1.6,
+            "image_width_mm": 0
+          },
+          "tags": [
+            {
+              "name": "Layer0",
+              "visible": true
+            },
+            {
+              "name": "QA_012_Tag",
+              "visible": false
+            }
+          ],
+          "axes": {
+            "origin_mm": [
+              100,
+              200,
+              300
+            ],
+            "xaxis": [
+              0,
+              1,
+              0
+            ],
+            "yaxis": [
+              -1,
+              0,
+              0
+            ],
+            "zaxis": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_scene",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "apply",
+        "name": "QA_012_A",
+        "options": {
+          "scope": "full"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:30"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "398c16b2-dd90-4fe6-b240-b028baecf517",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:30",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:31",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:30",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "scene",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:41:18.252Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "scope": "full",
+            "action": "apply",
+            "name": "QA_012_A",
+            "note": "Native2019 scene state/metadata is not reliably Undoable. On failure inspect before retry.",
+            "selected_scene": "QA_012_A",
+            "verification": "native_selection_acknowledged; inspect view_state for resulting view"
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_view_preset",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "apply",
+        "name": "QA_012_Preset",
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:31"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "e2774626-d917-400b-9b04-c1781fbe43b5",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:31",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:32",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:31",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "view_preset",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:41:21.512Z",
+          "state": "completed",
+          "data": {
+            "action": "apply",
+            "name": "QA_012_Preset",
+            "dry_run": false,
+            "undoable": false,
+            "effect": "view_state",
+            "before": {
+              "rendering": {
+                "ModelTransparency": false,
+                "MaterialTransparency": true,
+                "DrawHidden": false,
+                "DrawBackEdges": false,
+                "DisplaySectionPlanes": false,
+                "DisplaySectionCuts": true,
+                "SectionCutFilled": true,
+                "DisplayColorByLayer": false,
+                "DisplayDims": true,
+                "DisplayText": true,
+                "DisplaySketchAxes": true,
+                "DrawGround": false,
+                "DrawHorizon": true,
+                "Texture": true,
+                "DisplayFog": false,
+                "BackgroundColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "SkyColor": [
+                  198,
+                  205,
+                  208
+                ],
+                "GroundColor": [
+                  210,
+                  208,
+                  185
+                ],
+                "FogColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "RenderMode": 2,
+                "EdgeDisplayMode": 1
+              },
+              "shadows": {
+                "DisplayShadows": false,
+                "DisplayOnGroundPlane": true,
+                "DisplayOnAllFaces": true,
+                "UseSunForAllShading": false,
+                "EdgesCastShadows": false,
+                "DaylightSavings": false,
+                "Light": 80,
+                "Dark": 45,
+                "Latitude": 37.5,
+                "Longitude": 127,
+                "TZOffset": 9,
+                "NorthAngle": 0,
+                "ShadowTime": "2026-11-08T13:30:00Z"
+              },
+              "camera": {
+                "eye_mm": [
+                  8224.054753,
+                  -7360.182895,
+                  3490.828636
+                ],
+                "target_mm": [
+                  682.056533,
+                  3813.478919,
+                  77.292911
+                ],
+                "up": [
+                  -0.13732942314234511,
+                  0.20345702643967736,
+                  0.9694049040167454
+                ],
+                "perspective": true,
+                "fov_degrees": 35,
+                "aspect_ratio": 0,
+                "image_width_mm": 0
+              },
+              "tags": [
+                {
+                  "name": "Layer0",
+                  "visible": true
+                },
+                {
+                  "name": "QA_012_Tag",
+                  "visible": true
+                }
+              ],
+              "axes": {
+                "origin_mm": [
+                  0,
+                  0,
+                  0
+                ],
+                "xaxis": [
+                  1,
+                  0,
+                  0
+                ],
+                "yaxis": [
+                  0,
+                  1,
+                  0
+                ],
+                "zaxis": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            },
+            "after": {
+              "rendering": {
+                "ModelTransparency": false,
+                "MaterialTransparency": true,
+                "DrawHidden": false,
+                "DrawBackEdges": false,
+                "DisplaySectionPlanes": false,
+                "DisplaySectionCuts": true,
+                "SectionCutFilled": true,
+                "DisplayColorByLayer": false,
+                "DisplayDims": true,
+                "DisplayText": true,
+                "DisplaySketchAxes": true,
+                "DrawGround": false,
+                "DrawHorizon": false,
+                "Texture": true,
+                "DisplayFog": false,
+                "BackgroundColor": [
+                  255,
+                  255,
+                  255
+                ],
+                "SkyColor": [
+                  189,
+                  209,
+                  208
+                ],
+                "GroundColor": [
+                  210,
+                  208,
+                  185
+                ],
+                "FogColor": [
+                  204,
+                  204,
+                  201
+                ],
+                "RenderMode": 1,
+                "EdgeDisplayMode": 1
+              },
+              "shadows": {
+                "DisplayShadows": false,
+                "DisplayOnGroundPlane": true,
+                "DisplayOnAllFaces": true,
+                "UseSunForAllShading": false,
+                "EdgesCastShadows": false,
+                "DaylightSavings": false,
+                "Light": 80,
+                "Dark": 45,
+                "Latitude": 37.5,
+                "Longitude": 127,
+                "TZOffset": 9,
+                "NorthAngle": 0,
+                "ShadowTime": "2026-11-08T13:30:00Z"
+              },
+              "camera": {
+                "eye_mm": [
+                  8224.054753,
+                  -7360.182895,
+                  3490.828636
+                ],
+                "target_mm": [
+                  682.056533,
+                  3813.478919,
+                  77.292911
+                ],
+                "up": [
+                  -0.13732942314234511,
+                  0.20345702643967736,
+                  0.9694049040167454
+                ],
+                "perspective": true,
+                "fov_degrees": 35,
+                "aspect_ratio": 0,
+                "image_width_mm": 0
+              },
+              "tags": [
+                {
+                  "name": "Layer0",
+                  "visible": true
+                },
+                {
+                  "name": "QA_012_Tag",
+                  "visible": true
+                }
+              ],
+              "axes": {
+                "origin_mm": [
+                  0,
+                  0,
+                  0
+                ],
+                "xaxis": [
+                  1,
+                  0,
+                  0
+                ],
+                "yaxis": [
+                  0,
+                  1,
+                  0
+                ],
+                "zaxis": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "model_query",
+      "query": "view_state",
+      "options": {},
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "382838d1-0681-48ab-ac0e-427bb5aa587c",
+        "ok": true,
+        "status": "model_query",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "data": {
+          "rendering": {
+            "ModelTransparency": false,
+            "MaterialTransparency": true,
+            "DrawHidden": false,
+            "DrawBackEdges": false,
+            "DisplaySectionPlanes": false,
+            "DisplaySectionCuts": true,
+            "SectionCutFilled": true,
+            "DisplayColorByLayer": false,
+            "DisplayDims": true,
+            "DisplayText": true,
+            "DisplaySketchAxes": true,
+            "DrawGround": false,
+            "DrawHorizon": false,
+            "Texture": true,
+            "DisplayFog": false,
+            "BackgroundColor": [
+              255,
+              255,
+              255
+            ],
+            "SkyColor": [
+              189,
+              209,
+              208
+            ],
+            "GroundColor": [
+              210,
+              208,
+              185
+            ],
+            "FogColor": [
+              204,
+              204,
+              201
+            ],
+            "RenderMode": 1,
+            "EdgeDisplayMode": 1
+          },
+          "shadows": {
+            "DisplayShadows": false,
+            "DisplayOnGroundPlane": true,
+            "DisplayOnAllFaces": true,
+            "UseSunForAllShading": false,
+            "EdgesCastShadows": false,
+            "DaylightSavings": false,
+            "Light": 80,
+            "Dark": 45,
+            "Latitude": 37.5,
+            "Longitude": 127,
+            "TZOffset": 9,
+            "NorthAngle": 0,
+            "ShadowTime": "2026-11-08T13:30:00Z"
+          },
+          "camera": {
+            "eye_mm": [
+              8224.054753,
+              -7360.182895,
+              3490.828636
+            ],
+            "target_mm": [
+              682.056533,
+              3813.478919,
+              77.292911
+            ],
+            "up": [
+              -0.13732942314234511,
+              0.20345702643967736,
+              0.9694049040167454
+            ],
+            "perspective": true,
+            "fov_degrees": 35,
+            "aspect_ratio": 0,
+            "image_width_mm": 0
+          },
+          "tags": [
+            {
+              "name": "Layer0",
+              "visible": true
+            },
+            {
+              "name": "QA_012_Tag",
+              "visible": true
+            }
+          ],
+          "axes": {
+            "origin_mm": [
+              0,
+              0,
+              0
+            ],
+            "xaxis": [
+              1,
+              0,
+              0
+            ],
+            "yaxis": [
+              0,
+              1,
+              0
+            ],
+            "zaxis": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_scene",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "apply",
+        "name": "QA_012_A",
+        "options": {
+          "scope": "full",
+          "discard_style_changes": true
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:32"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "0b8a4e8e-2b82-44c6-8b93-3753d19c8a6b",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:32",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:33",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:32",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "scene",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:41:25.941Z",
+          "state": "completed",
+          "data": {
+            "dry_run": false,
+            "undoable": false,
+            "scope": "full",
+            "action": "apply",
+            "name": "QA_012_A",
+            "note": "Native2019 scene state/metadata is not reliably Undoable. On failure inspect before retry.",
+            "selected_scene": "QA_012_A",
+            "verification": "native_selection_acknowledged; inspect view_state for resulting view"
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_view_preset",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "delete",
+        "name": "QA_012_Preset",
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:33"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "62ce132a-130c-4c8c-91cf-e37b40d2e405",
+        "ok": true,
+        "status": "command_completed",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:33",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:34",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:33",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "view_preset",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:41:29.331Z",
+          "state": "completed",
+          "data": {
+            "action": "delete",
+            "name": "QA_012_Preset",
+            "dry_run": false,
+            "undoable": true,
+            "ui_update": {
+              "mode": "defer",
+              "suppression_requested": true,
+              "operation_closed": true,
+              "view_redraw_requested": true,
+              "inspectors_refresh_requested": true,
+              "outliner_control": "operation_disable_ui",
+              "outliner_visibility_changed": false,
+              "warnings": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sketchup_style",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "duplicate",
+        "options": {
+          "name": "[Architectural Design Style]",
+          "new_name": "QA_Unsupported"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:34"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "329d0630-6f2c-41fe-94d5-7569f03606be",
+        "ok": false,
+        "status": "unsupported_version",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:34",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:35",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:34",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "style",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:41:32.567Z",
+          "state": "failed",
+          "error": "unsupported_version",
+          "message": "Native style duplication requires SketchUp2026.2+; use portable display settings on2019"
+        }
+      }
+    },
+    {
+      "name": "sketchup_style",
+      "args": {
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "action": "delete",
+        "options": {
+          "name": "QA_012_Hidden"
+        },
+        "expected_context": [],
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:35"
+      },
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "7ac6d6a4-def9-4b06-ba96-317c54831709",
+        "ok": false,
+        "status": "unsupported_version",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:35",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:36",
+        "result": {
+          "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:35",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "command": "style",
+          "expected_context": [],
+          "finished_at": "2026-10-29T10:41:35.570Z",
+          "state": "failed",
+          "error": "unsupported_version",
+          "message": "Individual style deletion requires SketchUp2026+; use purge_unused on2019"
+        }
+      }
+    },
+    {
+      "name": "model_query",
+      "query": "view_state",
+      "options": {},
+      "response": {
+        "v": 1,
+        "type": "result",
+        "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+        "id": "30f60cb5-9f41-4615-b341-f22c377f2507",
+        "ok": true,
+        "status": "model_query",
+        "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+        "data": {
+          "rendering": {
+            "ModelTransparency": false,
+            "MaterialTransparency": true,
+            "DrawHidden": false,
+            "DrawBackEdges": false,
+            "DisplaySectionPlanes": false,
+            "DisplaySectionCuts": true,
+            "SectionCutFilled": true,
+            "DisplayColorByLayer": false,
+            "DisplayDims": true,
+            "DisplayText": true,
+            "DisplaySketchAxes": true,
+            "DrawGround": false,
+            "DrawHorizon": true,
+            "Texture": true,
+            "DisplayFog": false,
+            "BackgroundColor": [
+              204,
+              204,
+              201
+            ],
+            "SkyColor": [
+              198,
+              205,
+              208
+            ],
+            "GroundColor": [
+              210,
+              208,
+              185
+            ],
+            "FogColor": [
+              204,
+              204,
+              201
+            ],
+            "RenderMode": 2,
+            "EdgeDisplayMode": 1
+          },
+          "shadows": {
+            "DisplayShadows": false,
+            "DisplayOnGroundPlane": true,
+            "DisplayOnAllFaces": true,
+            "UseSunForAllShading": false,
+            "EdgesCastShadows": false,
+            "DaylightSavings": false,
+            "Light": 80,
+            "Dark": 45,
+            "Latitude": 37.5,
+            "Longitude": 127,
+            "TZOffset": 9,
+            "NorthAngle": 0,
+            "ShadowTime": "2026-11-08T13:30:00Z"
+          },
+          "camera": {
+            "eye_mm": [
+              8224.054753,
+              -7360.182895,
+              3490.828636
+            ],
+            "target_mm": [
+              682.056533,
+              3813.478919,
+              77.292911
+            ],
+            "up": [
+              -0.13732942314234511,
+              0.20345702643967736,
+              0.9694049040167454
+            ],
+            "perspective": true,
+            "fov_degrees": 35,
+            "aspect_ratio": 0,
+            "image_width_mm": 0
+          },
+          "tags": [
+            {
+              "name": "Layer0",
+              "visible": true
+            },
+            {
+              "name": "QA_012_Tag",
+              "visible": true
+            }
+          ],
+          "axes": {
+            "origin_mm": [
+              0,
+              0,
+              0
+            ],
+            "xaxis": [
+              1,
+              0,
+              0
+            ],
+            "yaxis": [
+              0,
+              1,
+              0
+            ],
+            "zaxis": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "library_records": [
+    {
+      "args": {
+        "mode": "verify",
+        "environment": "native",
+        "technique_id": "qa.native012-panel-20261029",
+        "revision": "sha256:684a16c717bf3a98d0f3f6a25dfe785aa3246abc821683b750585b613d9f9576",
+        "bindings": {
+          "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+          "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+          "expected_context": [],
+          "origin_mm": [
+            12000,
+            0,
+            0
+          ],
+          "materials": {
+            "panel": "QA_012_Checker"
+          }
+        },
+        "request_id": "9e71a5a8-ecc2-4f9c-b2d3-6ab2d244c5ad",
+        "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:36"
+      },
+      "start": {
+        "ok": true,
+        "effect": "none",
+        "data": {
+          "job_id": "825d1785-f40b-4e80-b24c-80c4ff715fa1",
+          "state": "queued"
+        },
+        "warnings": []
+      },
+      "response": {
+        "ok": true,
+        "effect": "unknown",
+        "data": {
+          "job_id": "825d1785-f40b-4e80-b24c-80c4ff715fa1",
+          "request_id": "9e71a5a8-ecc2-4f9c-b2d3-6ab2d244c5ad",
+          "state": "outcome_unknown",
+          "stage": "reconcile",
+          "effect": "unknown",
+          "submitted": true,
+          "created_at": "2026-10-29T10:41:54.4588541Z",
+          "events": [
+            {
+              "index": 1,
+              "state": "running",
+              "stage": "validate",
+              "at": "2026-10-29T10:41:54.4708522Z"
+            },
+            {
+              "index": 2,
+              "state": "running",
+              "stage": "native_wait",
+              "at": "2026-10-29T10:41:57.4474846Z"
+            },
+            {
+              "index": 3,
+              "state": "outcome_unknown",
+              "stage": "reconcile",
+              "at": "2026-10-29T10:41:57.5651577Z"
+            }
+          ],
+          "updated_at": "2026-10-29T10:41:57.5651577Z",
+          "next_cursor": 3,
+          "error": {
+            "v": 1,
+            "type": "result",
+            "session_id": "c8ded6bb-feb4-4af1-a329-69237b017914",
+            "id": "ee7782f1-7ad6-4e94-a87f-c18d6952bef3",
+            "ok": false,
+            "status": "outcome_unknown",
+            "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:36",
+            "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+            "next_command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:37",
+            "result": {
+              "command_id": "c8ded6bb-feb4-4af1-a329-69237b017914:36",
+              "model_id": "1c27a1b3-b91c-411c-b3a4-623e26ec9525",
+              "command": "apply_library_plan",
+              "expected_context": [],
+              "finished_at": "2026-10-29T10:41:57.520Z",
+              "library_job_id": "825d1785-f40b-4e80-b24c-80c4ff715fa1",
+              "state": "unknown",
+              "error": "outcome_unknown",
+              "message": "Library verification cleanup did not restore the model stamp"
+            }
+          }
+        },
+        "warnings": []
+      }
+    }
+  ],
+  "panel_first_conflict": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"ok\":true,\"effect\":\"none\",\"data\":{\"job_id\":\"d3d917f5-dac5-45ac-a13c-e1551e8ef575\",\"request_id\":\"fb626a65-038f-46d2-898e-1932d62df260\",\"state\":\"failed\",\"stage\":\"submit\",\"effect\":\"none\",\"submitted\":true,\"created_at\":\"2026-10-29T10:39:51.3462366Z\",\"events\":[{\"index\":1,\"state\":\"running\",\"stage\":\"validate\",\"at\":\"2026-10-29T10:39:51.3802623Z\"},{\"index\":2,\"state\":\"running\",\"stage\":\"native_wait\",\"at\":\"2026-10-29T10:39:54.5802680Z\"},{\"index\":3,\"state\":\"failed\",\"stage\":\"submit\",\"at\":\"2026-10-29T10:39:54.6922667Z\"}],\"updated_at\":\"2026-10-29T10:39:54.6922667Z\",\"next_cursor\":3,\"error\":{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"7f201f67-2c3e-48e2-8b1b-9967951a0a5b\",\"ok\":false,\"status\":\"command_id_conflict\"}},\"warnings\":[]}"
+      }
+    ],
+    "isError": false
+  },
+  "saved_techniques": [
+    {
+      "section": "example",
+      "id": "qa.native012-panel-20261029",
+      "result": {
+        "ok": true,
+        "effect": "library_changed",
+        "data": {
+          "technique_ref": {
+            "library_id": "user",
+            "technique_id": "qa.native012-panel-20261029",
+            "revision": "sha256:684a16c717bf3a98d0f3f6a25dfe785aa3246abc821683b750585b613d9f9576"
+          },
+          "head": "sha256:684a16c717bf3a98d0f3f6a25dfe785aa3246abc821683b750585b613d9f9576",
+          "active": "",
+          "no_change": false
+        },
+        "warnings": []
+      },
+      "manifest": {
+        "format_version": "probe-technique/1",
+        "id": "qa.native012-panel-20261029",
+        "title": "직육면체 패널 예제",
+        "summary": "가로·세로·깊이로 닫힌 패널 하나를 만드는 규격 예제. 실행 도구는 아직 구현되지 않음.",
+        "keywords": [
+          "패널",
+          "panel",
+          "box"
+        ],
+        "kind": "generator",
+        "entrypoint": "technique.js",
+        "input_schema": "inputs.schema.json",
+        "tests": "tests.json",
+        "runtime": "probe-js/1",
+        "output": "sketchup-plan/1",
+        "requires": [
+          "group/1",
+          "mesh/1",
+          "material-existing/1",
+          "verify/1"
+        ],
+        "material_roles": [
+          "panel"
+        ],
+        "dependencies": [],
+        "reads": [],
+        "budgets": {
+          "plan_ms": 1000,
+          "memory_mib": 64,
+          "max_nodes": 2,
+          "max_points": 8,
+          "max_faces": 6,
+          "max_plan_bytes": 12000
+        }
+      }
+    },
+    {
+      "section": "window_example",
+      "id": "qa.native012-window-20261029",
+      "result": {
+        "ok": true,
+        "effect": "library_changed",
+        "data": {
+          "technique_ref": {
+            "library_id": "user",
+            "technique_id": "qa.native012-window-20261029",
+            "revision": "sha256:f1eac375aa47e88b85b789b66626a7a43bc8473cbd25835a729301fb2b56b7f2"
+          },
+          "head": "sha256:f1eac375aa47e88b85b789b66626a7a43bc8473cbd25835a729301fb2b56b7f2",
+          "active": "",
+          "no_change": false
+        },
+        "warnings": []
+      },
+      "manifest": {
+        "format_version": "probe-technique/1",
+        "id": "qa.native012-window-20261029",
+        "title": "두 짝 미닫이 창",
+        "summary": "크기·열림으로 프레임·복열 레일·유리·바깥 세로대 매립 손잡이를 계산하는 Probe 기법.",
+        "keywords": [
+          "창",
+          "미닫이",
+          "sliding-window"
+        ],
+        "kind": "generator",
+        "entrypoint": "technique.js",
+        "input_schema": "inputs.schema.json",
+        "tests": "tests.json",
+        "runtime": "probe-js/1",
+        "output": "sketchup-plan/1",
+        "requires": [
+          "group/1",
+          "mesh/1",
+          "material-existing/1",
+          "verify/1",
+          "cleanup/1"
+        ],
+        "material_roles": [
+          "frame",
+          "glass",
+          "seal",
+          "hardware"
+        ],
+        "dependencies": [],
+        "reads": [],
+        "budgets": {
+          "plan_ms": 1000,
+          "memory_mib": 64,
+          "max_nodes": 4,
+          "max_points": 256,
+          "max_faces": 256,
+          "max_plan_bytes": 48000
+        }
+      }
+    },
+    {
+      "section": "operations_example",
+      "id": "qa.native012-raw-20261029",
+      "result": {
+        "ok": true,
+        "effect": "library_changed",
+        "data": {
+          "technique_ref": {
+            "library_id": "user",
+            "technique_id": "qa.native012-raw-20261029",
+            "revision": "sha256:d844525b0d475047703b72e25599647942c2240fdee7153ecb1af111973e59a8"
+          },
+          "head": "sha256:d844525b0d475047703b72e25599647942c2240fdee7153ecb1af111973e59a8",
+          "active": "",
+          "no_change": false
+        },
+        "warnings": []
+      },
+      "manifest": {
+        "format_version": "probe-technique/1",
+        "id": "qa.native012-raw-20261029",
+        "title": "그룹 없는 사각형 도면",
+        "summary": "그룹 없이 사각형을 그리고 선택적으로 두 치수와 설명을 한 번에 배치합니다.",
+        "keywords": [
+          "raw",
+          "drawing",
+          "치수",
+          "그룹없음"
+        ],
+        "kind": "generator",
+        "entrypoint": "technique.js",
+        "input_schema": "inputs.schema.json",
+        "tests": "tests.json",
+        "runtime": "probe-js/1",
+        "output": "sketchup-operations/1",
+        "requires": [
+          "commands/1",
+          "verify/1"
+        ],
+        "material_roles": [],
+        "dependencies": [],
+        "reads": [],
+        "budgets": {
+          "plan_ms": 1000,
+          "memory_mib": 64,
+          "max_nodes": 2,
+          "max_points": 8,
+          "max_faces": 6,
+          "max_plan_bytes": 12000
+        }
+      }
+    },
+    {
+      "section": "terrain_example",
+      "id": "qa.native012-terrain-20261029",
+      "result": {
+        "ok": true,
+        "effect": "library_changed",
+        "data": {
+          "technique_ref": {
+            "library_id": "user",
+            "technique_id": "qa.native012-terrain-20261029",
+            "revision": "sha256:d8ec97f54e3f2f38381a86f46498444c8d38eb92c313626353f881d8a8f39260"
+          },
+          "head": "sha256:d8ec97f54e3f2f38381a86f46498444c8d38eb92c313626353f881d8a8f39260",
+          "active": "",
+          "no_change": false
+        },
+        "warnings": []
+      },
+      "manifest": {
+        "format_version": "probe-technique/1",
+        "id": "qa.native012-terrain-20261029",
+        "title": "격자 지형과 완만한 높이 조절",
+        "summary": "높이 격자 또는 측량점 IDW 보간으로 열린 지형을 만들고 반경별 높이 조절을 적용합니다. 계산은 Probe의 순수 JS입니다.",
+        "keywords": [
+          "terrain",
+          "heightfield",
+          "IDW",
+          "지형"
+        ],
+        "kind": "generator",
+        "entrypoint": "technique.js",
+        "input_schema": "inputs.schema.json",
+        "tests": "tests.json",
+        "runtime": "probe-js/1",
+        "output": "sketchup-operations/1",
+        "requires": [
+          "commands/1",
+          "surface-mesh/1",
+          "verify/1"
+        ],
+        "material_roles": [],
+        "dependencies": [],
+        "reads": [],
+        "budgets": {
+          "plan_ms": 1000,
+          "memory_mib": 64,
+          "max_nodes": 1,
+          "max_points": 169,
+          "max_faces": 256,
+          "max_plan_bytes": 40000
+        }
+      }
+    },
+    {
+      "section": "texture_example",
+      "id": "qa.native012-texture-20261029",
+      "result": {
+        "ok": true,
+        "effect": "library_changed",
+        "data": {
+          "technique_ref": {
+            "library_id": "user",
+            "technique_id": "qa.native012-texture-20261029",
+            "revision": "sha256:6b3e74909a0efba24a2743202c502a14e8ee3c9ad972f44a4bdd7566f556fddd"
+          },
+          "head": "sha256:6b3e74909a0efba24a2743202c502a14e8ee3c9ad972f44a4bdd7566f556fddd",
+          "active": "",
+          "no_change": false
+        },
+        "warnings": []
+      },
+      "manifest": {
+        "format_version": "probe-technique/1",
+        "id": "qa.native012-texture-20261029",
+        "title": "면 텍스처 배치 편집",
+        "summary": "기존 배치를 읽고 이동·회전·축척·실제 크기·맞춤·기울임·네 핀 왜곡을 Probe에서 계산합니다.",
+        "keywords": [
+          "texture",
+          "UV",
+          "회전",
+          "타일",
+          "재질"
+        ],
+        "kind": "generator",
+        "entrypoint": "technique.js",
+        "input_schema": "inputs.schema.json",
+        "tests": "tests.json",
+        "runtime": "probe-js/1",
+        "output": "sketchup-operations/1",
+        "requires": [
+          "commands/1",
+          "face-texture/1",
+          "verify/1"
+        ],
+        "material_roles": [],
+        "dependencies": [],
+        "reads": [
+          {
+            "name": "face",
+            "query": "face-texture/1",
+            "binding": "face",
+            "max_entities": 1
+          }
+        ],
+        "budgets": {
+          "plan_ms": 1000,
+          "memory_mib": 64,
+          "max_nodes": 2,
+          "max_points": 8,
+          "max_faces": 6,
+          "max_plan_bytes": 12000
+        }
+      }
+    }
+  ],
+  "scene_B_restored": true,
+  "after_unknown_summary": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"1a76fd21-966a-4ad0-9b13-82c3478bffc8\",\"ok\":true,\"status\":\"model_summary\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"data\":{\"queried_at\":\"2026-10-29T10:42:14.880Z\",\"measurement_unit\":\"mm\",\"model_units\":{\"length_unit_code\":2,\"length_unit\":\"mm\",\"length_format_code\":0,\"length_precision\":0},\"title\":\"\",\"path\":\"\",\"saved\":false,\"modified\":true,\"bounds\":{\"empty\":false,\"axes\":\"model_axes\",\"min\":[-67.623181,-181.923181,-0.683933],\"max\":[9000.0,2900.0,1701.733117],\"size\":[9067.623181,3081.923181,1702.41705]},\"top_level_entities\":{\"total\":4,\"by_type\":{\"ComponentInstance\":2,\"Group\":2},\"scanned\":4,\"complete\":true,\"scope\":\"direct_children\"},\"collection_counts\":{\"tags\":2,\"materials\":10,\"definitions\":5,\"scenes\":2},\"selection_count\":0,\"edit_context\":{\"depth\":0,\"path\":[],\"path_truncated\":false,\"name_character_limit\":64},\"notes\":[\"Entity counts cover the model root only, including hidden objects. They do not recurse into definitions.\",\"Collection counts include unused entries. All numeric lengths and coordinates are millimeters.\",\"Bounds are bounding-box extents, not measured edges or usable floor dimensions.\"]}}"
+      }
+    ],
+    "isError": false
+  },
+  "after_unknown_definitions": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"v\":1,\"type\":\"result\",\"session_id\":\"c8ded6bb-feb4-4af1-a329-69237b017914\",\"id\":\"7f222bd3-abfd-4ff0-80f6-720279426e62\",\"ok\":true,\"status\":\"resources\",\"model_id\":\"1c27a1b3-b91c-411c-b3a4-623e26ec9525\",\"data\":{\"kind\":\"definitions\",\"items\":[{\"name\":\"Laura\",\"resource_id\":\"definitions:37\",\"definition_id\":\"definition:37\",\"description\":\"Laura is a Regional Channel Manager for SketchUp. She is proud to say that she\\u0027s never missed a 3D Basecamp. \",\"group\":false,\"image\":false,\"instance_count\":1},{\"name\":\"그룹1#1\",\"resource_id\":\"definitions:17653\",\"definition_id\":\"definition:17653\",\"description\":\"\",\"group\":true,\"image\":false,\"instance_count\":1},{\"name\":\"그룹1#2\",\"resource_id\":\"definitions:17886\",\"definition_id\":\"definition:17886\",\"description\":\"\",\"group\":true,\"image\":false,\"instance_count\":1},{\"name\":\"그룹2#1\",\"resource_id\":\"definitions:17976\",\"definition_id\":\"definition:17976\",\"description\":\"\",\"group\":false,\"image\":false,\"instance_count\":1},{\"name\":\"그룹4#1\",\"resource_id\":\"definitions:17988\",\"definition_id\":\"definition:17988\",\"description\":\"\",\"group\":true,\"image\":false,\"instance_count\":1}],\"offset\":0,\"next_offset\":null,\"collection_length\":5,\"live_page\":true}}"
+      }
+    ],
+    "isError": false
+  }
+}

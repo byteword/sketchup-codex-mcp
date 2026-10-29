@@ -64,6 +64,29 @@ class LibraryPlanTest < Minitest::Test
     assert_equal 2,result['plans'].length; assert_equal 1,@model.starts; assert_equal 1,@model.aborts
     assert_empty @model.entities.to_a
   end
+  def test_verify_does_not_suppress_actual_cleanup_failure
+    @model.define_singleton_method(:abort_operation) { result=super();add(999);result }
+    error=assert_raises(SUPipeProbe::CommandError) { execute('verify_only'=>true) }
+    assert_equal 'outcome_unknown',error.code
+    assert_includes error.details['changed_fields'],'roots'
+    assert_equal false,error.details['cleanup_verified']
+    assert_equal 1,@model.aborts
+  end
+  def test_cleanup_diagnostics_bound_resource_identity_differences
+    before=@executor.send(:library_model_stamp)
+    12.times { |i| @model.add(900+i) }
+    error=assert_raises(SUPipeProbe::CommandError) { @executor.send(:library_assert_restored,before) }
+    diff=error.details['differences']['roots']
+    assert_equal 12,diff['after_count'];assert_equal 2,diff['added'].length
+    assert diff['truncated'];assert_operator JSON.generate(error.details).bytesize,:<,4096
+  end
+  def test_cleanup_bounds_and_modified_differences_are_explicit
+    before=@executor.send(:library_model_stamp)
+    before['bounds']=[[1,2,3],[4,5,6]];before['modified']=!before['modified']
+    error=assert_raises(SUPipeProbe::CommandError) { @executor.send(:library_assert_restored,before) }
+    assert_equal %w[bounds modified],error.details['changed_fields'].sort
+    assert_equal before['bounds'],error.details['differences']['bounds']['before']
+  end
   def test_frame_cleanup_does_not_open_mesh
     @plan['nodes'][1]['cleanup']='material_safe'
     assert execute['plans'][0]['sections'][0]['solid']
