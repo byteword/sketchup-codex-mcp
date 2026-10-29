@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "width_mm": {
+      "type": "number",
+      "minimum": 600,
+      "maximum": 6000
+    },
+    "height_mm": {
+      "type": "number",
+      "minimum": 400,
+      "maximum": 3600
+    },
+    "depth_mm": {
+      "type": "number",
+      "minimum": 80,
+      "maximum": 300
+    },
+    "frame_width_mm": {
+      "type": "number",
+      "minimum": 30,
+      "maximum": 100,
+      "default": 40
+    },
+    "sash_width_mm": {
+      "type": "number",
+      "minimum": 20,
+      "maximum": 80,
+      "default": 35
+    },
+    "glass_thickness_mm": {
+      "type": "number",
+      "minimum": 3,
+      "maximum": 12,
+      "default": 6
+    },
+    "overlap_mm": {
+      "type": "number",
+      "minimum": 20,
+      "maximum": 160
+    },
+    "open_sash": {
+      "type": "string",
+      "enum": [
+        "none",
+        "left",
+        "right"
+      ],
+      "maxLength": 5,
+      "default": "none"
+    },
+    "open_fraction": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0
+    }
+  },
+  "required": [
+    "width_mm",
+    "height_mm",
+    "depth_mm"
+  ],
+  "additionalProperties": false
+}

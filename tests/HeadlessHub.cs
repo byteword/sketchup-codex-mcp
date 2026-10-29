@@ -9,6 +9,7 @@ static class HeadlessHub
 {
     static int Main(string[] args)
     {
+        if(LibraryWorker.TryMain(args)) return 0;
         object gate = new object();
         Action<string> log = message => {
             if (message.Length > 512)

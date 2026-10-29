@@ -80,15 +80,33 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(40, len(tools))
-        self.assertEqual(40, len({tool["name"] for tool in tools}))
+        self.assertEqual(47, len(tools))
+        self.assertEqual(47, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
+            self.assertEqual("object",tool["inputSchema"]["type"])
         self.assertTrue(next(t for t in tools if t["name"] == "sketchup_ping")["annotations"]["readOnlyHint"])
         for name in ["sketchup_get_model_summary", "sketchup_get_selection_info"]:
             tool = next(t for t in tools if t["name"] == name)
             self.assertEqual(["session_id", "model_id"], tool["inputSchema"]["required"])
             self.assertTrue(tool["annotations"]["readOnlyHint"])
+
+    def test_library_tools_accept_model_free_lifecycle_and_reject_mode_mixing(self):
+        self.initialize()
+        request = dict(request_id="11111111-1111-4111-8111-111111111111", action="create_library",
+                       title="기법 모음", scope="user")
+        self.send("tools/call", dict(name="sketchup_library_manage", arguments=request), 2)
+        result = self.response()["result"]
+        self.assertFalse(result["isError"])
+        self.assertEqual(request, json.loads(result["content"][0]["text"])["arguments"])
+        for name, args in [
+            ("sketchup_library_manage", dict(request, arbitrary=True)),
+            ("sketchup_library_run", dict(mode="apply", request_id=request["request_id"], params={})),
+            ("sketchup_library_transfer", dict(action="export", selections=[], package_info=dict(title="Empty"))),
+            ("sketchup_library_list", dict(limit=True)),
+        ]:
+            self.send("tools/call", dict(name=name, arguments=args), 3)
+            self.assertEqual(-32602, self.response()["error"]["code"])
 
     def test_read_query_validation_and_paging(self):
         self.initialize()

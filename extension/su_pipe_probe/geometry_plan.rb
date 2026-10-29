@@ -99,8 +99,8 @@ module SUPipeProbe
         work.first
       end
     end
-    def mesh_validate(points,faces)
-      fail_command('invalid_geometry','Invalid polyhedron face count') unless faces.is_a?(Array) && faces.length.between?(4,256) && faces.inject(0) { |s,f| s+(f.is_a?(Array) ? f.length : 10000) }<=2048
+    def mesh_validate(points,faces,maximum_faces=256,maximum_corners=2048)
+      fail_command('invalid_geometry','Invalid polyhedron face count') unless faces.is_a?(Array) && faces.length.between?(4,maximum_faces) && faces.inject(0) { |s,f| s+(f.is_a?(Array) ? f.length : maximum_corners+1) }<=maximum_corners
       usage=Hash.new { |h,k| h[k]=[] }
       volume=0.0
       faces.each do |face|

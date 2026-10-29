@@ -1,0 +1,110 @@
+{
+  "format_version": "probe-tests/1",
+  "cases": [
+    {
+      "id": "prototype",
+      "params": {
+        "width_mm": 1200,
+        "height_mm": 900,
+        "depth_mm": 100
+      },
+      "expect": {
+        "ok": true,
+        "bounds_mm": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            1200,
+            100,
+            900
+          ]
+        },
+        "groups": 4,
+        "mesh_faces": 220
+      }
+    },
+    {
+      "id": "tall_reference",
+      "params": {
+        "width_mm": 900,
+        "height_mm": 1800,
+        "depth_mm": 150
+      },
+      "expect": {
+        "ok": true,
+        "bounds_mm": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            900,
+            150,
+            1800
+          ]
+        },
+        "groups": 4,
+        "mesh_faces": 220
+      }
+    },
+    {
+      "id": "half_open",
+      "params": {
+        "width_mm": 1500,
+        "height_mm": 1200,
+        "depth_mm": 100,
+        "open_sash": "left",
+        "open_fraction": 0.5
+      },
+      "expect": {
+        "ok": true,
+        "bounds_mm": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            1500,
+            100,
+            1200
+          ]
+        },
+        "groups": 4,
+        "mesh_faces": 220
+      }
+    },
+    {
+      "id": "insufficient_depth",
+      "params": {
+        "width_mm": 1200,
+        "height_mm": 900,
+        "depth_mm": 80,
+        "glass_thickness_mm": 12
+      },
+      "expect": {
+        "ok": false,
+        "code": "input_invalid",
+        "path": "/depth_mm"
+      }
+    },
+    {
+      "id": "choose_open_sash",
+      "params": {
+        "width_mm": 1200,
+        "height_mm": 900,
+        "depth_mm": 100,
+        "open_fraction": 0.5
+      },
+      "expect": {
+        "ok": false,
+        "code": "input_invalid",
+        "path": "/open_sash"
+      }
+    }
+  ]
+}

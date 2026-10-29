@@ -129,6 +129,67 @@ class WindowsMcpTests(unittest.TestCase):
         keys = ['session_id', 'model_id'] if model else ['session_id']
         return {key: self.instances[index][key] for key in keys}
 
+    def library_wait(self, response):
+        self.assertTrue(response["ok"], response)
+        job_id = response["data"]["job_id"]
+        for _ in range(150):
+            job = self.tool("sketchup_library_job", dict(action="get", job_id=job_id, wait_ms=100))["data"]
+            if job["state"] not in ("queued", "running"):
+                return job
+        self.fail("library job did not finish")
+
+    def library_panel(self):
+        folder = ROOT / "docs/library-spec/example/solid-panel"
+        files = {p.name: p.read_text(encoding="utf-8") for p in folder.iterdir() if p.is_file()}
+        manifest = json.loads(files["manifest.json"])
+        manifest["id"] = "integration.panel-" + uuid.uuid4().hex[:12]
+        files["manifest.json"] = json.dumps(manifest, ensure_ascii=False)
+        saved = self.tool("sketchup_library_save", dict(request_id=str(uuid.uuid4()), technique_id=manifest["id"],
+                         base_revision=None, files=files, change_summary="native pipe integration"))
+        self.assertTrue(saved["ok"], saved)
+        return saved["data"]["technique_ref"]
+
+    def test_library_plan_apply_permission_replay_and_native_history(self):
+        ref = self.library_panel()
+        verified = self.library_wait(self.tool("sketchup_library_run", dict(ref, mode="verify",
+                        request_id=str(uuid.uuid4()), activate_if_passed=True, expected_active_revision=None)))
+        self.assertEqual("succeeded", verified["state"], verified)
+        bindings = dict(self.target(0, True), expected_context=[], origin_mm=[3000,0,0], materials=dict(panel="콘크리트"))
+        plan = self.library_wait(self.tool("sketchup_library_run", dict(ref, mode="plan", params={}, bindings=bindings,
+                                                                      request_id=str(uuid.uuid4()))))["result"]
+        args = self.command_args(mode="apply", request_id=str(uuid.uuid4()), plan_id=plan["plan_id"], plan_hash=plan["plan_hash"])
+        denied = self.library_wait(self.tool("sketchup_library_run", args))
+        self.assertEqual("failed", denied["state"], denied)
+        self.assertEqual("none", denied["effect"])
+        self.command(grant=0)
+        plan = self.library_wait(self.tool("sketchup_library_run", dict(ref, mode="plan", params={}, bindings=bindings,
+                                                                      request_id=str(uuid.uuid4()))))["result"]
+        args = self.command_args(mode="apply", request_id=str(uuid.uuid4()), plan_id=plan["plan_id"], plan_hash=plan["plan_hash"])
+        initial = self.tool("sketchup_library_run", args)
+        applied = self.library_wait(initial)
+        self.assertEqual("succeeded", applied["state"], applied)
+        self.assertEqual("model_applied", applied["effect"])
+        self.assertEqual([3000,0,0], applied["result"]["plans"][0]["geometry_bounds"]["min"])
+        self.assertEqual([4200,100,900], applied["result"]["plans"][0]["geometry_bounds"]["max"])
+        self.assertEqual(initial, self.tool("sketchup_library_run", args))
+        conflict = self.tool("sketchup_library_run", dict(args, request_id=str(uuid.uuid4())), error=True)
+        self.assertEqual("plan_in_use", conflict["error"]["code"])
+        history = self.tool("sketchup_get_command_result", dict(self.target(0, True), command_id=args["command_id"]))
+        self.assertEqual(applied["job_id"], history["result"]["library_job_id"])
+
+    def test_library_native_verification_aborts_and_snapshot_staleness(self):
+        ref = self.library_panel()
+        self.command(grant=0)
+        bindings = dict(self.target(0, True), expected_context=[], origin_mm=[5000,0,0], materials=dict(panel="콘크리트"))
+        before = self.tool("sketchup_get_model_summary", self.target(0, True))["data"]["top_level_entities"]
+        native = self.library_wait(self.tool("sketchup_library_run", dict(ref, mode="verify",
+                    request_id=str(uuid.uuid4()), environment="native", bindings=bindings,
+                    command_id=self.command_args()["command_id"])))
+        self.assertEqual("succeeded", native["state"], native)
+        self.assertEqual("none", native["effect"])
+        after = self.tool("sketchup_get_model_summary", self.target(0, True))["data"]["top_level_entities"]
+        self.assertEqual(before, after)
+
     def window_fields(self, **changes):
         fields=dict(name='Recipe window',origin_mm=[2000,0,0],width_mm=1200,height_mm=900,depth_mm=100,materials=dict(frame='콘크리트',glass='콘크리트',seal='콘크리트',hardware='콘크리트'))
         fields.update(changes)

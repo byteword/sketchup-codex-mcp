@@ -8,6 +8,7 @@ require_relative 'view_commands'
 require_relative 'ui_update_scope'
 require_relative 'batch_commands'
 require_relative 'sliding_window_commands'
+require_relative 'library_plan'
 
 module SUPipeProbe
   class CommandError < StandardError
@@ -27,7 +28,8 @@ module SUPipeProbe
     include ViewCommands
     include BatchCommands
     include SlidingWindowCommands
-    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch create_sliding_window].freeze
+    include LibraryPlanCommands
+    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch create_sliding_window apply_library_plan].freeze
     RESULT_LIMIT = 44_000
     MAX_SELECTION = 1000
 
@@ -61,6 +63,7 @@ module SUPipeProbe
       when 'run_self_test' then NativeSelfTest.new(@model).call(args,dry)
       when 'run_batch' then run_batch(args,dry)
       when 'create_sliding_window' then create_sliding_window(args,dry)
+      when 'apply_library_plan' then apply_library_plan(args,dry)
       when 'manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
       end
     end

@@ -27,7 +27,7 @@ clock = 0.0
   identity = SUPipeProbe::ModelIdentity.new { session.tick if session }
   data = {'pid' => Process.pid, 'model_id' => identity.id_for(model),
     'title' => "인스턴스 #{index}", 'path' => '', 'extension_version' => SUPipeProbe::VERSION,
-    'test_model_wrapper_id' => model.object_id}
+    'test_model_wrapper_id' => model.object_id, 'library_capabilities'=>%w[group/1 mesh/1 material-existing/1 verify/1 cleanup/1 target-summary/1 target-subtree/1]}
   session = SUPipeProbe::Session.new(lambda { |m| client.send_message(m) },
     lambda { data['model_id'] = identity.id_for(model); data },
     lambda { clock }, lambda { |method, args| SUPipeProbe::ModelReader.new(model).call(method, args).merge('instance_index'=>index, 'method'=>method) },

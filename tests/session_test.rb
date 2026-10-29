@@ -204,4 +204,24 @@ class SessionTest < Minitest::Test
   end
 
 
+  def test_library_reads_route_without_grant_and_query_failure_does_not_disconnect
+    calls=[]
+    reader=lambda do |method,args|
+      raise ArgumentError,'invalid palette' if args['test_error']
+      calls<<method; {'kind'=>method}
+    end
+    @session=SUPipeProbe::Session.new(lambda { |m| @sent<<m },lambda { @model },nil,reader)
+    original=@session.snapshot['next_command_id']
+    {'get_plan_snapshot'=>'plan_snapshot','get_plan_materials'=>'plan_materials'}.each do |method,status|
+      result=request(method)
+      assert result['ok']; assert_equal status,result['status']; assert_equal method,result['data']['kind']
+      assert_equal 'model_mismatch',request(method,'model_id'=>'wrong')['status']
+    end
+    assert_equal 'query_failed',request('get_plan_materials','test_error'=>true)['status']
+    assert_equal 'pong',request('ping')['status']
+    assert_equal original,@session.snapshot['next_command_id']
+    assert_equal %w[get_plan_snapshot get_plan_materials],calls
+    assert_equal 'user',@session.authority
+  end
+
 end

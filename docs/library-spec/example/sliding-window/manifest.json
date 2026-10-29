@@ -1,0 +1,40 @@
+{
+  "format_version": "probe-technique/1",
+  "id": "byteword.sliding-window",
+  "title": "두 짝 미닫이 창",
+  "summary": "크기·열림으로 프레임·복열 레일·유리·바깥 세로대 매립 손잡이를 계산하는 Probe 기법.",
+  "keywords": [
+    "창",
+    "미닫이",
+    "sliding-window"
+  ],
+  "kind": "generator",
+  "entrypoint": "technique.js",
+  "input_schema": "inputs.schema.json",
+  "tests": "tests.json",
+  "runtime": "probe-js/1",
+  "output": "sketchup-plan/1",
+  "requires": [
+    "group/1",
+    "mesh/1",
+    "material-existing/1",
+    "verify/1",
+    "cleanup/1"
+  ],
+  "material_roles": [
+    "frame",
+    "glass",
+    "seal",
+    "hardware"
+  ],
+  "dependencies": [],
+  "reads": [],
+  "budgets": {
+    "plan_ms": 1000,
+    "memory_mib": 64,
+    "max_nodes": 4,
+    "max_points": 256,
+    "max_faces": 256,
+    "max_plan_bytes": 48000
+  }
+}

@@ -13,6 +13,7 @@ namespace SketchUpPipeProbe
         [STAThread]
         static void Main(string[] args)
         {
+            if(LibraryWorker.TryMain(args)) return;
             bool created;
             using (var mutex = new Mutex(true, "Local\\SketchUpCodexMcp.PipeProbe.v1", out created))
             {
@@ -99,6 +100,19 @@ namespace SketchUpPipeProbe
                 catch (Exception error) { Log("설정 복사 오류: " + error.Message); }
             };
             actions.Controls.Add(config);
+            var libraryFolder=new Button {Text="기법 라이브러리 폴더",AutoSize=true,Height=32};
+            libraryFolder.Click+=delegate {
+                try {System.Diagnostics.Process.Start("explorer.exe", "\""+control.LibraryDirectory+"\"");}
+                catch(Exception error){Log("라이브러리 폴더 열기 오류: "+error.Message);}
+            };
+            actions.Controls.Add(libraryFolder);
+            var notices=new Button {Text="오픈소스 안내",AutoSize=true,Height=32};
+            notices.Click+=delegate {
+                var dialog=new Form {Text="스크립트 엔진 오픈소스 안내",Width=780,Height=600,StartPosition=FormStartPosition.CenterParent};
+                dialog.Controls.Add(new TextBox {Multiline=true,ReadOnly=true,ScrollBars=ScrollBars.Both,Dock=DockStyle.Fill,Text=Lib.Resource("NOTICES")});
+                using(dialog)dialog.ShowDialog(this);
+            };
+            actions.Controls.Add(notices);
             layout.Controls.Add(actions, 0, 2);
             status.Dock = DockStyle.Fill;
             layout.Controls.Add(status, 0, 3);

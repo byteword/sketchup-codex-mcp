@@ -19,6 +19,9 @@ module Geom
   end
 end
 module SketchupDouble
+  class Material
+    def texture; nil; end
+  end
   class TestResource
     attr_accessor :name,:description,:color,:alpha,:texture,:camera,:visible
     @@next_id=7_000_000

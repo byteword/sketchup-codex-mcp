@@ -1,5 +1,14 @@
 # 검증 범위
 
+
+## 0.8.0 Probe 라이브러리·엔진·패키지 — 2026-10-29
+
+전체 **271개 통과**, 실패·오류·생략0: Ruby211개/1688 assertions, 라이브러리/Jint14개, Python STDIO27개·외부 실행기6개·Win32/MCP/Ruby 통합13개. [최종 로그](validation-0.8.0.txt). 설치 ZIP의5개 파일·RBZ 전체 소스·체크섬과 DLL 없는 추출 폴더의 windowless 한글 엔진 실행도 [패키지 검사](validation-0.8.0-package.txt)에서 확인했습니다. Windows/.NET4.8 x64, SketchUp2020 Ruby2.5.5 DLL 호스트·Minitest5.15.0, Python3.13.17. ASCII 검사 복사본에서 실행하고 소스/빌드 입력을 원본과 대조했습니다.
+
+검증 범위: 전체 수정본 저장/CAS·동일 요청 재조회·재시작 복구, 초안 실패 시 활성본 유지, Jint 격리/시간 제한/한글 입출력, 긴 소스 바이트 페이지·계획 해시, 빈 라이브러리 작성 안내, 작업 파일 자동 초안/검사 후 활성화, 다중 대표 기법 export/일부 import·의존 폐쇄·fork 재작성·가져오기 충돌·경로/해시 검증·코드 미실행. 실제 Win32 pipe에서 native 실행 허가/거부·작업 ID와 명령 이력 연결·중복 생성 방지·임시 검증 abort와 복구를 확인했습니다. Ruby API 대역에서 한 operation/Undo, 재질/bounds/solid/교체 취소/지문 변경 감지를 검사했습니다. 창 JavaScript의5개 fixture와 기본 형상 모든 면/재질 역할은 기존 승인 창 fixture에 대조했습니다.
+
+엔진은 실제 내장 Jint이고 Windows 통신은 실제 경로지만 SketchUp 형상/Undo/Observer는 API 대역입니다. **0.8.0 설치 후 실제 모델에서 실행·교체·Ctrl+Z·UV/외관·복구 판정 검사는 아직 하지 않았습니다.** 기존0.6.3의56항목 native 결과와 구분합니다. 이번 작업은 실행 중인 프로그램/모델을 교체하지 않았습니다. 초기 검사에서 발견한 도구 스키마 루트 형식, 검사 복사본 skills 누락, GUI 작업 프로세스 인코딩, 새 읽기 상태 라우팅 문제는 수정했고 최초 실패 로그는 `validation-0.8.0-*-run.txt`에 보존합니다.
+
 ## 0.7.0 창 생성 레시피·스킬 — 2026-10-28
 
 전체 **245개 통과**: Ruby202개/1636 assertions, Python STDIO26개·외부 실행기6개·Win32/MCP/Ruby 통합11개. 실패·오류·생략0. SketchUp2020 Ruby2.5.5 DLL 호스트, Minitest5.15.0, Python3.13.17, .NET4.8/x64. OneDrive 임시 제어 파일 간섭을 피한 ASCII 검사 복사본에서 실행하고 원본과 source dirs/build 입력 일치를 확인했습니다. [로그](validation-0.7.0.txt).

@@ -1,0 +1,9 @@
+0.8.0 packaging verification — 2026-10-29
+Source/build inputs match successful test mirror: 115 files.
+Install ZIP contains exactly 5 runtime files; all match build outputs.
+RBZ contains exactly 27 source files; all bytes match extension source.
+All 5 SHA256SUMS.txt entries match outputs.
+Extracted installation: Probe --library-worker runs without external DLLs, Node or Python runtime dependency.
+CREATE_NO_WINDOW redirected UTF-8 stdin/stdout: Korean round trip passed.
+GUI/SketchUp were not launched or replaced; native installed acceptance remains pending.
+ZIP SHA256: e4dc4c3edd68c6bba3f79717b68ae59352f79e722ac03e9383fbc4e142af5216

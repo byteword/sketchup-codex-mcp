@@ -134,8 +134,8 @@ namespace SketchUpPipeProbe
             {
                 object result;
                 try { result = await bridge.CallAsync(name, args, source.Token).ConfigureAwait(false); }
-                catch (OperationCanceledException) { result = ToolCatalog.Error(CommandCatalog.IsWrite(name) ? "outcome_unknown" : "canceled", CommandCatalog.IsWrite(name) ? "Query sketchup_get_command_result; a submitted command may have completed. Do not automatically retry." : "Request canceled."); }
-                catch (Exception error) { result = ToolCatalog.Error(CommandCatalog.IsWrite(name) ? "outcome_unknown" : "bridge_unavailable", error.Message + (CommandCatalog.IsWrite(name) ? " Query sketchup_get_command_result; do not automatically retry." : "")); }
+                catch (OperationCanceledException) { result = LibraryCatalog.Contains(name) ? ToolCatalog.Error("library_outcome_unknown","Query library_job with its job_id or replay the exact request_id; do not reapply model changes.") : ToolCatalog.Error(CommandCatalog.IsWrite(name) ? "outcome_unknown" : "canceled", CommandCatalog.IsWrite(name) ? "Query sketchup_get_command_result; a submitted command may have completed. Do not automatically retry." : "Request canceled."); }
+                catch (Exception error) { result = LibraryCatalog.Contains(name) ? ToolCatalog.Error("library_unavailable","Probe unavailable. Query prior library job or replay the exact request_id; never repeat an apply with a fresh ID.") : ToolCatalog.Error(CommandCatalog.IsWrite(name) ? "outcome_unknown" : "bridge_unavailable", error.Message + (CommandCatalog.IsWrite(name) ? " Query sketchup_get_command_result; do not automatically retry." : "")); }
                 await ResultAsync(id, result).ConfigureAwait(false);
             }
             catch (Exception error) { Console.Error.WriteLine("MCP output: " + error.Message); }

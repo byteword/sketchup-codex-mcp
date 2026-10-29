@@ -8,15 +8,20 @@ Set-Location (Split-Path $PSScriptRoot -Parent)
 & .\build.cmd
 if ($LASTEXITCODE -ne 0) { throw 'GUI build failed' }
 $probeCompiler = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
-& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /define:PROBE_TEST /out:dist\HeadlessHub.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\CommandCatalog.cs shared\ToolkitCatalog.cs shared\DiscoveryCatalog.cs shared\JsonLines.cs shared\ToolCatalog.cs bridge\PipeHub.cs bridge\ControlHub.cs tests\HeadlessHub.cs
+& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /define:PROBE_TEST /out:dist\HeadlessHub.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\CommandCatalog.cs shared\ToolkitCatalog.cs shared\DiscoveryCatalog.cs shared\JsonLines.cs shared\ToolCatalog.cs bridge\PipeHub.cs bridge\ControlHub.cs tests\HeadlessHub.cs @dist\library-gui.rsp
 if ($LASTEXITCODE -ne 0) { throw 'Headless hub build failed' }
 Copy-Item bridge\App.config dist\HeadlessHub.exe.config -Force
-& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /out:dist\McpHarness.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\CommandCatalog.cs shared\ToolkitCatalog.cs shared\DiscoveryCatalog.cs shared\JsonLines.cs shared\ToolCatalog.cs mcp\McpServer.cs tests\McpHarness.cs
+& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /out:dist\McpHarness.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\CommandCatalog.cs shared\ToolkitCatalog.cs shared\DiscoveryCatalog.cs shared\JsonLines.cs shared\ToolCatalog.cs mcp\McpServer.cs tests\McpHarness.cs @dist\library-common.rsp
 if ($LASTEXITCODE -ne 0) { throw 'MCP harness build failed' }
 Copy-Item bridge\App.config dist\McpHarness.exe.config -Force
-& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /define:PROBE_TEST /out:dist\SketchUpMcp.Test.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\CommandCatalog.cs shared\ToolkitCatalog.cs shared\DiscoveryCatalog.cs shared\JsonLines.cs shared\ToolCatalog.cs mcp\McpServer.cs mcp\BridgeConnection.cs mcp\Program.cs
+& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /define:PROBE_TEST /out:dist\SketchUpMcp.Test.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\CommandCatalog.cs shared\ToolkitCatalog.cs shared\DiscoveryCatalog.cs shared\JsonLines.cs shared\ToolCatalog.cs mcp\McpServer.cs mcp\BridgeConnection.cs mcp\Program.cs @dist\library-common.rsp
 if ($LASTEXITCODE -ne 0) { throw 'Isolated MCP adapter build failed' }
 Copy-Item bridge\App.config dist\SketchUpMcp.Test.exe.config -Force
+& $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /out:dist\LibraryHarness.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\CommandCatalog.cs shared\ToolkitCatalog.cs shared\DiscoveryCatalog.cs shared\JsonLines.cs shared\ToolCatalog.cs bridge\PipeHub.cs tests\LibraryHarness.cs @dist\library-gui.rsp
+if ($LASTEXITCODE -ne 0) { throw 'Library harness build failed' }
+Copy-Item bridge\App.config dist\LibraryHarness.exe.config -Force
+& $Python tests/library_test.py (Join-Path $PWD 'dist\LibraryHarness.exe')
+if ($LASTEXITCODE -ne 0) { throw 'Library/worker/package tests failed' }
 & $Python tests/mcp_stdio_test.py dist/McpHarness.exe
 if ($LASTEXITCODE -ne 0) { throw 'MCP stdio tests failed' }
 & $Python tests/native_runner_test.py
@@ -37,6 +42,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Basic drawing/edit/query and native-suite test
 if ($LASTEXITCODE -ne 0) { throw 'Geometry algorithm tests failed' }
 & $Ruby @RubyArguments tests/extended_commands_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Extended drawing/component/resource tests failed' }
+& $Ruby @RubyArguments tests/library_plan_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Library plan executor tests failed' }
 & $Ruby @RubyArguments tests/sliding_window_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Sliding window recipe tests failed' }
 & $Ruby @RubyArguments tests/ui_updates_test.rb

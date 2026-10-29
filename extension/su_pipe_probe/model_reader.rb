@@ -4,6 +4,7 @@ require 'time'
 require_relative 'entity_browser'
 require_relative 'entity_details'
 require_relative 'resources'
+require_relative 'library_plan'
 
 module SUPipeProbe
   # Called only by Panel's UI timer. No observers, operations, or setters.
@@ -23,6 +24,8 @@ module SUPipeProbe
       when 'get_selection_info' then selection(arguments)
       when 'get_entity_info' then specific_entity(arguments)
       when 'get_resources' then ResourceReader.new(@model).call(arguments)
+      when 'get_plan_snapshot' then LibrarySnapshotReader.new(@model).call(arguments)
+      when 'get_plan_materials' then LibrarySnapshotReader.new(@model).palette(arguments)
       when 'find_entities', 'get_children' then EntityBrowser.new(@model).call(method, arguments)
       else raise ArgumentError, 'Unknown read method'
       end

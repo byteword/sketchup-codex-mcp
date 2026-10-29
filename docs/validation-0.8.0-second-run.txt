@@ -1,0 +1,125 @@
+Built: dist\SketchUpPipeProbe.exe and dist\SketchUpMcp.exe
+test_budget_schema_and_source_isolation (__main__.LibraryTests.test_budget_schema_and_source_isolation) ... ok
+test_create_verify_activate_plan_and_restart (__main__.LibraryTests.test_create_verify_activate_plan_and_restart) ... ok
+test_missing_dependency_and_tampered_archive_rejected (__main__.LibraryTests.test_missing_dependency_and_tampered_archive_rejected) ... ok
+test_multiple_roots_selective_import_and_no_automatic_execution (__main__.LibraryTests.test_multiple_roots_selective_import_and_no_automatic_execution) ... ok
+test_save_replay_conflict_and_failed_revision_keeps_active (__main__.LibraryTests.test_save_replay_conflict_and_failed_revision_keeps_active) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 15.549s
+
+OK
+test_basic_commands_reject_bad_vectors_ranges_and_unconfirmed_batch (__main__.StdioTests.test_basic_commands_reject_bad_vectors_ranges_and_unconfirmed_batch) ... ok
+test_basic_drawing_edit_query_and_batch_contract (__main__.StdioTests.test_basic_drawing_edit_query_and_batch_contract) ... ok
+test_batch_rejects_forbidden_actions_overrides_and_bad_inner_types (__main__.StdioTests.test_batch_rejects_forbidden_actions_overrides_and_bad_inner_types) ... ok
+test_batch_schema_and_nested_validation (__main__.StdioTests.test_batch_schema_and_nested_validation) ... ok
+test_command_tool_annotations_and_result_schema (__main__.StdioTests.test_command_tool_annotations_and_result_schema) ... ok
+test_command_validation_and_nested_input (__main__.StdioTests.test_command_validation_and_nested_input) ... ok
+test_concurrent_calls_and_cancellation (__main__.StdioTests.test_concurrent_calls_and_cancellation) ... ok
+test_creation_and_duplication_contract_and_arguments (__main__.StdioTests.test_creation_and_duplication_contract_and_arguments) ... ok
+test_creation_and_duplication_reject_invalid_geometry_and_targets (__main__.StdioTests.test_creation_and_duplication_reject_invalid_geometry_and_targets) ... ok
+test_discovery_contract_and_nested_arguments (__main__.StdioTests.test_discovery_contract_and_nested_arguments) ... ok
+test_discovery_rejects_invalid_filters_paths_and_limits (__main__.StdioTests.test_discovery_rejects_invalid_filters_paths_and_limits) ... ok
+test_duplicate_active_id_closes_without_repeating_tool (__main__.StdioTests.test_duplicate_active_id_closes_without_repeating_tool) ... ok
+test_eof_cancels_pending_call (__main__.StdioTests.test_eof_cancels_pending_call) ... ok
+test_extended_tools_accept_typed_contracts (__main__.StdioTests.test_extended_tools_accept_typed_contracts) ... ok
+test_extended_tools_reject_untyped_nested_options_and_unknown_keys (__main__.StdioTests.test_extended_tools_reject_untyped_nested_options_and_unknown_keys) ... ok
+test_initialization_and_tool_contract (__main__.StdioTests.test_initialization_and_tool_contract) ... ok
+test_oversized_frame_closes_connection (__main__.StdioTests.test_oversized_frame_closes_connection) ... ok
+test_parse_error_and_invalid_request_do_not_break_session (__main__.StdioTests.test_parse_error_and_invalid_request_do_not_break_session) ... ok
+test_protocol_negotiation (__main__.StdioTests.test_protocol_negotiation) ... ok
+test_read_query_validation_and_paging (__main__.StdioTests.test_read_query_validation_and_paging) ... ok
+test_requires_initialized_notification (__main__.StdioTests.test_requires_initialized_notification) ... ok
+test_runtime_failure_is_tool_error (__main__.StdioTests.test_runtime_failure_is_tool_error) ... ok
+test_unicode_and_fragmented_input (__main__.StdioTests.test_unicode_and_fragmented_input) ... ok
+test_unknown_notification_has_no_response (__main__.StdioTests.test_unknown_notification_has_no_response) ... ok
+test_validation_and_unknown_methods (__main__.StdioTests.test_validation_and_unknown_methods) ... ok
+test_window_recipe_schema_and_typed_parameters (__main__.StdioTests.test_window_recipe_schema_and_typed_parameters) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 5.847s
+
+OK
+test_lost_response_uses_result_lookup_without_rerunning (__main__.NativeRunnerTest.test_lost_response_uses_result_lookup_without_rerunning) ... FAIL
+test_missing_permission_stops_before_mutation (__main__.NativeRunnerTest.test_missing_permission_stops_before_mutation) ... FAIL
+test_old_schema_is_blocked_before_submitting_extended_test (__main__.NativeRunnerTest.test_old_schema_is_blocked_before_submitting_extended_test) ... FAIL
+test_one_batch_command_writes_a_structured_report (__main__.NativeRunnerTest.test_one_batch_command_writes_a_structured_report) ... FAIL
+test_stale_model_never_runs_a_test (__main__.NativeRunnerTest.test_stale_model_never_runs_a_test) ... FAIL
+test_version_mismatch_stops_before_mutation (__main__.NativeRunnerTest.test_version_mismatch_stops_before_mutation) ... FAIL
+
+======================================================================
+FAIL: test_lost_response_uses_result_lookup_without_rerunning (__main__.NativeRunnerTest.test_lost_response_uses_result_lookup_without_rerunning)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 59, in test_lost_response_uses_result_lookup_without_rerunning
+    process, report, calls = self.run_case('lost')
+                             ~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 25, in run_case
+    self.assertTrue(output.is_file(), (result.stdout,result.stderr))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : (b'', b"C:\\Python313\\python.exe: can't open file 'C:\\\\Users\\\\bytew\\\\Documents\\\\ChatGPT\\\\sketchup-codex-mcp\\\\dist\\\\validation-0.8.0\\\\skills\\\\sketchup-self-test\\\\scripts\\\\run_native_tests.py': [Errno 2] No such file or directory\r\n")
+
+======================================================================
+FAIL: test_missing_permission_stops_before_mutation (__main__.NativeRunnerTest.test_missing_permission_stops_before_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 38, in test_missing_permission_stops_before_mutation
+    process, report, calls = self.run_case('permission')
+                             ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 25, in run_case
+    self.assertTrue(output.is_file(), (result.stdout,result.stderr))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : (b'', b"C:\\Python313\\python.exe: can't open file 'C:\\\\Users\\\\bytew\\\\Documents\\\\ChatGPT\\\\sketchup-codex-mcp\\\\dist\\\\validation-0.8.0\\\\skills\\\\sketchup-self-test\\\\scripts\\\\run_native_tests.py': [Errno 2] No such file or directory\r\n")
+
+======================================================================
+FAIL: test_old_schema_is_blocked_before_submitting_extended_test (__main__.NativeRunnerTest.test_old_schema_is_blocked_before_submitting_extended_test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 54, in test_old_schema_is_blocked_before_submitting_extended_test
+    _, report, calls = self.run_case('old_schema')
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 25, in run_case
+    self.assertTrue(output.is_file(), (result.stdout,result.stderr))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : (b'', b"C:\\Python313\\python.exe: can't open file 'C:\\\\Users\\\\bytew\\\\Documents\\\\ChatGPT\\\\sketchup-codex-mcp\\\\dist\\\\validation-0.8.0\\\\skills\\\\sketchup-self-test\\\\scripts\\\\run_native_tests.py': [Errno 2] No such file or directory\r\n")
+
+======================================================================
+FAIL: test_one_batch_command_writes_a_structured_report (__main__.NativeRunnerTest.test_one_batch_command_writes_a_structured_report)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 31, in test_one_batch_command_writes_a_structured_report
+    process, report, calls = self.run_case('ok')
+                             ~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 25, in run_case
+    self.assertTrue(output.is_file(), (result.stdout,result.stderr))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : (b'', b"C:\\Python313\\python.exe: can't open file 'C:\\\\Users\\\\bytew\\\\Documents\\\\ChatGPT\\\\sketchup-codex-mcp\\\\dist\\\\validation-0.8.0\\\\skills\\\\sketchup-self-test\\\\scripts\\\\run_native_tests.py': [Errno 2] No such file or directory\r\n")
+
+======================================================================
+FAIL: test_stale_model_never_runs_a_test (__main__.NativeRunnerTest.test_stale_model_never_runs_a_test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 49, in test_stale_model_never_runs_a_test
+    _, report, calls = self.run_case('ok', '33333333-3333-4333-8333-333333333333')
+                       ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 25, in run_case
+    self.assertTrue(output.is_file(), (result.stdout,result.stderr))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : (b'', b"C:\\Python313\\python.exe: can't open file 'C:\\\\Users\\\\bytew\\\\Documents\\\\ChatGPT\\\\sketchup-codex-mcp\\\\dist\\\\validation-0.8.0\\\\skills\\\\sketchup-self-test\\\\scripts\\\\run_native_tests.py': [Errno 2] No such file or directory\r\n")
+
+======================================================================
+FAIL: test_version_mismatch_stops_before_mutation (__main__.NativeRunnerTest.test_version_mismatch_stops_before_mutation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 44, in test_version_mismatch_stops_before_mutation
+    _, report, calls = self.run_case('version')
+                       ~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.8.0\tests\native_runner_test.py", line 25, in run_case
+    self.assertTrue(output.is_file(), (result.stdout,result.stderr))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : (b'', b"C:\\Python313\\python.exe: can't open file 'C:\\\\Users\\\\bytew\\\\Documents\\\\ChatGPT\\\\sketchup-codex-mcp\\\\dist\\\\validation-0.8.0\\\\skills\\\\sketchup-self-test\\\\scripts\\\\run_native_tests.py': [Errno 2] No such file or directory\r\n")
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.551s
+
+FAILED (failures=6)

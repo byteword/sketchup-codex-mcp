@@ -20,7 +20,7 @@ namespace SketchUpPipeProbe
 {
     public static class BuildInfo
     {
-        public const string Version = "0.7.0";
+        public const string Version = "0.8.0";
         public const string NumericVersion = Version + ".0";
         public const string Product = "SketchUp Local MCP Bridge";
     }

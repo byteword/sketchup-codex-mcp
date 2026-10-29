@@ -1,0 +1,1357 @@
+{
+  "sketchup_library_list": {
+    "description": "List libraries or search techniques without a SketchUp connection. Compact summaries, revision-bound cursors. Use state=all to include drafts. No source code in list.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "libraries",
+            "techniques"
+          ]
+        },
+        "library_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "maxItems": 16
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "active",
+            "all"
+          ]
+        },
+        "compatible_with": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "model_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            }
+          },
+          "required": [
+            "session_id",
+            "model_id"
+          ],
+          "additionalProperties": false
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 25
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_library_get": {
+    "description": "Read exact technique contract, source pages or tests. To create your first technique, call kind=authoring without technique_id: returns a complete example and pure-JS/plan authoring profile; request individual *_schema sections as needed. Pin revision for edits/execution. Authoring section window_example returns the editable two-panel sliding-window technique files.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "library_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "technique_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 97,
+          "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "contract",
+              "examples",
+              "source",
+              "tests",
+              "history",
+              "diff",
+              "profile",
+              "example",
+              "manifest_schema",
+              "plan_schema",
+              "report_schema",
+              "tests_schema",
+              "package_schema",
+              "window_example"
+            ]
+          },
+          "maxItems": 7
+        },
+        "source_page": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "start_line": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100000
+            },
+            "line_count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "byte_offset": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65536
+            },
+            "max_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8192
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "additionalProperties": false,
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "start_line": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "line_count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                }
+              },
+              "required": [
+                "file",
+                "start_line",
+                "line_count"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "byte_offset": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 65536
+                },
+                "max_bytes": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 8192
+                }
+              },
+              "required": [
+                "file",
+                "byte_offset",
+                "max_bytes"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "base_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "target_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 71,
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "history_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "history_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 25
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "technique",
+            "authoring"
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "technique_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 97,
+              "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "sections": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "contract",
+                  "examples",
+                  "source",
+                  "tests",
+                  "history",
+                  "diff"
+                ]
+              },
+              "maxItems": 7
+            },
+            "source_page": {
+              "type": "object",
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "start_line": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100000
+                },
+                "line_count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                "byte_offset": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 65536
+                },
+                "max_bytes": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 8192
+                }
+              },
+              "required": [
+                "file"
+              ],
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "start_line": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100000
+                    },
+                    "line_count": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100
+                    }
+                  },
+                  "required": [
+                    "file",
+                    "start_line",
+                    "line_count"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "byte_offset": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 65536
+                    },
+                    "max_bytes": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 8192
+                    }
+                  },
+                  "required": [
+                    "file",
+                    "byte_offset",
+                    "max_bytes"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "base_revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "target_revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "history_offset": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "history_limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 25
+            },
+            "kind": {
+              "const": "technique"
+            }
+          },
+          "required": [
+            "technique_id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "authoring"
+            },
+            "sections": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "profile",
+                  "example",
+                  "manifest_schema",
+                  "plan_schema",
+                  "report_schema",
+                  "tests_schema",
+                  "package_schema",
+                  "window_example"
+                ]
+              }
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "sketchup_library_save": {
+    "description": "Save complete UTF-8 technique file snapshot as an immutable draft. base_revision=null creates; otherwise compare with current head. request_id deduplicates. Does not activate or touch model.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "library_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "technique_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 97,
+          "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+        },
+        "base_revision": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "files": {
+          "type": "object",
+          "maxProperties": 32,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 65536
+          }
+        },
+        "change_summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "derived_from": {
+          "type": "object",
+          "properties": {
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "technique_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 97,
+              "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "library_id",
+            "technique_id",
+            "revision"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "request_id",
+        "technique_id",
+        "base_revision",
+        "files",
+        "change_summary"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_library_manage": {
+    "description": "Create a named user library, activate a verified revision, archive/restore a technique or tag an immutable release. Compare expected_active_revision (null for none). Model unchanged.",
+    "schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "action": {
+              "const": "create_library"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            },
+            "summary": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "scope": {
+              "type": "string",
+              "enum": [
+                "user"
+              ]
+            }
+          },
+          "required": [
+            "request_id",
+            "action",
+            "title"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "action": {
+              "const": "activate"
+            },
+            "technique_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 97,
+              "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+            },
+            "expected_active_revision": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "request_id",
+            "action",
+            "technique_id",
+            "expected_active_revision",
+            "revision"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "action": {
+              "const": "archive"
+            },
+            "technique_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 97,
+              "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+            },
+            "expected_active_revision": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "request_id",
+            "action",
+            "technique_id",
+            "expected_active_revision"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "action": {
+              "const": "restore"
+            },
+            "technique_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 97,
+              "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+            },
+            "expected_active_revision": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "request_id",
+            "action",
+            "technique_id",
+            "expected_active_revision"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "action": {
+              "const": "tag"
+            },
+            "technique_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 97,
+              "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+            },
+            "expected_active_revision": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            }
+          },
+          "required": [
+            "request_id",
+            "action",
+            "technique_id",
+            "expected_active_revision",
+            "revision",
+            "label"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "const": "configure_library"
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "update_policy": {
+              "type": "string",
+              "enum": [
+                "draft_only",
+                "after_checks"
+              ]
+            }
+          },
+          "required": [
+            "action",
+            "request_id",
+            "update_policy"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "action": {},
+        "expected_active_revision": {},
+        "label": {},
+        "library_id": {},
+        "request_id": {},
+        "revision": {},
+        "scope": {},
+        "summary": {},
+        "technique_id": {},
+        "title": {},
+        "update_policy": {}
+      },
+      "required": [
+        "action",
+        "request_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_library_run": {
+    "description": "Start verify, plan or apply; returns durable job_id immediately. Scripts run in bounded Probe worker. verify offline needs no model. apply requires a bound unexpired plan, panel grant, fresh context/command_id; after unknown outcome query library_job, never reapply.",
+    "schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "mode": {
+              "const": "verify"
+            },
+            "technique_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 97,
+              "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "offline",
+                "native"
+              ]
+            },
+            "tests": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "maxItems": 128
+            },
+            "activate_if_passed": {
+              "type": "boolean"
+            },
+            "expected_active_revision": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "bindings": {
+              "type": "object",
+              "maxProperties": 64
+            },
+            "command_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            }
+          },
+          "required": [
+            "request_id",
+            "mode",
+            "technique_id",
+            "revision"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "mode": {
+              "const": "plan"
+            },
+            "technique_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 97,
+              "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "params": {
+              "type": "object",
+              "maxProperties": 64
+            },
+            "preset": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "bindings": {
+              "type": "object",
+              "maxProperties": 64
+            }
+          },
+          "required": [
+            "request_id",
+            "mode",
+            "technique_id",
+            "revision",
+            "params"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "mode": {
+              "const": "apply"
+            },
+            "plan_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "plan_hash": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "model_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "expected_context": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 19,
+                "pattern": "^[1-9][0-9]{0,18}$"
+              },
+              "maxItems": 32
+            },
+            "command_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80
+            }
+          },
+          "required": [
+            "request_id",
+            "mode",
+            "plan_id",
+            "plan_hash",
+            "session_id",
+            "model_id",
+            "expected_context",
+            "command_id"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "activate_if_passed": {},
+        "bindings": {},
+        "command_id": {},
+        "environment": {},
+        "expected_active_revision": {},
+        "expected_context": {},
+        "library_id": {},
+        "mode": {},
+        "model_id": {},
+        "params": {},
+        "plan_hash": {},
+        "plan_id": {},
+        "preset": {},
+        "request_id": {},
+        "revision": {},
+        "session_id": {},
+        "technique_id": {},
+        "tests": {}
+      },
+      "required": [
+        "mode",
+        "request_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_library_job": {
+    "description": "Get or cooperatively cancel this exact library job. get can reconcile an uncertain native submission. No automatic model retry.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "get",
+            "cancel"
+          ]
+        },
+        "job_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36,
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "cursor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "wait_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30000
+        }
+      },
+      "required": [
+        "action",
+        "job_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_library_transfer": {
+    "description": "Export one or more pinned techniques as .probe-techpack ZIP with deduplicated dependencies. Upload and inspect without execution; select roots then commit an import plan as drafts. Never overwrites active revisions.",
+    "schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "const": "export"
+            },
+            "selections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "library_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "technique_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 97,
+                    "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+                  },
+                  "revision": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 71,
+                    "pattern": "^sha256:[0-9a-f]{64}$"
+                  }
+                },
+                "required": [
+                  "technique_id",
+                  "revision"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "maxItems": 32
+            },
+            "package_info": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "summary": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "include_dependencies": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "action",
+            "selections",
+            "package_info"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "const": "open_import"
+            },
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "total_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1048576
+            },
+            "digest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 71,
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "action",
+            "request_id",
+            "total_bytes",
+            "digest"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "const": "write_chunk"
+            },
+            "upload_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1048576
+            },
+            "data_base64": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 24000
+            }
+          },
+          "required": [
+            "action",
+            "upload_id",
+            "offset",
+            "data_base64"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "const": "inspect_import"
+            },
+            "upload_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "selected_roots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "technique_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 97,
+                    "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+                  },
+                  "revision": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 71,
+                    "pattern": "^sha256:[0-9a-f]{64}$"
+                  }
+                },
+                "required": [
+                  "technique_id",
+                  "revision"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 32
+            },
+            "conflict_policy": {
+              "type": "string",
+              "enum": [
+                "fail",
+                "stage",
+                "fork"
+              ]
+            },
+            "id_map": {
+              "type": "object",
+              "maxProperties": 64,
+              "additionalProperties": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 97,
+                "pattern": "^[a-z][a-z0-9-]{0,31}\\.[a-z][a-z0-9-]{0,63}$"
+              }
+            }
+          },
+          "required": [
+            "action",
+            "upload_id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "const": "commit_import"
+            },
+            "request_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "upload_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "import_plan_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "library_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "conflict_policy": {
+              "type": "string",
+              "enum": [
+                "fail",
+                "stage",
+                "fork"
+              ]
+            }
+          },
+          "required": [
+            "action",
+            "request_id",
+            "upload_id",
+            "import_plan_id",
+            "library_id",
+            "conflict_policy"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "action": {
+              "const": "read_export"
+            },
+            "bundle_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 36,
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1048576
+            },
+            "max_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16384
+            }
+          },
+          "required": [
+            "action",
+            "bundle_id",
+            "offset",
+            "max_bytes"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "action": {},
+        "bundle_id": {},
+        "conflict_policy": {},
+        "data_base64": {},
+        "digest": {},
+        "id_map": {},
+        "import_plan_id": {},
+        "include_dependencies": {},
+        "library_id": {},
+        "max_bytes": {},
+        "offset": {},
+        "package_info": {},
+        "request_id": {},
+        "selected_roots": {},
+        "selections": {},
+        "total_bytes": {},
+        "upload_id": {}
+      },
+      "required": [
+        "action"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

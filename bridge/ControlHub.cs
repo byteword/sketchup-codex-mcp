@@ -28,6 +28,8 @@ namespace SketchUpPipeProbe
         public readonly ConcurrentDictionary<string, McpClientState> Clients = new ConcurrentDictionary<string, McpClientState>();
         readonly ConcurrentDictionary<string, NamedPipeServerStream> streams = new ConcurrentDictionary<string, NamedPipeServerStream>();
         readonly PipeHub hub;
+        readonly LibraryService library = new LibraryService();
+        public string LibraryDirectory {get {return library.DirectoryPath;}}
         readonly Action<string> log;
         readonly object sync = new object();
         NamedPipeServerStream listener;
@@ -203,6 +205,15 @@ namespace SketchUpPipeProbe
                     instances = hub.Peers.Count, clients = Clients.Values.Select(c => new { name = c.Name, version = c.Version, pid = c.Pid, protocol = c.Protocol }).ToArray(), last_error = LastError });
             if (name == "sketchup_list_instances")
                 return ToolCatalog.Result(new { instances = hub.Peers.Values.OrderBy(p => p.ClientPid).Select(Snapshot).ToArray() });
+            if (LibraryCatalog.Contains(name)) {
+                var output = await library.HandleAsync(name,args,async (nativeMethod,nativeFields,ct)=>{
+                    Peer target;
+                    if(!hub.Peers.TryGetValue(Lib.Str(nativeFields,"session_id"),out target))throw new LibraryFault("instance_not_found","Refresh connected instances");
+                    nativeFields=new Dictionary<string,object>(nativeFields);nativeFields["owner_id"]=client.Id;
+                    return await target.RequestAsync(nativeMethod,nativeFields,ct).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+                return ToolCatalog.Result(output,!Lib.Bool(Lib.Obj(output),"ok"));
+            }
             Peer peer;
             if (!hub.Peers.TryGetValue(JsonLines.Text(args, "session_id"), out peer))
                 return ToolCatalog.Error("instance_not_found", "Refresh sketchup_list_instances and choose an explicit target.");
@@ -243,6 +254,7 @@ namespace SketchUpPipeProbe
 
         public void Dispose()
         {
+            library.Dispose();
             lock (sync)
             {
                 stopping = true;

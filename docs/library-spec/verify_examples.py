@@ -46,7 +46,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--node", default="node")
     args = parser.parse_args()
-    for name in ("manifest", "plan", "report", "tests"):
+    for name in ("manifest", "plan", "report", "tests", "package"):
         Draft202012Validator.check_schema(read(ROOT / (name + ".schema.json")))
     package = ROOT / "example" / "solid-panel"
     manifest = read(package / "manifest.json")
@@ -129,7 +129,7 @@ process.stdout.write(output);
     changed = dict(files)
     changed["technique.js"] += b"// changed\n"
     assert revision(changed) != digest
-    print("Design specimens: 4 schemas valid; " + str(positive) +
+    print("Design specimens: 5 schemas valid; " + str(positive) +
           " positive plans / closed outward meshes; " + str(negative) +
           " rejected inputs; unexpected code fields rejected; revision vector verified.")
     print("Example revision: " + digest)

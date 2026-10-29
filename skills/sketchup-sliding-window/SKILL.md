@@ -5,7 +5,9 @@ description: "Create or replace a two-panel sliding window in connected SketchUp
 
 # SketchUp two-panel sliding window
 
-Use the installed `sketchup_create_sliding_window` tool (adapter and extension 0.7.0+). The geometry recipe lives in the plugin; this skill supplies design decisions and verification. Check actual tool availability first. If unavailable, explain the required runtime update; do not rebuild the window with hundreds of face/edge calls or arbitrary Ruby.
+Prefer the Probe library engine when the seven `sketchup_library_*` tools are available (0.8.0+). The editable geometry recipe lives outside the RBZ. Discover the active `byteword.sliding-window` technique and read its contract; preserve an existing user-improved revision. If absent, get `kind=authoring, sections=["window_example"]`, save its complete `window_files` as a new technique, then verify and activate it with the expected active revision. Use library jobs to await completion.
+
+On older adapters, use `sketchup_create_sliding_window` (0.7.0+) as a compatibility path. If neither route is available, explain the runtime update needed. Do not reconstruct the window with hundreds of face/edge calls or arbitrary Ruby.
 
 ## Interpret the request
 
@@ -20,11 +22,11 @@ Use the installed `sketchup_create_sliding_window` tool (adapter and extension 0
 
 Discover instances with `sketchup_list_instances`; resolve the current session/model. Read current edit context and next command ID immediately before each mutation. Use the local panel's human execution grant; reuse authorization already given for this task. No implicit edit-path changes.
 
-Send one typed `sketchup_create_sliding_window` request containing name, origin, dimensions, materials and desired opening. Optional `dry_run` validates without geometry but consumes a command ID. Execution needs its own fresh ID.
+For the library route, pin the chosen revision and send dimensions/opening as `params` to `sketchup_library_run mode=plan`. Set `bindings.session_id`, `model_id`, `expected_context`, `origin_mm=[x,y,z]`, optional `name`, and `materials={frame: exactName, glass: exactName, seal: exactName, hardware: exactName}` from the current model. Supply the exact direct-child replacement target when redrawing an existing window, keeping the user's reference separate. Read the plan summary before applying. Then use `mode=apply` with the returned plan ID/hash, fresh command ID, session/model IDs and expected edit context. Poll the library job for the native result. Replan if bindings, target or context changed.
 
-For “redraw/replace that window”, resolve the exact direct-child target and provide `replace_entity_id`. The old object is removed only after the replacement passes native checks, in the same Undo operation. Preserve a separate user reference. Creating a new window leaves `replace_entity_id` absent.
+For the older native route, send one `sketchup_create_sliding_window` request containing name, origin, dimensions, materials and opening. Set `replace_entity_id` only for an exact direct-child replacement. Optional `dry_run` consumes a command ID; execution needs a fresh ID.
 
-After an unknown outcome, query `sketchup_get_command_result` and current objects; do not automatically repeat a creation request.
+Both routes remove an old target only after the replacement passes native checks, within the same Undo. After an unknown outcome, poll the library job or query `sketchup_get_command_result`; never automatically repeat creation.
 
 ## Preserve quality and verify
 
@@ -34,4 +36,4 @@ After an unknown outcome, query `sketchup_get_command_result` and current object
 - Check returned outer model bounds against X/Y/Z dimensions, all three sections `solid=true`, group structure, cleanup counts and timing. A single follow-up parent/children query is sufficient when needed; do not enumerate every surface.
 - State that one Undo reverts the whole creation/replacement. Native bounds/solidity checks do not prove appearance: use a user screenshot or approved viewport access for a visual claim. Do not change the camera merely to validate bounds.
 
-The source recipe matches the previously modeled and optimized 0.6.3 prototype at default dimensions. The new 0.7.0 command still requires its own installed native acceptance; API-double regression results are separate evidence.
+The source recipe matches the previously modeled and optimized 0.6.3 prototype at default dimensions. The Probe JavaScript example is checked against that prototype face-by-face, including material roles. New 0.8.0 library execution still needs installed native acceptance; API-double regression results are separate evidence.

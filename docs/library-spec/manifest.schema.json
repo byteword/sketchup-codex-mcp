@@ -64,7 +64,8 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^[a-z][a-z0-9-]*/[1-9][0-9]*$"
+        "pattern": "^[a-z][a-z0-9-]*/[1-9][0-9]*$",
+        "maxLength": 64
       },
       "minItems": 0,
       "maxItems": 32
