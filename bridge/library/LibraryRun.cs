@@ -299,7 +299,7 @@ namespace SketchUpPipeProbe
                 await CheckBindings(bindings,Lib.Parse(files["manifest.json"]),native,token).ConfigureAwait(false);
                 var fields=Lib.Map("session_id",Lib.Str(bindings,"session_id"),"model_id",Lib.Str(bindings,"model_id"),
                     "expected_context",bindings["expected_context"],"command_id",Lib.Str(a,"command_id"),"plans",plans,"bindings",bindings,"verify_only",true);
-                MarkSubmitted(jobId,fields);
+                MarkSubmitted(jobId,fields,token);
                 var result=await native("apply_library_plan",fields,CancellationToken.None).ConfigureAwait(false);
                 if(!NativeResult(jobId,result))throw new LibraryFault("native_failed","Native verification failed");
                 lock(gate){ChangeState(()=>{var validation=Lib.Obj(Lib.Obj(Lib.Obj(Technique(library,id)["revisions"])[rev])["validation"]);validation["native"]="passed";},true);}
@@ -331,9 +331,9 @@ namespace SketchUpPipeProbe
                 var value=Vec(expected[key]);for(int i=0;i<3;i++){double actual=key=="min"?all.Min(p=>p[i]):all.Max(p=>p[i]);if(Math.Abs(actual-value[i])>0.001)throw new LibraryFault("test_failed","Independent bounds mismatch");}
             }
         }
-        void MarkSubmitted(string jobId,Dictionary<string,object> fields) {
+        void MarkSubmitted(string jobId,Dictionary<string,object> fields,CancellationToken token) {
             fields["library_job_id"]=jobId;
-            lock(gate){var j=Record("jobs",jobId);j["submitted"]=true;j["native_request"]=fields;WriteRecord("jobs",jobId,j);}
+            lock(gate){token.ThrowIfCancellationRequested();var j=Record("jobs",jobId);j["submitted"]=true;j["native_request"]=fields;WriteRecord("jobs",jobId,j);}
             UpdateJob(jobId,"running","native_wait","unknown");
         }
         bool NativeResult(string jobId,Dictionary<string,object> response) {
@@ -356,7 +356,7 @@ namespace SketchUpPipeProbe
             token.ThrowIfCancellationRequested();var bindings=Lib.Obj(record["bindings"]);
             var fields=Lib.Map("session_id",a["session_id"],"model_id",a["model_id"],"expected_context",a["expected_context"],"command_id",a["command_id"],
                 "plans",new object[]{record["plan"]},"bindings",bindings,"fingerprints",record["fingerprints"],"verify_only",false);
-            MarkSubmitted(jobId,fields);
+            MarkSubmitted(jobId,fields,token);
             var result=await native("apply_library_plan",fields,CancellationToken.None).ConfigureAwait(false);
             NativeResult(jobId,result);
         }

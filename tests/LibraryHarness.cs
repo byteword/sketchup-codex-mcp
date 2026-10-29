@@ -1,11 +1,14 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Collections.Generic;
 using SketchUpPipeProbe;
 static class LibraryHarness
 {
     static int Main(string[] args) {
         if(LibraryWorker.TryMain(args))return 0;
+        if(args.Length==2 && args[0]=="--activity-tests")return ActivityTests(args[1]);
         if(args.Length==1 && args[0]=="--worker-monitor-tests")return WorkerMonitorTests();
         Console.InputEncoding=new System.Text.UTF8Encoding(false,true);Console.OutputEncoding=new System.Text.UTF8Encoding(false);
         try {
@@ -29,6 +32,64 @@ static class LibraryHarness
                 }
             }return 0;
         }catch(Exception e){Console.Error.WriteLine(e);return 1;}
+    }
+    static Dictionary<string,object> Data(object result) {
+        var value=Lib.Obj(result);
+        if(!Lib.Bool(value,"ok"))throw new Exception(Lib.Json(value));
+        return Lib.Obj(value["data"]);
+    }
+    static int ActivityTests(string root) {
+        int checks=0;
+        Action<bool> check=ok=>{if(!ok)throw new Exception("Activity test failed at "+checks);checks++;};
+        using(var service=new LibraryService(root)) {
+            var files=Lib.Map();
+            foreach(string path in Directory.GetFiles("docs/library-spec/example/solid-panel"))files[Path.GetFileName(path)]=File.ReadAllText(path);
+            var saved=Data(service.HandleAsync("sketchup_library_save",Lib.Map("request_id",Guid.NewGuid().ToString(),
+                "technique_id","demo.solid-panel","base_revision",null,"files",files,"change_summary","test"),null).GetAwaiter().GetResult());
+            var reference=Lib.Obj(saved["technique_ref"]);
+            string session=Guid.NewGuid().ToString(),model=Guid.NewGuid().ToString();
+            var bindings=Lib.Map("session_id",session,"model_id",model,"expected_context",new object[0],"materials",Lib.Map("panel","Gray"));
+            for(int scenario=0;scenario<2;scenario++) {
+                bool beforeSubmit=scenario==0;
+                using(var entered=new ManualResetEventSlim()) {
+                    var barrier=new TaskCompletionSource<Dictionary<string,object>>();
+                    Dictionary<string,object> submitted=null;int calls=0;
+                    var state=Lib.Map("ok",true,"state",Lib.Map("model_id",model,"library_capabilities",new[]{"group/1","mesh/1","material-existing/1","verify/1"}));
+                    LibraryService.NativeCall native=(method,fields,token)=>{
+                        if(method=="get_state") {
+                            if(beforeSubmit){entered.Set();return barrier.Task;}
+                            return Task.FromResult(state);
+                        }
+                        if(method=="get_plan_materials")return Task.FromResult(Lib.Map("ok",true));
+                        if(method=="apply_library_plan") {
+                            Interlocked.Increment(ref calls);submitted=fields;entered.Set();return barrier.Task;
+                        }
+                        throw new Exception("Unexpected method: "+method);
+                    };
+                    var args=Lib.Obj(Lib.Clone(reference));args["mode"]="verify";args["environment"]="native";
+                    args["tests"]=new[]{"default"};args["request_id"]=Guid.NewGuid().ToString();args["command_id"]=session+":1";args["bindings"]=bindings;
+                    var started=Data(service.HandleAsync("sketchup_library_run",args,native).GetAwaiter().GetResult());
+                    string id=Lib.Str(started,"job_id");
+                    check(entered.Wait(10000));
+                    var activity=Lib.Arr(service.ModelActivity(session,model));
+                    check(activity.Count==1 && Lib.Str(Lib.Obj(activity[0]),"job_id")==id);
+                    check(Lib.Arr(service.ModelActivity(session,Guid.NewGuid().ToString())).Count==0);
+                    check(service.StopModelJobs(Guid.NewGuid().ToString(),model)==0);
+                    check(service.StopModelJobs(session,model)==(beforeSubmit?1:0));
+                    check(Lib.Bool(Lib.Obj(activity[0]),"submitted")==!beforeSubmit);
+                    // The blocked read deliberately ignores cancellation, exercising the
+                    // final cancellation check at the native submission boundary.
+                    barrier.SetResult(beforeSubmit?state:Lib.Map("ok",true,"result",Lib.Map(
+                        "state","completed","library_job_id",submitted["library_job_id"],"data",Lib.Map("verified",true))));
+                    var job=Data(service.HandleAsync("sketchup_library_job",Lib.Map("action","get","job_id",id,"wait_ms",5000),null).GetAwaiter().GetResult());
+                    check(Lib.Str(job,"state")== (beforeSubmit?"canceled":"succeeded"));
+                    check(Lib.Str(job,"effect")=="none");
+                    check(calls==(beforeSubmit?0:1));
+                    check(Lib.Arr(service.ModelActivity(session,model)).Count==0);
+                }
+            }
+        }
+        Console.WriteLine(Lib.Json(Lib.Map("ok",true,"checks",checks)));return 0;
     }
     static int WorkerMonitorTests() {
         int checks=0,kills=0;bool done=false;

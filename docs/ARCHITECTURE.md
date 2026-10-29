@@ -1,5 +1,11 @@
 # 연결 구조 및 후속 설계
 
+## 0.13.0 툴바와 정보창
+
+Panel 제어기는 확장 로드 때 생성하며 UI::HtmlDialog는 추가 정보 버튼을 눌렀을 때만 만든다. 닫기는 연결·lease를 변경하지 않는다. ControlToolbar의4개 UI::Command는 캐시된 상태로 validation을 반환하고 상태 변화 때만 아이콘을 바꾼다. 모델 관찰자/연결 타이머는 정보창 없이도 유지된다. UI 표시 실패는 완료된 모델 명령을 실패로 바꾸지 않는다.
+
+Session은 native 변경 명령 수명과 bridge_state.library_jobs를 통해 busy를 계산한다. Probe LibraryActivity는 취소 토큰이 남은 queued/running job 중 해당 peer의 현재 session/model에 바인딩된 것만 보낸다. 로컬 emergency_stop은 먼저 lease를 회수한 뒤 정확한 model_id로 이벤트를 전송한다. Peer는 검증된 연결의 session과 마지막 모델을 확인한다. 미제출 계산은 토큰으로 취소하고 MarkSubmitted가 같은 gate에서 취소 여부를 재확인한다. submitted=true 이후에는 중단 요청으로 결과를 canceled로 덮지 않고 native 결과/unknown을 유지한다. 자세한 상태·한계는 [0.13.0](FEATURES_0.13.0.md).
+
 ## 0.6.1 공통 UI 갱신 범위와 원자적 일괄 변경
 
 모델·리소스 변경의 `CommandExecutor.operation`은 `UiUpdateScope`에 native operation 수명을 맡깁니다. 기본 `defer`는 `start_operation(label, true)`, `normal`은 `start_operation(label, false)`를 사용합니다. 작업은 하나의 동기 호출 안에서 닫으며, 동일 모델의 중첩 MCP operation은 시작 전에 거부합니다. 선택·카메라·장면은 이 모델 operation 경로와 별도입니다.
@@ -74,7 +80,7 @@ GUI는 사용자가 실행하고 유지하는 단일 중개 프로세스입니�
 
 ## 제어권 및 중지
 
-초기 상태는 사용자 제어입니다. SketchUp 패널에서만 원격 권한을 허용할 수 있으며, AI나 GUI 요청으로 권한을 자체 획득하지 못하게 합니다. 실제 변경은 Ruby 쪽에서 대상 모델과 권한을 다시 확인합니다.
+초기 상태는 사용자 제어입니다. SketchUp 로컬 툴바에서만 원격 권한을 허용할 수 있으며, AI나 GUI 요청으로 권한을 자체 획득하지 못하게 합니다. 실제 변경은 Ruby 쪽에서 대상 모델과 권한을 다시 확인합니다.
 
 1. 사용자: 연결 상태/Ping·모델/선택 조회·보관 결과 조회 가능. 변경 작업 거부.
 2. MCP 허용: 명시한 모델·유효한 lease로 등록된 작업만 시작.

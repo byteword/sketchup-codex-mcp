@@ -165,6 +165,42 @@ class WindowsMcpTests(unittest.TestCase):
         self.assertTrue(saved["ok"], saved)
         return saved["data"]["technique_ref"]
 
+    def test_toolbar_stop_reaches_worker_and_is_scoped_to_model(self):
+        folder = ROOT / "docs/library-spec/example/solid-panel"
+        files = {p.name: p.read_text(encoding="utf-8") for p in folder.iterdir() if p.is_file()}
+        manifest = json.loads(files["manifest.json"])
+        manifest["id"] = "integration.stop-" + uuid.uuid4().hex[:12]
+        manifest["budgets"]["plan_ms"] = 5000
+        files["manifest.json"] = json.dumps(manifest)
+        files["technique.js"] = "function build(ctx){ while(true){} }"
+        ref = self.tool("sketchup_library_save", dict(request_id=str(uuid.uuid4()), technique_id=manifest["id"],
+                        base_revision=None, files=files, change_summary="toolbar cancellation test"))["data"]["technique_ref"]
+        self.command(grant=0); self.command(grant=1)
+        jobs=[]
+        for index in (0,1):
+            bindings=dict(self.target(index,True),expected_context=[],materials=dict(panel="콘크리트"))
+            jobs.append(self.tool("sketchup_library_run",dict(ref, mode="plan",params={},bindings=bindings,request_id=str(uuid.uuid4()))))
+        first=jobs[0]["data"]["job_id"]; second=jobs[1]["data"]["job_id"]
+        deadline=time.monotonic()+3
+        while True:
+            state=self.tool("sketchup_get_instance",self.target(0))["state"]
+            ids=[j["job_id"] for j in state.get("library_jobs",[])]
+            if first in ids:break
+            self.assertLess(time.monotonic(),deadline,"Bound work did not reach toolbar")
+            time.sleep(.03)
+        self.assertNotIn(second,ids)
+        self.command(emergency_stop=0)
+        canceled=self.library_wait(jobs[0])
+        self.assertEqual("canceled",canceled["state"],canceled)
+        self.assertEqual("none",canceled["effect"])
+        self.assertFalse(canceled["submitted"])
+        self.assertEqual("user",self.tool("sketchup_get_instance",self.target(0))["state"]["authority"])
+        self.assertEqual("mcp",self.tool("sketchup_get_instance",self.target(1))["state"]["authority"])
+        other=self.tool("sketchup_library_job",dict(action="get",job_id=second))["data"]
+        self.assertIn(other["state"],("queued","running"),other)
+        self.tool("sketchup_library_job",dict(action="cancel",job_id=second))
+        self.assertEqual("canceled",self.library_wait(jobs[1])["state"])
+
     def test_library_plan_apply_permission_replay_and_native_history(self):
         ref = self.library_panel()
         verified = self.library_wait(self.tool("sketchup_library_run", dict(ref, mode="verify",

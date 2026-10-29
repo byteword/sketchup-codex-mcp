@@ -1,35 +1,34 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><title>SketchUp Pipe Probe</title>
+<html lang="ko"><head><meta charset="utf-8"><title>SketchUp MCP 정보</title>
 <style>
 body{font:14px 'Malgun Gothic',sans-serif;margin:22px;background:#f4f6f9;color:#1c293b}
-h1{font-size:22px;margin:0 0 4px}p{line-height:1.5}.card{background:white;border:1px solid #d9e0e9;border-radius:8px;padding:14px;margin:14px 0}
+h1{font-size:22px;margin:0 0 4px}p{line-height:1.6}.card{background:#fff;border:1px solid #d9e0e9;border-radius:8px;padding:14px;margin:14px 0}
 button{padding:9px 12px;margin:4px;border:1px solid #aebaca;background:white;border-radius:5px;cursor:pointer}
-.primary{background:#214fbd;color:white}.stop{background:#b32636;color:white}button:disabled{opacity:.4;cursor:default}
-pre{white-space:pre-wrap;word-break:break-all;font:12px Consolas,monospace}#error{color:#b32636}progress{width:100%;height:20px}
+button:disabled{opacity:.4;cursor:default}.allowed{color:#2563eb}pre{white-space:pre-wrap;word-break:break-all;font:12px Consolas,monospace}#error{color:#b32636}progress{width:100%;height:16px}.hint{color:#526174;font-size:12px}
 </style></head><body>
-<h1>SketchUp Pipe Probe <small id="version"></small></h1>
-<p>시험 배포 · 모델 조회 / 객체 검색 / 구조 탐색 / 선택 / 화면 / 속성 / 이동 / 박스 생성 / 복제</p>
-<div class="card"><b id="connection">초기화 중</b><pre id="identity"></pre>
-<button onclick="act('connect')">연결 / 자동 재연결</button><button onclick="act('disconnect')">연결 해제</button>
-<button id="ping" onclick="act('ping')">GUI로 한글 Ping</button></div>
-<div class="card"><b id="authority">사용자 제어</b><p>조회는 별도 허가 없이 가능합니다. 선택·화면·객체 변경은 아래 실행 허가가 필요합니다. SketchUp 편집 조작을 마친 상태에서 허용하세요. 객체 변경은 명령당 한 번의 Undo로 되돌릴 수 있습니다.</p>
-<button id="grant" class="primary" onclick="act('grant')">MCP 명령 실행 허용</button>
-<button onclick="act('revoke')">사용자 제어로 회수</button>
-<p id="job">대기</p><progress id="progress" max="100" value="0"></progress>
-<button class="stop" onclick="act('stop')">작업 중지 + 제어권 회수</button></div>
+<h1>SketchUp MCP <small id="version"></small></h1>
+<p>연결과 실행 권한은 툴바에서 조절합니다.<br>이 정보창을 닫아도 연결과 실행 권한은 유지됩니다.</p>
+<div class="card"><b id="connection">상태 확인 중</b><pre id="identity"></pre>
+<button id="ping" onclick="act('ping')">연결 확인</button></div>
+<div class="card"><b id="authority">사용자 제어</b><p id="job">대기</p><progress id="progress" max="100" value="0" hidden></progress>
+<p class="hint">긴급 정지는 진행 중인 작업에만 사용할 수 있으며 실행 권한도 회수합니다. SketchUp이 긴 작업을 처리 중이면 버튼 입력이 늦게 처리될 수 있습니다.</p></div>
 <pre id="result"></pre><pre id="error"></pre><button onclick="act('clear')">오류 표시 지우기</button>
 <script>
 function act(name){sketchup.action(name);}
 window.renderState=function(s){
+ var connection={connected:'Probe 연결됨',closed:'Probe 연결 안 됨',closing:'연결 해제 중',unavailable:'연결 기능 사용 불가'};
  document.getElementById('version').textContent=s.extension_version||'';
- document.getElementById('connection').textContent='GUI: '+s.connection+' | MCP: '+((s.mcp_clients||[]).map(function(c){return c.name;}).join(', ')||'연결 대기');
+ document.getElementById('connection').textContent=(connection[s.connection]||s.connection)+(s.retrying&&s.connection!=='connected'?' · 재연결 대기':'')+' | MCP: '+((s.mcp_clients||[]).map(function(c){return c.name;}).join(', ')||'연결 대기');
  document.getElementById('identity').textContent='PID: '+s.pid+' | SketchUp '+s.sketchup_version+' | Ruby '+s.ruby_version+' ('+s.pointer_bits+'bit)\n세션: '+s.session_id+'\n모델: '+(s.title||'제목 없음')+'\n경로: '+(s.path||'미저장');
- document.getElementById('authority').textContent=s.authority==='mcp'?'MCP 명령 실행 허용 중':'사용자 제어';
- document.getElementById('grant').disabled=s.connection!=='connected'||s.authority==='mcp';
+ var authority=document.getElementById('authority');
+ authority.textContent=s.authority==='mcp'?'명령 실행 허용 중':'사용자 제어 · 실행 권한 없음';
+ authority.className=s.authority==='mcp'?'allowed':'';
  document.getElementById('ping').disabled=s.connection!=='connected';
- document.getElementById('job').textContent=s.job_id?'시험 작업: '+s.progress+'% · '+s.job_id:'대기';
- document.getElementById('progress').value=s.progress;
+ var jobs=s.library_jobs||[],stages={load:'대기',validate:'준비',plan:'기법 계산',native_wait:'모델 처리',test:'검사'};
+ document.getElementById('job').textContent=s.stop_requested?'중지 요청됨 · 처리 결과 확인 중':s.active_command?'SketchUp 명령 처리 중':jobs.length?'기법 작업 '+jobs.length+'개 · '+(stages[jobs[0].stage]||'처리 중'):s.job_id?'연결 시험 작업: '+s.progress+'%':'대기';
+ var progress=document.getElementById('progress');progress.hidden=!s.job_id;progress.value=s.progress;
  document.getElementById('result').textContent=s.last_result||'';
  document.getElementById('error').textContent=[s.transport_error,s.last_error].filter(Boolean).join('\n');
 };
+window.addEventListener('DOMContentLoaded',function(){act('ready');});
 </script></body></html>

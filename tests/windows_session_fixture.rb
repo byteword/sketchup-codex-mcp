@@ -48,6 +48,7 @@ clock = 0.0
 end
 puts JSON.generate('instances' => metadata)
 sequence = nil
+heartbeat = 0.0
 deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 90
 begin
   loop do
@@ -65,6 +66,7 @@ begin
       break if command['stop']
       clock = command['clock'].to_f if command.key?('clock')
       sessions[command['grant']].grant if command.key?('grant')
+      sessions[command['emergency_stop']].emergency_stop if command.key?('emergency_stop')
       if command.key?('change_model')
         # Simulate native New/Open reusing the same Model wrapper and entity IDs.
         # Exercise the production observer, rather than manually replacing UUIDs.
@@ -82,6 +84,10 @@ begin
     clients.each_with_index do |client, index|
       client.poll.each { |message| sessions[index].receive(message) }
       sessions[index].tick
+    end
+    now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    if now-heartbeat>=0.2
+      sessions.each(&:publish);heartbeat=now
     end
     sleep 0.005
   end

@@ -9,6 +9,7 @@ module SUPipeProbe
   # Protocol and authority state machine; independent of SketchUp and Win32.
   class Session
     attr_reader :session_id, :authority, :lease, :job, :last_error, :last_result
+    attr_writer :on_change
 
     def initialize(sender, metadata, clock = nil, reader = nil, executor = nil)
       @sender, @metadata = sender, metadata
@@ -24,6 +25,7 @@ module SUPipeProbe
       @seen = []
       @history = {}
       @mcp_clients = []
+      @bridge_jobs = []; @stopped_ids = []
       @model_id = @metadata.call['model_id']
     end
 
@@ -36,10 +38,12 @@ module SUPipeProbe
         'next_command_id' => next_command_id,
         'mcp_clients' => @mcp_clients,
         'job_id' => @job && @job[:id], 'progress' => @job ? @job[:progress] : 0,
+        'active_command' => @active_command, 'library_jobs' => @bridge_jobs, 'stop_requested' => stop_requested?,
         'last_error' => @last_error, 'last_result' => @last_result)
     end
 
     def publish(type = 'state')
+      notify_change
       @sender.call(envelope(type, snapshot))
     end
 
@@ -50,13 +54,16 @@ module SUPipeProbe
       @job = nil
       @controller_owner = nil
       @mcp_clients = []
+      @bridge_jobs = []; @stopped_ids = []
       @last_result = 'Disconnected / control returned to user'
+      notify_change
     end
 
     def grant
       tick
       return if @authority == 'mcp'
       @authority = 'mcp'
+      @stopped_ids = []
       @lease = SecureRandom.uuid
       publish
     end
@@ -78,6 +85,23 @@ module SUPipeProbe
       @last_result = reason
     end
 
+    def busy?
+      !activity_ids.empty?
+    end
+
+    def stop_requested?
+      busy? && (activity_ids-@stopped_ids).empty?
+    end
+
+    def emergency_stop
+      tick
+      return false unless busy?
+      @stopped_ids=activity_ids
+      revoke('긴급 정지 요청 · 실행 권한 회수됨')
+      @sender.call(envelope('event','event'=>'emergency_stop','model_id'=>@model_id))
+      true
+    end
+
     def report_error(message)
       @last_error = message.to_s
     end
@@ -91,6 +115,7 @@ module SUPipeProbe
       model_id = @metadata.call['model_id']
       if model_id != @model_id
         @model_id = model_id
+        @bridge_jobs = []; @stopped_ids = []
         revoke('Model changed; control returned to user')
       end
       return unless @job
@@ -109,6 +134,8 @@ module SUPipeProbe
       return unless message['session_id'] == @session_id
       if message['type'] == 'bridge_state'
         @mcp_clients = message['mcp_clients'].is_a?(Array) ? message['mcp_clients'] : []
+        @bridge_jobs = (message['library_jobs'].is_a?(Array) ? message['library_jobs'] : []).first(32).select { |j| j.is_a?(Hash) && j['model_id']==@model_id && j['job_id'].is_a?(String) }
+        notify_change
         return
       end
       if message['type'] == 'result' && message['id'] == @ping_id
@@ -196,6 +223,14 @@ module SUPipeProbe
 
     private
 
+    def activity_ids
+      [@job && @job[:id],@active_command && @active_command['command_id'],*@bridge_jobs.map { |j| j['job_id'] }].compact
+    end
+
+    def notify_change
+      @on_change.call if @on_change
+    end
+
     def next_command_id
       @command_sequence < 1_000_000_000 ? "#{@session_id}:#{@command_sequence + 1}" : nil
     end
@@ -251,6 +286,8 @@ module SUPipeProbe
       result = {'command_id' => command_id, 'model_id' => @model_id,
         'command' => method, 'expected_context' => message['expected_context'], 'finished_at' => Time.now.utc.iso8601(3)}
       result['library_job_id']=message['library_job_id'] if method=='apply_library_plan'
+      @active_command={'command_id'=>command_id,'method'=>method}
+      notify_change
       begin
         data = @executor.call(method, message)
         unless data.is_a?(Hash) && JSON.generate(data).bytesize <= CommandExecutor::RESULT_LIMIT
@@ -265,6 +302,9 @@ module SUPipeProbe
         if error.is_a?(CommandError) && error.details.is_a?(Hash) && JSON.generate(error.details).bytesize<=4096
           result['details']=error.details
         end
+      ensure
+        @active_command=nil
+        notify_change
       end
       result['finished_at'] = Time.now.utc.iso8601(3)
       result = JSON.parse(JSON.generate(result))

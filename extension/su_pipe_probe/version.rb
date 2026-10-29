@@ -1,4 +1,4 @@
 # encoding: UTF-8
 module SUPipeProbe
-  VERSION = '0.12.2'.freeze
+  VERSION = '0.13.0'.freeze
 end

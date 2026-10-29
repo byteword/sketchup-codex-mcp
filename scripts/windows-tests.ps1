@@ -32,6 +32,8 @@ if ($LASTEXITCODE -ne 0) { throw 'MCP stdio tests failed' }
 if ($LASTEXITCODE -ne 0) { throw 'Standalone native batch runner tests failed' }
 & $Ruby @RubyArguments tests/session_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Session tests failed' }
+& $Ruby @RubyArguments tests/control_toolbar_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Toolbar/controller tests failed' }
 & $Ruby @RubyArguments tests/model_identity_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Model lifecycle identity tests failed' }
 & $Ruby @RubyArguments tests/command_session_test.rb

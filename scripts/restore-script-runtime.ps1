@@ -43,5 +43,5 @@ $gui=@($common)+@($resources)+@(
  '/reference:System.IO.Compression.dll',
  '/reference:System.IO.Compression.FileSystem.dll',
  '/resource:third_party\ScriptRuntime.NOTICES.txt,ProbeRuntime.NOTICES',
- 'bridge\library\LibraryWorker.cs','bridge\library\LibraryStore.cs','bridge\library\LibraryRun.cs','bridge\library\LibraryPackages.cs','bridge\library\LibraryWorkspace.cs')
+ 'bridge\library\LibraryWorker.cs','bridge\library\LibraryStore.cs','bridge\library\LibraryRun.cs','bridge\library\LibraryActivity.cs','bridge\library\LibraryPackages.cs','bridge\library\LibraryWorkspace.cs')
 [IO.File]::WriteAllLines((Join-Path $PWD 'dist/library-gui.rsp'),$gui)

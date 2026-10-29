@@ -40,7 +40,11 @@ namespace SketchUpPipeProbe
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool GetNamedPipeClientProcessId(IntPtr pipe, out uint pid);
 
-        public ControlHub(PipeHub pipeHub, Action<string> logger) { hub = pipeHub; log = logger; }
+        public ControlHub(PipeHub pipeHub, Action<string> logger) {
+            hub = pipeHub; log = logger;
+            hub.LibraryActivityProvider=library.ModelActivity;
+            hub.EmergencyStopHandler=(session,model)=>library.StopModelJobs(session,model);
+        }
 
         public async Task RunAsync()
         {

@@ -20,7 +20,7 @@ On older adapters, use `sketchup_create_sliding_window` (0.7.0+) as a compatibil
 
 ## Execute
 
-Discover instances with `sketchup_list_instances`; resolve the current session/model. Read current edit context and next command ID immediately before each mutation. Use the local panel's human execution grant; reuse authorization already given for this task. No implicit edit-path changes.
+Discover instances with `sketchup_list_instances`; resolve the current session/model. Read current edit context and next command ID immediately before each mutation. Use the human execution grant from toolbar button2 in0.13.0+ (the local panel in older versions); reuse authorization already given for this task. No implicit edit-path changes.
 
 For the library route, pin the chosen revision and send dimensions/opening as `params` to `sketchup_library_run mode=plan`. Set `bindings.session_id`, `model_id`, `expected_context`, `origin_mm=[x,y,z]`, optional `name`, and `materials={frame: exactName, glass: exactName, seal: exactName, hardware: exactName}` from the current model. Supply the exact direct-child replacement target when redrawing an existing window, keeping the user's reference separate. Read the plan summary before applying. Then use `mode=apply` with the returned plan ID/hash, fresh command ID, session/model IDs and expected edit context. Poll the library job for the native result. Replan if bindings, target or context changed.
 

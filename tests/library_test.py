@@ -24,6 +24,12 @@ class LibraryTests(unittest.TestCase):
         self.assertEqual(0, run.returncode, run.stderr.decode('utf-8', errors='replace'))
         self.assertEqual(dict(ok=True, checks=15), json.loads(run.stdout))
 
+    def test_toolbar_stop_and_native_submission_boundary(self):
+        with tempfile.TemporaryDirectory(prefix="probe-activity-") as folder:
+            run=subprocess.run([EXE,"--activity-tests",folder],cwd=ROOT,capture_output=True,timeout=30)
+            self.assertEqual(0,run.returncode,run.stderr.decode("utf-8",errors="replace"))
+            self.assertEqual(dict(ok=True,checks=20),json.loads(run.stdout))
+
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory(prefix="probe-library-")
         self.start()
@@ -310,7 +316,8 @@ class LibraryTests(unittest.TestCase):
         source = "function build(ctx){ return ctx.call('base',ctx.params); }"
         a = self.ok(self.save("demo.linked-a", files=self.package("demo.linked-a", source, dependency)))["technique_ref"]
         b = self.ok(self.save("demo.linked-b", files=self.package("demo.linked-b", source, dependency)))["technique_ref"]
-        self.assertEqual("succeeded", self.verify(a)["state"])
+        verified = self.verify(a)
+        self.assertEqual("succeeded", verified["state"], verified)
         content = self.export([a, b])
         upload = self.upload(content)
         target = self.ok(self.call("manage", action="create_library", request_id=str(uuid.uuid4()), title="Forks"))["library_id"]
@@ -385,7 +392,8 @@ class LibraryTests(unittest.TestCase):
 
     def test_working_files_reload_without_restart_and_optional_auto_activation(self):
         ref = self.ok(self.save())["technique_ref"]
-        self.assertEqual("succeeded", self.verify(ref, activate_if_passed=True, expected_active_revision=None)["state"])
+        verified = self.verify(ref, activate_if_passed=True, expected_active_revision=None)
+        self.assertEqual("succeeded", verified["state"], verified)
         metadata = self.ok(self.call("get", technique_id=ref["technique_id"]))
         workspace = Path(metadata["workspace_path"])
         source = workspace / "technique.js"
@@ -405,7 +413,8 @@ class LibraryTests(unittest.TestCase):
             if metadata["active"] == metadata["head"] and metadata["active"] != ref["revision"]:
                 break
             time.sleep(.05)
-        self.assertEqual(metadata["head"], metadata["active"])
+        self.assertEqual(metadata["head"], metadata["active"],
+                         [json.loads(p.read_text(encoding="utf-8-sig")) for p in Path(self.directory.name, "jobs").glob("*.json")])
         good = metadata["active"]
         source.write_text("function build(ctx){", encoding="utf-8")
         for _ in range(100):

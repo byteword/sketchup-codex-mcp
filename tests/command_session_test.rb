@@ -20,6 +20,24 @@ class CommandSessionTest < Minitest::Test
     request('move_entities', {'command_id'=>@session.snapshot['next_command_id'],
       'expected_context'=>[], 'entity_ids'=>['101'], 'delta_mm'=>[1000,0,0]}.merge(fields))
   end
+  def test_native_activity_is_visible_only_during_execution_and_cleared_on_error
+    @session.grant
+    observed=[]
+    @session.on_change=lambda { observed << @session.busy? }
+    @executor=lambda do |method,args|
+      assert @session.busy?
+      assert_equal args['command_id'],@session.snapshot['active_command']['command_id']
+      assert_equal method,@session.snapshot['active_command']['method']
+      raise ArgumentError,'native failure'
+    end
+    result=command
+    refute result['ok']
+    refute @session.busy?
+    assert_nil @session.snapshot['active_command']
+    assert_includes observed,true
+    assert_equal false,observed.last
+  end
+
   def test_permission_and_expiry_reject_without_consuming_id
     original = @session.snapshot['next_command_id']
     assert_equal 'authority_or_model_mismatch', command['status']

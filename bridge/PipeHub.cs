@@ -49,6 +49,8 @@ namespace SketchUpPipeProbe
         public string SessionId { get; private set; }
         public readonly uint ClientPid;
         public Func<object> McpStateProvider;
+        public Func<string,string,object> LibraryActivityProvider;
+        public Action<string,string> EmergencyStopHandler;
         public DateTime LastSeenUtc { get; private set; }
         public volatile Dictionary<string, object> State = new Dictionary<string, object>();
         readonly NamedPipeServerStream pipe;
@@ -191,6 +193,9 @@ namespace SketchUpPipeProbe
                     }
                     else if (session != SessionId) throw new IOException("Session mismatch");
                     LastSeenUtc = DateTime.UtcNow;
+                    if (type == "event" && Wire.Text(message,"event")=="emergency_stop" &&
+                        Wire.Text(message,"model_id")==Wire.Text(State,"model_id") && EmergencyStopHandler!=null)
+                        EmergencyStopHandler(SessionId,Wire.Text(message,"model_id"));
                     if (type == "state") State = message;
                     else if (type == "request" && Wire.Text(message, "method") == "ping")
                     {
@@ -209,7 +214,8 @@ namespace SketchUpPipeProbe
                     }
                     if ((type == "hello" || type == "state") && McpStateProvider != null)
                         await SendAsync(new Dictionary<string, object> {
-                            { "type", "bridge_state" }, { "mcp_clients", McpStateProvider() }
+                            { "type", "bridge_state" }, { "mcp_clients", McpStateProvider() },
+                            { "library_jobs", LibraryActivityProvider==null ? new object[0] : LibraryActivityProvider(SessionId,Wire.Text(State,"model_id")) }
                         }).ConfigureAwait(false);
                 }
             }
@@ -233,6 +239,8 @@ namespace SketchUpPipeProbe
 #endif
         public readonly ConcurrentDictionary<string, Peer> Peers = new ConcurrentDictionary<string, Peer>();
         public Func<object> McpStateProvider;
+        public Func<string,string,object> LibraryActivityProvider;
+        public Action<string,string> EmergencyStopHandler;
         readonly ConcurrentDictionary<string, Peer> connections = new ConcurrentDictionary<string, Peer>();
         readonly Action<string> log;
         readonly object sync = new object();
@@ -300,6 +308,8 @@ namespace SketchUpPipeProbe
             {
                 Task reading = peer.ReadAsync(p => {
                     p.McpStateProvider = McpStateProvider;
+                    p.LibraryActivityProvider=LibraryActivityProvider;
+                    p.EmergencyStopHandler=EmergencyStopHandler;
                     if (!Peers.TryAdd(p.SessionId, p)) throw new IOException("Duplicate session ID");
                 });
                 if (await Task.WhenAny(reading, Task.Delay(10000)).ConfigureAwait(false) != reading && peer.SessionId == null)

@@ -1,0 +1,16 @@
+TARGETED RECHECK 1
+test_working_files_reload_without_restart_and_optional_auto_activation (__main__.LibraryTests.test_working_files_reload_without_restart_and_optional_auto_activation) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 25.029s
+
+OK
+
+TARGETED RECHECK 2
+test_shared_dependency_import_closure_and_fork (__main__.LibraryTests.test_shared_dependency_import_closure_and_fork) ... ok
+test_working_files_reload_without_restart_and_optional_auto_activation (__main__.LibraryTests.test_working_files_reload_without_restart_and_optional_auto_activation) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 22.121s
+
+OK

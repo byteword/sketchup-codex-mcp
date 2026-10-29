@@ -1,0 +1,93 @@
+FIRST ATTEMPT
+Built: dist\SketchUpPipeProbe.exe and dist\SketchUpMcp.exe
+test_archive_path_and_content_hash_validation (__main__.LibraryTests.test_archive_path_and_content_hash_validation) ... ok
+test_authoring_bootstrap_with_empty_library (__main__.LibraryTests.test_authoring_bootstrap_with_empty_library) ... ok
+test_budget_schema_and_source_isolation (__main__.LibraryTests.test_budget_schema_and_source_isolation) ... ok
+test_bundled_raw_drawing_example (__main__.LibraryTests.test_bundled_raw_drawing_example) ... ok
+test_bundled_terrain_authoring_verify_and_selected_package (__main__.LibraryTests.test_bundled_terrain_authoring_verify_and_selected_package) ... ok
+test_bundled_texture_example_verifies_and_shares (__main__.LibraryTests.test_bundled_texture_example_verifies_and_shares) ... ok
+test_create_verify_activate_plan_and_restart (__main__.LibraryTests.test_create_verify_activate_plan_and_restart) ... ok
+test_import_rechecks_local_state_and_chunk_replay (__main__.LibraryTests.test_import_rechecks_local_state_and_chunk_replay) ... ok
+test_import_updates_clean_workspace_and_preserves_dirty_files (__main__.LibraryTests.test_import_updates_clean_workspace_and_preserves_dirty_files) ... ok
+test_long_source_byte_pages_and_plan_integrity (__main__.LibraryTests.test_long_source_byte_pages_and_plan_integrity) ... ok
+test_missing_dependency_and_tampered_archive_rejected (__main__.LibraryTests.test_missing_dependency_and_tampered_archive_rejected) ... ok
+test_multiple_roots_selective_import_and_no_automatic_execution (__main__.LibraryTests.test_multiple_roots_selective_import_and_no_automatic_execution) ... ok
+test_operations_plan_verified_and_packaged (__main__.LibraryTests.test_operations_plan_verified_and_packaged) ... ok
+test_operations_reject_non_model_effects_and_transport_override (__main__.LibraryTests.test_operations_reject_non_model_effects_and_transport_override) ... ok
+test_save_replay_conflict_and_failed_revision_keeps_active (__main__.LibraryTests.test_save_replay_conflict_and_failed_revision_keeps_active) ... ok
+test_shared_dependency_import_closure_and_fork (__main__.LibraryTests.test_shared_dependency_import_closure_and_fork) ... ok
+test_sliding_window_script_matches_approved_prototype (__main__.LibraryTests.test_sliding_window_script_matches_approved_prototype) ... ok
+test_source_unicode_state_conflict_cursor_and_archive (__main__.LibraryTests.test_source_unicode_state_conflict_cursor_and_archive) ... ok
+test_toolbar_stop_and_native_submission_boundary (__main__.LibraryTests.test_toolbar_stop_and_native_submission_boundary) ... ok
+test_worker_exit_races_preserve_limits_and_live_errors (__main__.LibraryTests.test_worker_exit_races_preserve_limits_and_live_errors) ... ok
+test_working_files_reload_without_restart_and_optional_auto_activation (__main__.LibraryTests.test_working_files_reload_without_restart_and_optional_auto_activation) ... FAIL
+
+======================================================================
+FAIL: test_working_files_reload_without_restart_and_optional_auto_activation (__main__.LibraryTests.test_working_files_reload_without_restart_and_optional_auto_activation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.13.0\tests\library_test.py", line 394, in test_working_files_reload_without_restart_and_optional_auto_activation
+    self.assertEqual("succeeded", self.verify(ref, activate_if_passed=True, expected_active_revision=None)["state"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'succeeded' != 'failed'
+- succeeded
++ failed
+
+
+----------------------------------------------------------------------
+Ran 21 tests in 112.355s
+
+FAILED (failures=1)
+
+SECOND ATTEMPT
+Built: dist\SketchUpPipeProbe.exe and dist\SketchUpMcp.exe
+test_archive_path_and_content_hash_validation (__main__.LibraryTests.test_archive_path_and_content_hash_validation) ... ok
+test_authoring_bootstrap_with_empty_library (__main__.LibraryTests.test_authoring_bootstrap_with_empty_library) ... ok
+test_budget_schema_and_source_isolation (__main__.LibraryTests.test_budget_schema_and_source_isolation) ... ok
+test_bundled_raw_drawing_example (__main__.LibraryTests.test_bundled_raw_drawing_example) ... ok
+test_bundled_terrain_authoring_verify_and_selected_package (__main__.LibraryTests.test_bundled_terrain_authoring_verify_and_selected_package) ... ok
+test_bundled_texture_example_verifies_and_shares (__main__.LibraryTests.test_bundled_texture_example_verifies_and_shares) ... ok
+test_create_verify_activate_plan_and_restart (__main__.LibraryTests.test_create_verify_activate_plan_and_restart) ... ok
+test_import_rechecks_local_state_and_chunk_replay (__main__.LibraryTests.test_import_rechecks_local_state_and_chunk_replay) ... ok
+test_import_updates_clean_workspace_and_preserves_dirty_files (__main__.LibraryTests.test_import_updates_clean_workspace_and_preserves_dirty_files) ... ok
+test_long_source_byte_pages_and_plan_integrity (__main__.LibraryTests.test_long_source_byte_pages_and_plan_integrity) ... ok
+test_missing_dependency_and_tampered_archive_rejected (__main__.LibraryTests.test_missing_dependency_and_tampered_archive_rejected) ... ok
+test_multiple_roots_selective_import_and_no_automatic_execution (__main__.LibraryTests.test_multiple_roots_selective_import_and_no_automatic_execution) ... ok
+test_operations_plan_verified_and_packaged (__main__.LibraryTests.test_operations_plan_verified_and_packaged) ... ok
+test_operations_reject_non_model_effects_and_transport_override (__main__.LibraryTests.test_operations_reject_non_model_effects_and_transport_override) ... ok
+test_save_replay_conflict_and_failed_revision_keeps_active (__main__.LibraryTests.test_save_replay_conflict_and_failed_revision_keeps_active) ... ok
+test_shared_dependency_import_closure_and_fork (__main__.LibraryTests.test_shared_dependency_import_closure_and_fork) ... FAIL
+test_sliding_window_script_matches_approved_prototype (__main__.LibraryTests.test_sliding_window_script_matches_approved_prototype) ... ok
+test_source_unicode_state_conflict_cursor_and_archive (__main__.LibraryTests.test_source_unicode_state_conflict_cursor_and_archive) ... ok
+test_toolbar_stop_and_native_submission_boundary (__main__.LibraryTests.test_toolbar_stop_and_native_submission_boundary) ... ok
+test_worker_exit_races_preserve_limits_and_live_errors (__main__.LibraryTests.test_worker_exit_races_preserve_limits_and_live_errors) ... ok
+test_working_files_reload_without_restart_and_optional_auto_activation (__main__.LibraryTests.test_working_files_reload_without_restart_and_optional_auto_activation) ... FAIL
+
+======================================================================
+FAIL: test_shared_dependency_import_closure_and_fork (__main__.LibraryTests.test_shared_dependency_import_closure_and_fork)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.13.0\tests\library_test.py", line 319, in test_shared_dependency_import_closure_and_fork
+    self.assertEqual("succeeded", self.verify(a)["state"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'succeeded' != 'failed'
+- succeeded
++ failed
+
+
+======================================================================
+FAIL: test_working_files_reload_without_restart_and_optional_auto_activation (__main__.LibraryTests.test_working_files_reload_without_restart_and_optional_auto_activation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\bytew\Documents\ChatGPT\sketchup-codex-mcp\dist\validation-0.13.0\tests\library_test.py", line 415, in test_working_files_reload_without_restart_and_optional_auto_activation
+    self.assertEqual(metadata["head"], metadata["active"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'sha256:d176f3fe88f9295f898e8f468c6f9f45be9e4d428d8deaeda154f430962fdb23' != 'sha256:6ffdc145d6a56959b7b9ea8aa58bf0c9b0b2bda52c8d18c0d1d90c9fb006d582'
+- sha256:d176f3fe88f9295f898e8f468c6f9f45be9e4d428d8deaeda154f430962fdb23
++ sha256:6ffdc145d6a56959b7b9ea8aa58bf0c9b0b2bda52c8d18c0d1d90c9fb006d582
+
+
+----------------------------------------------------------------------
+Ran 21 tests in 150.654s
+
+FAILED (failures=2)
