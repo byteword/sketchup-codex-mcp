@@ -1,0 +1,623 @@
+{
+  "checked_at": "2026-10-29",
+  "source_commit": "4b31a07",
+  "scope": "Selected feature candidates only, not the full Ruby API. Multiple versions may belong to different overloads; use the 2019-compatible signature.",
+  "sources": [
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Entities.html",
+      "methods": [
+        {
+          "name": "add_cline",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "add_dimension_linear",
+          "documented_versions": "SketchUp 2014"
+        },
+        {
+          "name": "add_dimension_radial",
+          "documented_versions": "SketchUp 2014"
+        },
+        {
+          "name": "add_text",
+          "documented_versions": "SketchUp 2019; SketchUp 2019; SketchUp 6.0"
+        },
+        {
+          "name": "add_3d_text",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "add_image",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "add_section_plane",
+          "documented_versions": "SketchUp 2014"
+        },
+        {
+          "name": "intersect_with",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "add_faces_from_mesh",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "fill_from_mesh",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "weld",
+          "documented_versions": "SketchUp 2020.1"
+        },
+        {
+          "name": "build",
+          "documented_versions": "SketchUp 2022.0"
+        },
+        {
+          "name": "add_copy",
+          "documented_versions": "SketchUp 2027.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Group.html",
+      "methods": [
+        {
+          "name": "intersect",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "subtract",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "trim",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "union",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "outer_shell",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "split",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "volume",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "manifold?",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "glued_to=",
+          "documented_versions": "SketchUp 2021.1"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Model.html",
+      "methods": [
+        {
+          "name": "raytest",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "active_path=",
+          "documented_versions": "SketchUp 2020.0"
+        },
+        {
+          "name": "close_active",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "axes",
+          "documented_versions": "SketchUp 2016"
+        },
+        {
+          "name": "options",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "rendering_options",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "shadow_info",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "styles",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "import",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "export",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "save",
+          "documented_versions": "SketchUp 2014; SketchUp 6.0; SketchUp 2014"
+        },
+        {
+          "name": "line_styles",
+          "documented_versions": "SketchUp 2019"
+        },
+        {
+          "name": "classifications",
+          "documented_versions": "SketchUp 2015"
+        },
+        {
+          "name": "drawing_element_visible?",
+          "documented_versions": "SketchUp 2020.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Face.html",
+      "methods": [
+        {
+          "name": "classify_point",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "get_UVHelper",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "get_texture_projection",
+          "documented_versions": "SketchUp 2014"
+        },
+        {
+          "name": "position_material",
+          "documented_versions": "SketchUp 6.0; SketchUp 2021.1; SketchUp 6.0"
+        },
+        {
+          "name": "set_texture_projection",
+          "documented_versions": "SketchUp 2014"
+        },
+        {
+          "name": "mesh",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "pushpull",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "followme",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/View.html",
+      "methods": [
+        {
+          "name": "pickray",
+          "documented_versions": "SketchUp 6.0; SketchUp 6.0; SketchUp 2025.0; SketchUp 2025.0; SketchUp 6.0"
+        },
+        {
+          "name": "screen_coords",
+          "documented_versions": "SketchUp 6.0; SketchUp 2025.0; SketchUp 6.0"
+        },
+        {
+          "name": "write_image",
+          "documented_versions": "SketchUp 7; SketchUp 7; SketchUp 6.0"
+        },
+        {
+          "name": "pick_helper",
+          "documented_versions": "SketchUp 6.0; SketchUp 2025.0; SketchUp 6.0"
+        },
+        {
+          "name": "animation=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "draw",
+          "documented_versions": "SketchUp 2020.0; SketchUp 2020.0; SketchUp 6.0"
+        },
+        {
+          "name": "draw2d",
+          "documented_versions": "SketchUp 2020.0; SketchUp 2020.0; SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Entity.html",
+      "methods": [
+        {
+          "name": "get_attribute",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "set_attribute",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "delete_attribute",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "attribute_dictionaries",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/ComponentDefinition.html",
+      "methods": [
+        {
+          "name": "behavior",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "load_time",
+          "documented_versions": "SketchUp 2025.0"
+        },
+        {
+          "name": "save_as",
+          "documented_versions": "SketchUp 7.0; SketchUp 2022.0"
+        },
+        {
+          "name": "add_classification",
+          "documented_versions": "SketchUp 2015"
+        },
+        {
+          "name": "get_classification_value",
+          "documented_versions": "SketchUp 2015"
+        },
+        {
+          "name": "set_classification_value",
+          "documented_versions": "SketchUp 2015"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/ComponentInstance.html",
+      "methods": [
+        {
+          "name": "glued_to=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "volume",
+          "documented_versions": "SketchUp 8.0"
+        },
+        {
+          "name": "transformation=",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Behavior.html",
+      "methods": [
+        {
+          "name": "cuts_opening=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "always_face_camera=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "snapto=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "no_scale_mask=",
+          "documented_versions": "SketchUp 7.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/DefinitionList.html",
+      "methods": [
+        {
+          "name": "load",
+          "documented_versions": "SketchUp 2021.0; SketchUp 6.0"
+        },
+        {
+          "name": "load_from_url",
+          "documented_versions": "SketchUp 7.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Material.html",
+      "methods": [
+        {
+          "name": "texture=",
+          "documented_versions": "SketchUp 2018; SketchUp 6.0"
+        },
+        {
+          "name": "save_as",
+          "documented_versions": "SketchUp 2017"
+        },
+        {
+          "name": "normal_texture=",
+          "documented_versions": "SketchUp 2025.0"
+        },
+        {
+          "name": "roughness_enabled=",
+          "documented_versions": "SketchUp 2025.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Materials.html",
+      "methods": [
+        {
+          "name": "load",
+          "documented_versions": "SketchUp 2017"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/TextureWriter.html",
+      "methods": [
+        {
+          "name": "load",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "write",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/ImageRep.html",
+      "methods": [
+        {
+          "name": "load_file",
+          "documented_versions": "SketchUp 2018"
+        },
+        {
+          "name": "save_file",
+          "documented_versions": "SketchUp 2018"
+        },
+        {
+          "name": "data",
+          "documented_versions": "SketchUp 2018"
+        },
+        {
+          "name": "set_data",
+          "documented_versions": "SketchUp 2018"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/SectionPlane.html",
+      "methods": [
+        {
+          "name": "activate",
+          "documented_versions": "SketchUp 2014"
+        },
+        {
+          "name": "get_plane",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "set_plane",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "name=",
+          "documented_versions": "SketchUp 2018"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Axes.html",
+      "methods": [
+        {
+          "name": "set",
+          "documented_versions": "SketchUp 2016"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Page.html",
+      "methods": [
+        {
+          "name": "update",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "set_visibility",
+          "documented_versions": "SketchUp 2021.0; SketchUp 6.0"
+        },
+        {
+          "name": "use_section_planes=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "use_rendering_options=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "use_shadow_info=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "use_style=",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Camera.html",
+      "methods": [
+        {
+          "name": "two_point_perspective=",
+          "documented_versions": "NOT FOUND"
+        },
+        {
+          "name": "height=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "fov=",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Layer.html",
+      "methods": [
+        {
+          "name": "line_style=",
+          "documented_versions": "SketchUp 2019"
+        },
+        {
+          "name": "folder=",
+          "documented_versions": "SketchUp 2021.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/RenderingOptions.html",
+      "methods": [
+        {
+          "name": "class",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/ShadowInfo.html",
+      "methods": [
+        {
+          "name": "class",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Styles.html",
+      "methods": [
+        {
+          "name": "add_style",
+          "documented_versions": "SketchUp 6.0; SketchUp 2026.0"
+        },
+        {
+          "name": "selected_style=",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "purge_unused",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "update_selected_style",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/InputPoint.html",
+      "methods": [
+        {
+          "name": "pick",
+          "documented_versions": "SketchUp 6.0; SketchUp 6.0; SketchUp 2025.0; SketchUp 2025.0; SketchUp 6.0"
+        },
+        {
+          "name": "transformation",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "instance_path",
+          "documented_versions": "SketchUp 2017"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/PickHelper.html",
+      "methods": [
+        {
+          "name": "all_picked",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "boundingbox_pick",
+          "documented_versions": "SketchUp 2016"
+        },
+        {
+          "name": "window_pick",
+          "documented_versions": "SketchUp 2016"
+        },
+        {
+          "name": "path_at",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/OptionsManager.html",
+      "methods": [
+        {
+          "name": "class",
+          "documented_versions": "SketchUp 6.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/EntitiesBuilder.html",
+      "methods": [
+        {
+          "name": "class",
+          "documented_versions": "SketchUp 2022.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Sketchup/Overlay.html",
+      "methods": [
+        {
+          "name": "class",
+          "documented_versions": "SketchUp 2023.0"
+        }
+      ]
+    },
+    {
+      "url": "https://ruby.sketchup.com/Geom.html",
+      "methods": [
+        {
+          "name": "intersect_line_line",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "intersect_line_plane",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "intersect_plane_plane",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "point_in_polygon_2D",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "fit_plane_to_points",
+          "documented_versions": "SketchUp 6.0"
+        },
+        {
+          "name": "tesselate",
+          "documented_versions": "SketchUp 2020.0"
+        }
+      ]
+    }
+  ]
+}
