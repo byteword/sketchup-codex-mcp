@@ -1,0 +1,34 @@
+{
+  "format_version": "probe-technique/1",
+  "id": "demo.terrain-grid",
+  "title": "격자 지형과 완만한 높이 조절",
+  "summary": "높이 격자 또는 측량점 IDW 보간으로 열린 지형을 만들고 반경별 높이 조절을 적용합니다. 계산은 Probe의 순수 JS입니다.",
+  "keywords": [
+    "terrain",
+    "heightfield",
+    "IDW",
+    "지형"
+  ],
+  "kind": "generator",
+  "entrypoint": "technique.js",
+  "input_schema": "inputs.schema.json",
+  "tests": "tests.json",
+  "runtime": "probe-js/1",
+  "output": "sketchup-operations/1",
+  "requires": [
+    "commands/1",
+    "surface-mesh/1",
+    "verify/1"
+  ],
+  "material_roles": [],
+  "dependencies": [],
+  "reads": [],
+  "budgets": {
+    "plan_ms": 1000,
+    "memory_mib": 64,
+    "max_nodes": 1,
+    "max_points": 169,
+    "max_faces": 256,
+    "max_plan_bytes": 40000
+  }
+}

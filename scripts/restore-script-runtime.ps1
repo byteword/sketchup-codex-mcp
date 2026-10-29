@@ -35,6 +35,7 @@ foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.js
 foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\sliding-window/'+$name+',ProbeRuntime.window.'+$name) }
 foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\raw-drawing/'+$name+',ProbeRuntime.raw.'+$name) }
 foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\face-texture/'+$name+',ProbeRuntime.texture.'+$name) }
+foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\terrain-grid/'+$name+',ProbeRuntime.terrain.'+$name) }
 $gui=@($common)+@($resources)+@(
  '/reference:dist\engine-deps\Jint.dll',
  '/reference:dist\engine-deps\Esprima.dll',

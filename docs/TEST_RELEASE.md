@@ -1,27 +1,27 @@
-# 0.10.0 시험 배포 — 2026-10-29
+# 0.11.0 시험 배포 — 2026-10-29
 
-기본 브랜치 `main`의 확장 드로잉·컴포넌트·리소스·편집·조회와 일괄 검사 시험 버전입니다. MCP 도구는 총 60개입니다. 대량 변경의 UI 관리·일괄 실행은 [UI 갱신 관리](UI_UPDATES.md), 그 밖의 기능은 [확장 도구 대조표](EXTENDED_TOOLKIT.md), 설치 후 빠른 확인은 [일괄 검사](BATCH_TEST.md)를 따릅니다.
+기본 브랜치 `main`의 확장 드로잉·컴포넌트·리소스·편집·조회와 일괄 검사 시험 버전입니다. MCP 도구는 총 63개입니다. 대량 변경의 UI 관리·일괄 실행은 [UI 갱신 관리](UI_UPDATES.md), 그 밖의 기능은 [확장 도구 대조표](EXTENDED_TOOLKIT.md), 설치 후 빠른 확인은 [일괄 검사](BATCH_TEST.md)를 따릅니다.
 
-새 텍스처 기법·재질 관리·화면 프리셋은 [0.10.0 사용법](FEATURES_0.10.0.md)을 따릅니다. 자동 검사 결과는 [검증 기록](VALIDATION.md)에 있습니다. **실제0.10.0 설치 후 실기는 미실행**이며 실행 중인 앱과 사용자 모델을 바꾸지 않았습니다. 새 `suite=features2019`와 기존 `suite=all`을 별도로 확인하고 UV/재질·화면 출력·Ctrl+Z는 추가 확인합니다. 엔진은 EXE 내장이므로 Node/Python 별도 설치가 필요하지 않습니다.
+새 전체 장면·스타일·SKP/CAD·지형·분류는 [0.11.0 사용법](FEATURES_0.11.0.md)을 따릅니다. 자동 검사 결과는 [검증 기록](VALIDATION.md)에 있습니다. **실제0.11.0 설치 후 실기는 미실행**이며 실행 중인 앱과 사용자 모델을 바꾸지 않았습니다. 새 `suite=features2019`와 기존 `suite=all`을 별도로 확인하고 새 장면·스타일·파일 번역·지형·분류는0.11 사용법의 수동 수용 절차로 추가 확인합니다. 엔진은 EXE 내장이므로 Node/Python 별도 설치가 필요하지 않습니다.
 
 ## 배포 파일
 
-`dist/sketchup-codex-mcp-0.10.0-test.zip`에는 아래 실행 필수 파일 5개만 포함합니다. 문서·소스·테스트 도우미는 설치 ZIP에 넣지 않습니다.
+`dist/sketchup-codex-mcp-0.11.0-test.zip`에는 아래 실행 필수 파일 5개만 포함합니다. 문서·소스·테스트 도우미는 설치 ZIP에 넣지 않습니다.
 
 - `dist/SketchUpMcp.exe`
 - `dist/SketchUpMcp.exe.config`
 - `dist/SketchUpPipeProbe.exe`
 - `dist/SketchUpPipeProbe.exe.config`
-- `dist/su_pipe_probe-0.10.0.rbz`
+- `dist/su_pipe_probe-0.11.0.rbz`
 
-두 EXE의 파일 버전은 `0.10.0.0`, 제품 버전은 `0.10.0`입니다. 파일별 SHA-256은 저장소 루트의 `SHA256SUMS.txt`에 기록합니다. 로컬 빌드와 GitHub Actions의 빌드는 생성 시각 등에 따라 체크섬이 다를 수 있으므로 각 배포본에 맞는 기록을 사용합니다.
+두 EXE의 파일 버전은 `0.11.0.0`, 제품 버전은 `0.11.0`입니다. 파일별 SHA-256은 저장소 루트의 `SHA256SUMS.txt`에 기록합니다. 로컬 빌드와 GitHub Actions의 빌드는 생성 시각 등에 따라 체크섬이 다를 수 있으므로 각 배포본에 맞는 기록을 사용합니다.
 
 ## 설치
 
 1. 열려 있는 작업을 저장하고 SketchUp, 중개 GUI, MCP 서버를 종료합니다.
 2. ZIP을 풉니다. 기존 MCP 등록 경로를 유지하려면 ZIP 안의 `dist` 폴더에 들어 있는 파일 5개를 현재 실행 파일이 있는 폴더에 복사합니다. 폴더 안에 `dist`를 한 번 더 만드는 일이 없도록 실행 파일 경로를 확인합니다.
-3. SketchUp 확장 관리자에서 새 `su_pipe_probe-0.10.0.rbz`를 설치하고 SketchUp을 완전히 종료했다가 다시 엽니다.
-4. 새 `SketchUpPipeProbe.exe`를 실행하고 SketchUp 패널에서 연결합니다. 패널 버전 `0.10.0`을 확인합니다.
+3. SketchUp 확장 관리자에서 새 `su_pipe_probe-0.11.0.rbz`를 설치하고 SketchUp을 완전히 종료했다가 다시 엽니다.
+4. 새 `SketchUpPipeProbe.exe`를 실행하고 SketchUp 패널에서 연결합니다. 패널 버전 `0.11.0`을 확인합니다.
 5. MCP 서버를 다시 시작하고 도구 60개가 노출되는지 확인합니다. 실행 파일 위치가 바뀌었다면 등록된 전체 경로도 수정합니다.
 
 ## 새 라이브러리의 첫 시험

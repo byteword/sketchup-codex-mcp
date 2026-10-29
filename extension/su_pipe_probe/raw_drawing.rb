@@ -10,6 +10,7 @@ module SUPipeProbe
       mode
     end
     def draw_geometry(args,dry)
+      return surface_mesh(args.merge('grouping'=>args.fetch('grouping','auto')),dry) if args['kind']=='surface_mesh'
       kind=args['kind']; options=args['options']
       fail_command('invalid_arguments','options must be an object') unless options.is_a?(Hash)
       fields=args.merge('name'=>args.fetch('name','Drawing'),'grouping'=>args.fetch('grouping','auto'))

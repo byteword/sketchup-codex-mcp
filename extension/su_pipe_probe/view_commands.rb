@@ -43,6 +43,7 @@ module SUPipeProbe
       apply_camera(desired,dry)
     end
     def scene(args,dry)
+      return full_scene(args,dry) if args['options'].is_a?(Hash) && args['options']['scope']=='full'
       fail_command('context_mismatch','Scene management requires model root') unless context_ids.empty?
       name=label(args['name']); action=args['action']; pages=@model.pages; page=pages[name]
       fail_command('resource_too_large','Scene management limited to1000 pages') if pages.length>1000

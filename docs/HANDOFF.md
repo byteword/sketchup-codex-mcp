@@ -1,5 +1,20 @@
 # 다른 컴퓨터에서 이어가기 — 2026-10-28
 
+
+## 최신 상태: 0.11.0 전체 장면·파일·지형·분류 — 2026-10-29
+
+E: OneDrive 소스/main이 기준이다. C의 `dist/validation-0.11.0`은 ASCII 검사 복사본이다. 로컬 커밋만 하고 푸시하지 않는다. 도구63개. [0.11 기능·사용법·잔여 범위](FEATURES_0.11.0.md), [자동 검사](VALIDATION.md), [시험 설치](TEST_RELEASE.md).
+
+전체 Page 저장/선택/메타데이터/삭제, 스타일 목록/.style 로드/선택/편집 확정/이름 변경을 구현했다. 2019 `Page.use_style=`는 Style 객체, `Styles.add_style`은 Boolean 반환임을 유지한다. 카메라 전용 scene과0.10 view_preset은 기존 계약을 유지한다. 2019 장면/스타일 Undo는 보장하지 않는다.
+
+SKP는 정의 로드+지정 위치 배치, 모델 복사본 저장(2019/current). DWG/DXF는 Pro native importer/exporter를 호출한다. DefinitionList#import(2021.1+)를 쓰지 않는다. 출력은 새 파일만 생성하고 SHA를 반환한다. CAD importer는 native Undo/단위/그룹화에 맡기며 실패 후 자동재시도 금지다.
+
+Probe authoring `terrain_example`은 `demo.terrain-grid`4파일. 높이 격자/IDW/완만한 높이 조절을 JS에서 계산하고 `draw_geometry(surface_mesh)`로 열린 삼각 표면을 그룹 유/무 생성한다. native capability `surface-mesh/1`이 추가됐다. 분류는 스키마 목록/로드, 정의의 분류 추가/제거/스칼라 값 읽기/쓰기를 구현했다. 공유 변경 확인·잠긴 조상 거부·값 readback을 사용한다.
+
+자동347개 통과(Ruby266/2002 assertions, 라이브러리19, 텍스처7, 지형6, STDIO30, runner6, Win32연동13). 실패/오류/생략0. ZIP의5개 파일, RBZ40개 소스 일치, SHA와 별도 DLL 없는 추출 폴더의 지형 Jint 실행도 통과했다. 현재 연결된 SketchUp 인스턴스가 없어 실제 앱 수용 검사는 미실행이다. 실행 중인 앱/설치 파일/모델은 교체하지 않았다. 다음은0.11 설치 후 장면의 숨김/단면/스타일 복원, SKP/CAD roundtrip, 지형 면 방향/Undo, 실제 스키마 타입/속성 검증이다. 이후 등고선 제약 TIN·Drape/Stamp·기존 지형 편집, 선택 객체 SKP/2D CAD, DC 재계산 등은 별도 기능이다.
+
+OneDrive Git 객체 작성은 `core.createObject=rename`도 일부 객체 폴더에서 Permission denied로 막혔다. 기존 훅·서명 설정이 없음을 확인하고 C의 임시 객체 폴더에서 blob/tree/commit을 작성한 뒤 SHA-1과 내용을 검증해 E 객체 저장소에 새 파일로 복사하고, 기존 HEAD를 조건으로 main 참조를 갱신했다. E 저장소는 C의 임시 객체 폴더에 의존하지 않는다. ACL/전역 Git 설정은 변경하지 않았다. 아래0.10 이하 기록은 이전 상태다.
+
 ## 최신 상태: 0.10.0 텍스처·화면 설정 — 2026-10-29
 
 작업 기준은 E: OneDrive 저장소/main. 로컬 커밋만 하며 원격 푸시는 하지 않는다. 새 view_preset을 포함해60개 도구. face-texture/1 선언형 읽기와 stale 검사를 추가하고, Probe의 demo.face-texture 기법으로 이동/회전/축척/타일mm/fit/flip/shear/tilt/4핀/clear를 처리한다. 재질 복사·이미지 교체/제거·반복 크기, 카메라 비율/초점거리/필름폭, 텍스처·안개 표시와 화면 프리셋도 구현했다. [상세 계약](FEATURES_0.10.0.md).

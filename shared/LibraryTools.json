@@ -75,7 +75,7 @@
     }
   },
   "sketchup_library_get": {
-    "description": "Read exact technique contract, source pages or tests. To create your first technique, call kind=authoring without technique_id: returns a complete example and pure-JS/plan authoring profile; request individual *_schema sections as needed. Pin revision for edits/execution. Authoring section window_example returns the editable two-panel sliding-window technique files. Authoring texture_example returns face-local rotate/scale/tile/fit/tilt/clear with declared face-texture/1 snapshots.",
+    "description": "Read exact technique contract, source pages or tests. To create your first technique, call kind=authoring without technique_id: returns a complete example and pure-JS/plan authoring profile; request individual *_schema sections as needed. Pin revision for edits/execution. Authoring section window_example returns the editable two-panel sliding-window technique files. Authoring terrain_example returns an editable heightfield/IDW/bump surface technique (surface-mesh/1). Authoring texture_example returns face-local rotate/scale/tile/fit/tilt/clear with declared face-texture/1 snapshots.",
     "schema": {
       "type": "object",
       "properties": {
@@ -117,7 +117,8 @@
               "package_schema",
               "window_example",
               "operations_example",
-              "texture_example"
+              "texture_example",
+              "terrain_example"
             ]
           },
           "maxItems": 7
@@ -419,7 +420,8 @@
                   "package_schema",
                   "window_example",
                   "operations_example",
-                  "texture_example"
+                  "texture_example",
+              "terrain_example"
                 ]
               }
             }

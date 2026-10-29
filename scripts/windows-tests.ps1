@@ -24,6 +24,8 @@ Copy-Item bridge\App.config dist\LibraryHarness.exe.config -Force
 if ($LASTEXITCODE -ne 0) { throw 'Library/worker/package tests failed' }
 & $Python tests/texture_math_test.py (Join-Path $PWD "dist\LibraryHarness.exe")
 if ($LASTEXITCODE -ne 0) { throw "Texture technique math tests failed" }
+& $Python tests/terrain_math_test.py (Join-Path $PWD "dist\LibraryHarness.exe")
+if ($LASTEXITCODE -ne 0) { throw "Terrain technique math tests failed" }
 & $Python tests/mcp_stdio_test.py dist/McpHarness.exe
 if ($LASTEXITCODE -ne 0) { throw 'MCP stdio tests failed' }
 & $Python tests/native_runner_test.py
@@ -52,6 +54,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Raw drawing tests failed' }
 if ($LASTEXITCODE -ne 0) { throw 'Native metrics/annotation tests failed' }
 & $Ruby @RubyArguments tests/texture_view_test.rb
 if ($LASTEXITCODE -ne 0) { throw "Texture/view tests failed" }
+& $Ruby @RubyArguments tests/workflow_test.rb
+if ($LASTEXITCODE -ne 0) { throw "Scene/file/terrain/classification tests failed" }
 & $Ruby @RubyArguments tests/sliding_window_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Sliding window recipe tests failed' }
 & $Ruby @RubyArguments tests/ui_updates_test.rb

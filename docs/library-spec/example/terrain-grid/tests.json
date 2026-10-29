@@ -1,0 +1,63 @@
+{
+  "format_version": "probe-tests/1",
+  "cases": [
+    {
+      "id": "flat-default",
+      "params": {},
+      "expect": {
+        "ok": true,
+        "operation_count": 1
+      }
+    },
+    {
+      "id": "height-grid",
+      "params": {
+        "columns": 1,
+        "rows": 1,
+        "heights_mm": [
+          0,
+          0,
+          0,
+          100
+        ]
+      },
+      "expect": {
+        "ok": true,
+        "operation_count": 1
+      }
+    },
+    {
+      "id": "samples",
+      "params": {
+        "samples_mm": [
+          [
+            0,
+            0,
+            100
+          ],
+          [
+            10000,
+            10000,
+            500
+          ]
+        ]
+      },
+      "expect": {
+        "ok": true,
+        "operation_count": 1
+      }
+    },
+    {
+      "id": "too-many-cells",
+      "params": {
+        "columns": 12,
+        "rows": 12
+      },
+      "expect": {
+        "ok": false,
+        "code": "input_invalid",
+        "path": "params"
+      }
+    }
+  ]
+}

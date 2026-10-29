@@ -9,6 +9,7 @@ module SUPipeProbe
       when 'tags' then @model.layers
       when 'definitions' then @model.definitions
       when 'scenes' then @model.pages
+      when 'styles' then @model.styles
       else raise ArgumentError,'Invalid resource kind'
       end
     end
@@ -25,7 +26,17 @@ module SUPipeProbe
         end
       when 'tags' then data.merge!('visible'=>entity.visible?,'default'=>entity==@model.layers[0],'active'=>entity==@model.active_layer,'line_style'=>entity.respond_to?(:line_style) && entity.line_style ? entity.line_style.name : nil)
       when 'definitions' then data.merge!('definition_id'=>'definition:'+entity.entityID.to_s,'description'=>entity.description.to_s[0,1024],'group'=>entity.group?,'image'=>entity.image?,'instance_count'=>entity.count_instances)
+      when 'styles'
+        data.merge!('description'=>entity.description.to_s[0,1024],'path'=>entity.path.to_s[0,1024],
+          'selected'=>entity==@model.styles.selected_style,'active_style_changed'=>@model.styles.active_style_changed)
       when 'scenes'
+        flags=%w[camera axes hidden hidden_layers rendering_options section_planes shadow_info style hidden_geometry hidden_objects]
+        data['saved_properties']=flags.select { |key| entity.respond_to?('use_'+key+'?') && entity.send('use_'+key+'?') }
+        data['selected']=@model.pages.selected_page==entity if @model.pages.respond_to?(:selected_page)
+        data['style_name']=entity.style && entity.style.name if entity.respond_to?(:style)
+        data['transition_seconds']=entity.transition_time if entity.respond_to?(:transition_time)
+        data['delay_seconds']=entity.delay_time if entity.respond_to?(:delay_time)
+        data['include_in_animation']=entity.include_in_animation? if entity.respond_to?(:include_in_animation?)
         data.merge!('description'=>entity.description.to_s[0,1024],'use_camera'=>entity.use_camera?,'camera_only'=>camera_only?(entity),
           'camera'=>{'eye_mm'=>entity.camera.eye.to_a.map { |x| x*25.4 },'target_mm'=>entity.camera.target.to_a.map { |x| x*25.4 },'perspective'=>entity.camera.perspective?})
       end

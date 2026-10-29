@@ -11,6 +11,10 @@ require_relative 'extended_geometry'
 require_relative 'resources'
 require_relative 'view_commands'
 require_relative 'view_presets'
+require_relative 'scene_styles'
+require_relative 'model_files'
+require_relative 'surface_mesh'
+require_relative 'classification_commands'
 require_relative 'ui_update_scope'
 require_relative 'batch_commands'
 require_relative 'sliding_window_commands'
@@ -39,11 +43,15 @@ module SUPipeProbe
     include ResourceCommands
     include ViewCommands
     include ViewPresets
+    include SceneStyles
+    include ModelFiles
+    include SurfaceMesh
+    include ClassificationCommands
     include BatchCommands
     include SlidingWindowCommands
     include LibraryPlanCommands
     include LibraryOperationCommands
-    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch create_sliding_window apply_library_plan draw_geometry entity_attributes annotation edit_annotation solid_operation intersect_faces face_texture component_behavior configure_display export_view texture_resource view_preset].freeze
+    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch create_sliding_window apply_library_plan draw_geometry entity_attributes annotation edit_annotation solid_operation intersect_faces face_texture component_behavior configure_display export_view texture_resource view_preset style model_file classification].freeze
     RESULT_LIMIT = 44_000
     MAX_SELECTION = 1000
 
@@ -78,7 +86,7 @@ module SUPipeProbe
       when 'run_batch' then run_batch(args,dry)
       when 'create_sliding_window' then create_sliding_window(args,dry)
       when 'apply_library_plan' then apply_library_plan(args,dry)
-      when 'view_preset','configure_display','export_view','texture_resource','solid_operation','intersect_faces','face_texture','component_behavior','annotation','edit_annotation','entity_attributes','draw_geometry','manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
+      when 'style','model_file','classification','view_preset','configure_display','export_view','texture_resource','solid_operation','intersect_faces','face_texture','component_behavior','annotation','edit_annotation','entity_attributes','draw_geometry','manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
       end
     end
 

@@ -1,0 +1,136 @@
+{
+  "type": "object",
+  "properties": {
+    "columns": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12,
+      "default": 8
+    },
+    "rows": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12,
+      "default": 8
+    },
+    "width_mm": {
+      "type": "number",
+      "minimum": 10,
+      "maximum": 1000000.0,
+      "default": 10000
+    },
+    "depth_mm": {
+      "type": "number",
+      "minimum": 10,
+      "maximum": 1000000.0,
+      "default": 10000
+    },
+    "origin_mm": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": -10000000.0,
+        "maximum": 10000000.0
+      },
+      "minItems": 3,
+      "maxItems": 3,
+      "default": [
+        0,
+        0,
+        0
+      ]
+    },
+    "heights_mm": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": -1000000.0,
+        "maximum": 1000000.0
+      },
+      "minItems": 0,
+      "maxItems": 169,
+      "default": []
+    },
+    "samples_mm": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number",
+          "minimum": -10000000.0,
+          "maximum": 10000000.0
+        },
+        "minItems": 3,
+        "maxItems": 3
+      },
+      "minItems": 0,
+      "maxItems": 64,
+      "default": []
+    },
+    "bumps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "center_mm": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": -1000000.0,
+              "maximum": 1000000.0
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "radius_mm": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000000.0
+          },
+          "height_mm": {
+            "type": "number",
+            "minimum": -1000000.0,
+            "maximum": 1000000.0
+          }
+        },
+        "required": [
+          "center_mm",
+          "radius_mm",
+          "height_mm"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 16,
+      "default": []
+    },
+    "grouping": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 5,
+      "enum": [
+        "auto",
+        "group",
+        "none"
+      ],
+      "default": "auto"
+    },
+    "smooth": {
+      "type": "boolean",
+      "default": true
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "default": "Terrain"
+    },
+    "material": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 256,
+      "default": ""
+    }
+  },
+  "additionalProperties": false
+}

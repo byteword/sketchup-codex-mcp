@@ -1,5 +1,10 @@
 # Probe 기법 라이브러리 0.8.0
 
+
+## 0.11.0 지형 기법과 열린 표면
+
+`library_get(kind=authoring,sections=["terrain_example"])`로 `demo.terrain-grid`의 편집 가능한4개 파일을 조회합니다. 높이 격자·측량점 IDW·반경 높이 조절을 Probe에서 계산하고 `surface-mesh/1` 공통 연산으로 그립니다. 기존 저장/검증/계획/적용과 선택형 패키지 공유를 그대로 사용합니다. 첫 실행은0.11 Probe/MCP/RBZ가 필요하고 이후 지원 연산 안의 기법 개선은 외부JS 갱신으로 반영합니다. `texture_example`은0.10 면 텍스처 기법입니다. [정확한 인수와 한도](FEATURES_0.11.0.md). 아래 설치/도구 수는0.8 첫 구현 이력입니다.
+
 ## 0.9.0 추가: 그룹 없는 명령 계획
 
 `sketchup-operations/1`과 `commands/1`을 추가했습니다. `get(kind=authoring,sections=["operations_example"])`로 그룹 없는 사각형·치수·문자 예제를 가져올 수 있습니다. 기존 계획/패키지는 호환됩니다. [인수·제한·실기 절차](FEATURES_0.9.0.md).

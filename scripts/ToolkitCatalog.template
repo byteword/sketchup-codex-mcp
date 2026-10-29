@@ -16,7 +16,7 @@ namespace SketchUpPipeProbe
             var result = new List<object>();
             foreach (var pair in Specs) {
                 var spec = (Dictionary<string,object>)pair.Value;
-                result.Add(new { name=pair.Key, description=(string)spec["description"] + (IsWrite(pair.Key) ? " Requires fresh model/context, panel grant and next_command_id. dry_run validates without mutation; query get_command_result after timeout, never automatically retry. Geometry/resource edits use one Undo operation unless explicitly stated otherwise." : ""), inputSchema=spec["schema"], annotations=new {readOnlyHint=!IsWrite(pair.Key),destructiveHint=IsWrite(pair.Key),idempotentHint=true,openWorldHint=pair.Key=="sketchup_export_view"||pair.Key=="sketchup_texture_resource"} });
+                result.Add(new { name=pair.Key, description=(string)spec["description"] + (IsWrite(pair.Key) ? " Requires fresh model/context, panel grant and next_command_id. dry_run validates without mutation; query get_command_result after timeout, never automatically retry. Geometry/resource edits use one Undo operation unless explicitly stated otherwise." : ""), inputSchema=spec["schema"], annotations=new {readOnlyHint=!IsWrite(pair.Key),destructiveHint=IsWrite(pair.Key),idempotentHint=true,openWorldHint=pair.Key=="sketchup_export_view"||pair.Key=="sketchup_texture_resource"||pair.Key=="sketchup_model_file"||pair.Key=="sketchup_style"||pair.Key=="sketchup_classification"} });
             }
             return result.ToArray();
         }
@@ -35,7 +35,7 @@ namespace SketchUpPipeProbe
             } else if(Has(types,"array")) {
                 var values=value as IList; if(values==null || values.Count<Convert.ToInt32(schema["minItems"]) || values.Count>Convert.ToInt32(schema["maxItems"])) throw new ArgumentException("Array length outside supported range");
                 foreach(object item in values) Check(schema["items"],item);
-            } else if(Has(types,"string")) {
+            } else if(Has(types,"string") && value is string) {
                 var s=value as string; if(s==null || s.IndexOf('\0')>=0) throw new ArgumentException("Expected valid text");
                 int length=0;
                 for(int i=0;i<s.Length;++i) { if(Char.IsLowSurrogate(s[i])) throw new ArgumentException("Invalid Unicode"); if(Char.IsHighSurrogate(s[i])) { if(i+1>=s.Length || !Char.IsLowSurrogate(s[++i])) throw new ArgumentException("Invalid Unicode"); } ++length; }
@@ -43,9 +43,9 @@ namespace SketchUpPipeProbe
                 if(schema.ContainsKey("enum") && !Has((IList)schema["enum"],s)) throw new ArgumentException("Invalid choice");
                 if(schema.ContainsKey("pattern") && !Regex.IsMatch(s,"\\A"+((string)schema["pattern"]).TrimStart('^').TrimEnd('$')+"\\z")) throw new ArgumentException("Invalid identifier");
                 Guid guid; if(schema.ContainsKey("format") && !Guid.TryParseExact(s,"D",out guid)) throw new ArgumentException("Invalid UUID");
-            } else if(Has(types,"boolean")) { if(!(value is bool)) throw new ArgumentException("Expected boolean"); }
+            } else if(Has(types,"boolean") && value is bool) { if(!(value is bool)) throw new ArgumentException("Expected boolean"); }
             else {
-                if(!(value is int || value is long || value is double || value is decimal) || Has(types,"integer") && !(value is int || value is long)) throw new ArgumentException("Expected number");
+                if(!(Has(types,"number") || Has(types,"integer")) || !(value is int || value is long || value is double || value is decimal) || Has(types,"integer") && !(value is int || value is long)) throw new ArgumentException("Expected number");
                 double n=Convert.ToDouble(value); if(Double.IsNaN(n) || Double.IsInfinity(n) || n<Convert.ToDouble(schema["minimum"]) || n>Convert.ToDouble(schema["maximum"])) throw new ArgumentException("Number outside range");
             }
         }

@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(60, len(tools))
-        self.assertEqual(60, len({tool["name"] for tool in tools}))
+        self.assertEqual(63, len(tools))
+        self.assertEqual(63, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
             self.assertEqual("object",tool["inputSchema"]["type"])
@@ -384,6 +384,29 @@ class StdioTests(unittest.TestCase):
             self.assertIn('command_id', tools[name]['inputSchema']['required'])
             self.assertIn('expected_context', tools[name]['inputSchema']['required'])
         self.assertTrue(tools['sketchup_get_command_result']['annotations']['readOnlyHint'])
+
+    def test_scene_file_surface_classification_contracts(self):
+        self.initialize()
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        cases=[('sketchup_scene',dict(action='create',name='Full',options=dict(scope='full',transition_seconds=2))),
+               ('sketchup_style',dict(action='load',options=dict(path='C:/test.style',select=True))),
+               ('sketchup_model_file',dict(action='save_copy',path='C:/copy.skp',options=dict(version='2019'))),
+               ('sketchup_draw_geometry',dict(kind='surface_mesh',grouping='none',options=dict(points_mm=[[0,0,0],[100,0,0],[0,100,0]],triangles=[[0,1,2]],smooth=True)))]
+        for value in ['Wall',15,2.5,True,False]:
+            cases.append(('sketchup_classification',dict(action='set_value',options=dict(definition_id='definition:1',classification_path=['IFC 2x3','IfcWall','Name'],value=value,affect_all_instances=True))))
+        for index,(name,fields) in enumerate(cases,10):
+            args=dict(common,**fields);self.send('tools/call',dict(name=name,arguments=args),index)
+            result=self.response()['result'];self.assertFalse(result['isError']);self.assertEqual(args,json.loads(result['content'][0]['text'])['arguments'])
+        for index,(name,fields) in enumerate([
+            ('sketchup_classification',dict(action='set_value',options=dict(value=['bad']))),
+            ('sketchup_model_file',dict(action='save_copy',path='C:/copy.skp',options=dict(version='2022'))),
+            ('sketchup_draw_geometry',dict(kind='surface_mesh',options=dict(triangles=[[0,1,256]]))),
+            ('sketchup_scene',dict(action='create',name='Full',options=dict(scope='full',transition_seconds=4000)))],30):
+            self.send('tools/call',dict(name=name,arguments=dict(common,**fields)),index)
+            self.assertEqual(-32602,self.response()['error']['code'])
+        for index,name in enumerate(['style','model_file','classification'],40):
+            self.send('tools/call',dict(name='sketchup_run_batch',arguments=dict(common,steps=[dict(method=name,arguments={})])),index)
+            self.assertEqual(-32602,self.response()['error']['code'])
 
     def test_texture_and_view_contracts(self):
         self.initialize()

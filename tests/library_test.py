@@ -138,6 +138,18 @@ class LibraryTests(unittest.TestCase):
         self.assertEqual("succeeded",result["state"],result)
         self.assertEqual(3,len(result["result"]["cases"]))
 
+    def test_bundled_terrain_authoring_verify_and_selected_package(self):
+        files=self.ok(self.call("get",kind="authoring",sections=["terrain_example"]))["terrain_files"]
+        ref=self.ok(self.save(id="demo.terrain-grid",files=files))["technique_ref"]
+        result=self.verify(ref)
+        self.assertEqual("succeeded",result["state"],result)
+        self.assertEqual(4,len(result["result"]["cases"]))
+        self.assertTrue(self.export([ref]))
+        planned=self.wait(self.call('run',request_id=str(uuid.uuid4()),mode='plan',params=dict(columns=1,rows=1),**ref))
+        self.assertEqual('succeeded',planned['state'],planned)
+        record=json.loads((Path(self.directory.name)/'plans'/(planned['result']['plan_id']+'.json')).read_text(encoding='utf-8'))
+        self.assertEqual('surface_mesh',record['plan']['steps'][0]['arguments']['kind'])
+
     def test_bundled_texture_example_verifies_and_shares(self):
         files=self.ok(self.call("get",kind="authoring",sections=["texture_example"]))["texture_files"]
         ref=self.ok(self.save(id="demo.face-texture",files=files))["technique_ref"]
