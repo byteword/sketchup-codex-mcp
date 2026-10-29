@@ -1,0 +1,10 @@
+{
+  "source_mirror_identical": true,
+  "runtime_files": 5,
+  "rbz_source_files": 34,
+  "checksums_match": true,
+  "embedded_worker_without_external_dlls": "passed",
+  "worker_plan_format": "sketchup-operations/1",
+  "worker_steps": 4,
+  "package_sha256": "77d65259c8e6609ca9f5ea0b6fa07227c7ddf5e2f91015d681ec12ced7a13d25"
+}

@@ -42,7 +42,7 @@
     }
   },
   "sketchup_manage_resource": {
-    "description": "Create/update/delete solid-color materials or tags, or purge unused definitions/materials/tags. Tag deletion preserves geometry and reassigns it to Layer0. Layer0 and active tag cannot be deleted. Purge is model-wide and requires confirm_model_wide=true. No texture file access.",
+    "description": "Create/update/delete solid-color materials or tags, or purge unused definitions/materials/tags. Tag deletion preserves geometry and reassigns it to Layer0. Layer0 and active tag cannot be deleted. Purge is model-wide and requires confirm_model_wide=true. No texture file access. Tags accept line_style: exact name from model_query capabilities, or null for solid line (SketchUp2019+).",
     "read": false,
     "schema": {
       "type": "object",
@@ -132,6 +132,14 @@
             },
             "confirm_model_wide": {
               "type": "boolean"
+            },
+            "line_style": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "maxLength": 256
             }
           },
           "required": [],
@@ -459,7 +467,7 @@
     }
   },
   "sketchup_edit_geometry": {
-    "description": "Edit explicit raw children of one direct group/component. Unique definition required, or explicit affect_all_instances=true for shared components; this edits their definition for all occurrences. Shared groups still require make_unique. Add points/lines/faces, erase raw items, move construction points or edge endpoints, regenerate bounded faces, reverse faces, assign front/back materials, soften/smooth or unsoften edges, dissolve only coplanar internal edges. Edge deletion can remove adjacent faces. IDs/paths become stale after topology edits. No implicit edit-context changes. Required options: add_points/add_lines/add_face: points_mm; move_vertices: vertex_moves(edge_id,endpoint=start/end,position_mm); others: entity_ids. move_points also delta_mm. properties: material/back_material(null clears),hidden. soften: optional angle_degrees default30, only two-face edges within angle. simplify: only untextured matching coplanar face pairs; verifies total area.",
+    "description": "Edit explicit raw children of one direct group/component. Unique definition required, or explicit affect_all_instances=true for shared components; this edits their definition for all occurrences. Shared groups still require make_unique. Add points/lines/faces, erase raw items, move construction points or edge endpoints, regenerate bounded faces, reverse faces, assign front/back materials, soften/smooth or unsoften edges, dissolve only coplanar internal edges. Edge deletion can remove adjacent faces. IDs/paths become stale after topology edits. No implicit edit-context changes. Required options: add_points/add_lines/add_face: points_mm; move_vertices: vertex_moves(edge_id,endpoint=start/end,position_mm); others: entity_ids. move_points also delta_mm. properties: material/back_material(null clears),hidden. soften: optional angle_degrees default30, only two-face edges within angle. simplify: only untextured matching coplanar face pairs; verifies total area. Omit container_id to edit raw geometry directly in the current edit context, including model root, without grouping. Shared edit ancestors remain rejected. Current context budget2048 direct entities.",
     "read": false,
     "schema": {
       "type": "object",
@@ -634,7 +642,6 @@
         "model_id",
         "command_id",
         "expected_context",
-        "container_id",
         "action",
         "options"
       ],
@@ -1058,6 +1065,1436 @@
         "height_mm",
         "depth_mm",
         "materials"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_draw_geometry": {
+    "description": "Draw model-axis geometry. Default grouping=auto draws points, lines, faces and native curves directly in the current edit context without temporary groups; closed solids are grouped. Direct drawing can merge/split existing geometry. Refresh IDs afterward. Choose group for isolation or none to require raw geometry. Native raw circular arcs require uniform edit scaling.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "rectangle",
+            "circle",
+            "polyline",
+            "points",
+            "face",
+            "polygon",
+            "arc_center",
+            "arc_two_point",
+            "arc_three_point",
+            "bezier",
+            "freehand",
+            "polyhedron",
+            "offset",
+            "revolve",
+            "sweep"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "grouping": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "none",
+            "group"
+          ],
+          "default": "auto"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "points_mm": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -1000000000.0,
+                  "maximum": 1000000000.0
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "minItems": 1,
+              "maxItems": 256
+            },
+            "faces": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 255
+                },
+                "minItems": 3,
+                "maxItems": 64
+              },
+              "minItems": 4,
+              "maxItems": 256
+            },
+            "origin_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "plane": {
+              "type": "string",
+              "enum": [
+                "XY",
+                "XZ",
+                "YZ"
+              ]
+            },
+            "radius_mm": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 1000000
+            },
+            "sides": {
+              "type": "integer",
+              "minimum": 3,
+              "maximum": 128
+            },
+            "segments": {
+              "type": "integer",
+              "minimum": 3,
+              "maximum": 128
+            },
+            "start_degrees": {
+              "type": "number",
+              "minimum": -360,
+              "maximum": 360
+            },
+            "sweep_degrees": {
+              "type": "number",
+              "minimum": -360,
+              "maximum": 360
+            },
+            "bulge_mm": {
+              "type": "number",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "distance_mm": {
+              "type": "number",
+              "minimum": -1000000,
+              "maximum": 1000000
+            },
+            "pivot_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "axis": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "path_mm": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -1000000000.0,
+                  "maximum": 1000000000.0
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "minItems": 2,
+              "maxItems": 64
+            },
+            "size_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "kind",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_model_query": {
+    "description": "Read capabilities, bounded recursive physical metrics, ray hits, face point classification or paged custom attributes. No model changes. Metrics/classify require root edit context on2019; return model-axis mm/mm2/mm3. Repeated instances counted; overlapping solids not unioned.",
+    "read": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "query": {
+          "type": "string",
+          "enum": [
+            "capabilities",
+            "metrics",
+            "raycast",
+            "classify_point",
+            "attributes",
+            "display",
+            "face_mesh",
+            "uv"
+          ]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "instance_path": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,18}$",
+                "maxLength": 19
+              },
+              "minItems": 1,
+              "maxItems": 32
+            },
+            "points_mm": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -1000000000.0,
+                  "maximum": 1000000000.0
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "minItems": 1,
+              "maxItems": 64
+            },
+            "front": {
+              "type": "boolean"
+            },
+            "origin_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "direction": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "point_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "include_hidden": {
+              "type": "boolean"
+            },
+            "recursive": {
+              "type": "boolean"
+            },
+            "max_entities": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5000
+            },
+            "dictionary": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 25
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "query",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_entity_attributes": {
+    "description": "Set or delete one custom attribute on a direct drawing entity. Shared edit ancestors and locked targets are rejected. value_json is a scalar/array JSON value; object metadata can be stored as a JSON string. Uses one Undo.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "set",
+            "delete"
+          ]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "entity_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,18}$",
+              "maxLength": 19
+            },
+            "dictionary": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "value_json": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8192
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "action",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_annotation": {
+    "description": "Create ungrouped guides, linear/radial dimensions, leader text or section planes at model root, model-axis mm. 3D text creates one group for safe placement without merging existing geometry; text uses XY plane. No implicit edit-mode changes.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "guide",
+            "linear_dimension",
+            "radial_dimension",
+            "text",
+            "text3d",
+            "section"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "point_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "direction": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "start_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "end_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "offset_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "edge_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,18}$",
+              "maxLength": 19
+            },
+            "leader_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "origin_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "height_mm": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 10000
+            },
+            "font": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "bold": {
+              "type": "boolean"
+            },
+            "italic": {
+              "type": "boolean"
+            },
+            "extrusion_mm": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "normal": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "symbol": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 3
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "kind",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_edit_annotation": {
+    "description": "At model root, erase explicit guides/dimensions/text/sections, change label text or edit a section plane position/normal, name, symbol or activation. Grouped 3D text uses ordinary group tools.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "erase",
+            "section",
+            "text"
+          ]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "entity_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,18}$",
+                "maxLength": 19
+              },
+              "minItems": 1,
+              "maxItems": 25
+            },
+            "entity_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,18}$",
+              "maxLength": 19
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "point_mm": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "normal": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000.0,
+                "maximum": 1000000000.0
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "symbol": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 3
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "action",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_solid_operation": {
+    "description": "Native Boolean union/intersect/subtract/trim/outer_shell of two root solids, preserving both originals. Produces one isolated result. subtract/trim mean target minus tool. Pro required except outer_shell. Empty results fail and roll back. Face topology/material mapping changes; inspect result.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "union",
+            "intersect",
+            "subtract",
+            "trim",
+            "outer_shell"
+          ]
+        },
+        "target_id": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$",
+          "maxLength": 19
+        },
+        "tool_id": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$",
+          "maxLength": 19
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "operation",
+        "target_id",
+        "tool_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_intersect_faces": {
+    "description": "Insert raw intersection edges into one unique root group/component using another as cutter; no new groups, no automatic removal of unwanted faces. Direct faces/edges only;5000 entities each. Refresh paths after topology changes.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "target_id": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$",
+          "maxLength": 19
+        },
+        "cutter_id": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$",
+          "maxLength": 19
+        },
+        "include_hidden": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "target_id",
+        "cutter_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_face_texture": {
+    "description": "Position an existing textured material on a face, using1..4 model point(mm)/UV(unitless) pairs. Root context, unique unlocked ancestors required. Uses2019 position_material overload; no deprecated projection setter.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "instance_path": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 1,
+          "maxItems": 32
+        },
+        "material": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "front": {
+          "type": "boolean"
+        },
+        "mapping": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "point_mm": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -1000000000.0,
+                  "maximum": 1000000000.0
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "uv": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -1000000.0,
+                  "maximum": 1000000.0
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "point_mm",
+              "uv"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "instance_path",
+        "material",
+        "mapping"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_component_behavior": {
+    "description": "Configure definition-wide opening, gluing, camera-facing and scale-handle behavior, or glue/unglue a direct component to a root face. Configure requires affect_all_instances=true. Opening is face cutting, not a wall-thickness Boolean.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "configure",
+            "glue",
+            "unglue"
+          ]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "definition_id": {
+              "type": "string",
+              "pattern": "^definition:[1-9][0-9]{0,18}$",
+              "maxLength": 30
+            },
+            "affect_all_instances": {
+              "type": "boolean"
+            },
+            "is2d": {
+              "type": "boolean"
+            },
+            "cuts_opening": {
+              "type": "boolean"
+            },
+            "always_face_camera": {
+              "type": "boolean"
+            },
+            "shadows_face_sun": {
+              "type": "boolean"
+            },
+            "snapto": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "no_scale_mask": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 127
+            },
+            "entity_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,18}$",
+              "maxLength": 19
+            },
+            "face_id": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]{0,18}$",
+              "maxLength": 19
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "action",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_configure_display": {
+    "description": "Configure bounded2019 rendering/style properties and shadow/geolocation settings at root. Query current values via model_query display. Explicit ISO8601 offset for ShadowTime. No reliable model Undo; restores prior values on failure. Excluded from library operations/batches.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "rendering": {
+          "type": "object",
+          "properties": {
+            "ModelTransparency": {
+              "type": "boolean"
+            },
+            "MaterialTransparency": {
+              "type": "boolean"
+            },
+            "DrawHidden": {
+              "type": "boolean"
+            },
+            "DrawBackEdges": {
+              "type": "boolean"
+            },
+            "DisplaySectionPlanes": {
+              "type": "boolean"
+            },
+            "DisplaySectionCuts": {
+              "type": "boolean"
+            },
+            "SectionCutFilled": {
+              "type": "boolean"
+            },
+            "DisplayColorByLayer": {
+              "type": "boolean"
+            },
+            "DisplayDims": {
+              "type": "boolean"
+            },
+            "DisplayText": {
+              "type": "boolean"
+            },
+            "DisplaySketchAxes": {
+              "type": "boolean"
+            },
+            "DrawGround": {
+              "type": "boolean"
+            },
+            "DrawHorizon": {
+              "type": "boolean"
+            },
+            "RenderMode": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "EdgeDisplayMode": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2
+            },
+            "BackgroundColor": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              },
+              "minItems": 3,
+              "maxItems": 3
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "shadows": {
+          "type": "object",
+          "properties": {
+            "DisplayShadows": {
+              "type": "boolean"
+            },
+            "DisplayOnGroundPlane": {
+              "type": "boolean"
+            },
+            "DisplayOnAllFaces": {
+              "type": "boolean"
+            },
+            "UseSunForAllShading": {
+              "type": "boolean"
+            },
+            "EdgesCastShadows": {
+              "type": "boolean"
+            },
+            "DaylightSavings": {
+              "type": "boolean"
+            },
+            "Light": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "Dark": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "Latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "Longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            "TZOffset": {
+              "type": "number",
+              "minimum": -14,
+              "maximum": 14
+            },
+            "NorthAngle": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 360
+            },
+            "ShadowTime": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 25
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_export_view": {
+    "description": "Export current viewport to a NEW local PNG/JPEG path in an existing folder. No overwrite.64..4096 pixels. Returns size andSHA256. File output has no model Undo and is excluded from library operations/batches.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "path": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 1024
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 64,
+          "maximum": 4096
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 64,
+          "maximum": 4096
+        },
+        "transparent": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "path"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "sketchup_texture_resource": {
+    "description": "Load an existing local SKM, or create a new material from a PNG/JPEG texture with an explicit new name. Input <=64MiB, existing folder, root context. File reads are excluded from library operations/batches. Model material change uses one Undo.",
+    "read": false,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "model_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F-]{36}:[1-9][0-9]{0,9}$",
+          "maxLength": 48
+        },
+        "expected_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "maxLength": 19
+          },
+          "minItems": 0,
+          "maxItems": 32
+        },
+        "dry_run": {
+          "type": "boolean"
+        },
+        "ui_updates": {
+          "type": "string",
+          "enum": [
+            "defer",
+            "normal"
+          ],
+          "default": "defer",
+          "description": "Native model operations only: defer suppresses intermediate UI/Outliner updates and requests one refresh after commit/abort. normal allows normal updates. No persistent freeze/tray visibility changes. Not applicable to camera/scenes."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "create_texture",
+            "load_skm"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 1024
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "session_id",
+        "model_id",
+        "command_id",
+        "expected_context",
+        "action",
+        "path"
       ],
       "additionalProperties": false
     }

@@ -44,6 +44,10 @@ if ($LASTEXITCODE -ne 0) { throw 'Geometry algorithm tests failed' }
 if ($LASTEXITCODE -ne 0) { throw 'Extended drawing/component/resource tests failed' }
 & $Ruby @RubyArguments tests/library_plan_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Library plan executor tests failed' }
+& $Ruby @RubyArguments tests/raw_drawing_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Raw drawing tests failed' }
+& $Ruby @RubyArguments tests/native_features_test.rb
+if ($LASTEXITCODE -ne 0) { throw 'Native metrics/annotation tests failed' }
 & $Ruby @RubyArguments tests/sliding_window_test.rb
 if ($LASTEXITCODE -ne 0) { throw 'Sliding window recipe tests failed' }
 & $Ruby @RubyArguments tests/ui_updates_test.rb

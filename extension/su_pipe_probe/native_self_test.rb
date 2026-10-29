@@ -1,6 +1,7 @@
 # encoding: UTF-8
 require_relative 'model_reader'
 require_relative 'extended_self_checks'
+require_relative 'features_2019_checks'
 
 module SUPipeProbe
   # Fixed internal suite, never user-supplied Ruby or arbitrary batch commands.
@@ -8,6 +9,7 @@ module SUPipeProbe
   # sub-command Undo boundaries are deliberately suppressed and NOT certified.
   class NativeSelfTest
     include ExtendedSelfChecks
+    include Features2019Checks
     CHECKS = %w[box rectangle circle polyline entity_info face_edge_metrics push_pull rotate scale move duplicate selection properties locked_rejection unlock erase group make_unique nested_query view_top view_front view_right view_isometric zoom].freeze
     class InlineExecutor < CommandExecutor
       private
@@ -28,8 +30,8 @@ module SUPipeProbe
         raise CommandError.new('test_model_too_large','Use a small dedicated test model')
       end
       suite=args.fetch('suite','core')
-      raise CommandError.new('invalid_arguments','suite must be core, extended or all') unless %w[core extended all].include?(suite)
-      planned=(suite=='extended' ? [] : CHECKS)+(suite=='core' ? [] : ExtendedSelfChecks::CHECKS)
+      raise CommandError.new('invalid_arguments','suite must be core, extended, all or features2019') unless %w[core extended all features2019].include?(suite)
+      planned=suite=='features2019' ? Features2019Checks::CHECKS : (suite=='extended' ? [] : CHECKS)+(suite=='core' ? [] : ExtendedSelfChecks::CHECKS)
       return {'dry_run'=>true,'undoable'=>false,'suite'=>suite,'planned_checks'=>planned,'temporary_geometry'=>true} if dry
       @executor,@reader = InlineExecutor.new(@model),ModelReader.new(@model)
       @checks,@started_at = [],@clock.call
@@ -51,8 +53,12 @@ module SUPipeProbe
       begin
         scope.run('temporary native smoke test',true) do
           begin
-            run_checks(camera) unless suite=='extended'
-            run_extended_checks(camera) unless suite=='core'
+            if suite=='features2019'
+              run_features_2019_checks
+            else
+              run_checks(camera) unless suite=='extended'
+              run_extended_checks(camera) unless suite=='core'
+            end
           ensure
             begin
               @model.selection.clear

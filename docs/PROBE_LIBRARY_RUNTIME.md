@@ -1,5 +1,9 @@
 # Probe 기법 라이브러리 0.8.0
 
+## 0.9.0 추가: 그룹 없는 명령 계획
+
+`sketchup-operations/1`과 `commands/1`을 추가했습니다. `get(kind=authoring,sections=["operations_example"])`로 그룹 없는 사각형·치수·문자 예제를 가져올 수 있습니다. 기존 계획/패키지는 호환됩니다. [인수·제한·실기 절차](FEATURES_0.9.0.md).
+
 2026-10-29. [검토 규격](PROBE_LIBRARY_SPEC.md)을 바탕으로 구현한 첫 시험 버전입니다. Probe의 외부 파일과 내장 JavaScript 엔진에서 기법을 관리하고 SketchUp에는 한 번의 형상 계획으로 전달합니다. 지원하는 연산을 조합하는 새 기법은 EXE/RBZ 재설치 없이 추가·수정할 수 있습니다.
 
 ## 설치와 저장 위치

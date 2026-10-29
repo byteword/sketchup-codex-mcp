@@ -16,7 +16,7 @@ namespace SketchUpPipeProbe
             var result = new List<object>();
             foreach (var pair in Specs) {
                 var spec = (Dictionary<string,object>)pair.Value;
-                result.Add(new { name=pair.Key, description=(string)spec["description"] + (IsWrite(pair.Key) ? " Requires fresh model/context, panel grant and next_command_id. dry_run validates without mutation; query get_command_result after timeout, never automatically retry. Geometry/resource edits use one Undo operation unless explicitly stated otherwise." : ""), inputSchema=spec["schema"], annotations=new {readOnlyHint=!IsWrite(pair.Key),destructiveHint=IsWrite(pair.Key),idempotentHint=true,openWorldHint=false} });
+                result.Add(new { name=pair.Key, description=(string)spec["description"] + (IsWrite(pair.Key) ? " Requires fresh model/context, panel grant and next_command_id. dry_run validates without mutation; query get_command_result after timeout, never automatically retry. Geometry/resource edits use one Undo operation unless explicitly stated otherwise." : ""), inputSchema=spec["schema"], annotations=new {readOnlyHint=!IsWrite(pair.Key),destructiveHint=IsWrite(pair.Key),idempotentHint=true,openWorldHint=pair.Key=="sketchup_export_view"||pair.Key=="sketchup_texture_resource"} });
             }
             return result.ToArray();
         }
@@ -54,7 +54,7 @@ namespace SketchUpPipeProbe
     public static class BatchCatalog
     {
         const string Name="sketchup_run_batch";
-        static readonly string[] Methods={"update_entity_properties","move_entities","create_box","duplicate_entities","create_rectangle","create_circle","create_polyline","rotate_entities","scale_entities","erase_entities","group_entities","make_unique","push_pull","manage_resource","component","create_geometry","edit_geometry","mirror_entities"};
+        static readonly string[] Methods={"update_entity_properties","move_entities","create_box","duplicate_entities","create_rectangle","create_circle","create_polyline","rotate_entities","scale_entities","erase_entities","group_entities","make_unique","push_pull","manage_resource","component","create_geometry","edit_geometry","mirror_entities","draw_geometry","entity_attributes","annotation","edit_annotation","solid_operation","intersect_faces","face_texture","component_behavior"};
         static readonly string[] Common={"session_id","model_id","command_id","expected_context","dry_run","ui_updates"};
         public static bool Contains(string name) { return name==Name; }
         static Dictionary<string,object> Schema()

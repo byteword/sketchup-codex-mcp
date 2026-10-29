@@ -8,6 +8,7 @@ end
 [SketchupDouble::Entity,SketchupDouble::Face,SketchupDouble::Edge].each { |type| type.include(Sketchup::Drawingelement) }
 module Geom
   class Point3d
+    def [](index); to_a[index]; end
     def initialize(*values); @values=values.length==1 ? values[0].to_a.dup : values; end
     def -(other); Vector3d.new(to_a.zip(other.to_a).map { |a,b| a-b }); end
     def offset(vector); Point3d.new(to_a.zip(vector.to_a).map { |a,b| a+b }); end

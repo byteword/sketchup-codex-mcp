@@ -1,0 +1,33 @@
+{
+  "format_version": "probe-technique/1",
+  "id": "demo.raw-drawing",
+  "title": "그룹 없는 사각형 도면",
+  "summary": "그룹 없이 사각형을 그리고 선택적으로 두 치수와 설명을 한 번에 배치합니다.",
+  "keywords": [
+    "raw",
+    "drawing",
+    "치수",
+    "그룹없음"
+  ],
+  "kind": "generator",
+  "entrypoint": "technique.js",
+  "input_schema": "inputs.schema.json",
+  "tests": "tests.json",
+  "runtime": "probe-js/1",
+  "output": "sketchup-operations/1",
+  "requires": [
+    "commands/1",
+    "verify/1"
+  ],
+  "material_roles": [],
+  "dependencies": [],
+  "reads": [],
+  "budgets": {
+    "plan_ms": 1000,
+    "memory_mib": 64,
+    "max_nodes": 2,
+    "max_points": 8,
+    "max_faces": 6,
+    "max_plan_bytes": 12000
+  }
+}

@@ -19,7 +19,7 @@ module SUPipeProbe
       case kind
       when 'materials'
         data.merge!('color_rgb'=>[entity.color.red,entity.color.green,entity.color.blue],'alpha'=>entity.alpha,'textured'=>!entity.texture.nil?)
-      when 'tags' then data.merge!('visible'=>entity.visible?,'default'=>entity==@model.layers[0],'active'=>entity==@model.active_layer)
+      when 'tags' then data.merge!('visible'=>entity.visible?,'default'=>entity==@model.layers[0],'active'=>entity==@model.active_layer,'line_style'=>entity.respond_to?(:line_style) && entity.line_style ? entity.line_style.name : nil)
       when 'definitions' then data.merge!('definition_id'=>'definition:'+entity.entityID.to_s,'description'=>entity.description.to_s[0,1024],'group'=>entity.group?,'image'=>entity.image?,'instance_count'=>entity.count_instances)
       when 'scenes'
         data.merge!('description'=>entity.description.to_s[0,1024],'use_camera'=>entity.use_camera?,'camera_only'=>camera_only?(entity),
@@ -69,7 +69,7 @@ module SUPipeProbe
         o=options(args,['confirm_model_wide']); fail_command('invalid_arguments','Explicit model-wide purge confirmation required') unless o['confirm_model_wide']==true
       else
         fail_command('invalid_arguments','Definitions support purge_unused only here') if kind=='definitions'
-        required=['name']; optional=kind=='materials' ? %w[new_name color_rgb alpha] : %w[new_name visible]
+        required=['name']; optional=kind=='materials' ? %w[new_name color_rgb alpha] : %w[new_name visible line_style]
         o=options(args,required,action=='delete' ? [] : optional); name=label(o['name']); entity=collection[name]
         fail_command('resource_exists','Resource name already exists') if action=='create' && entity
         fail_command('resource_not_found','Resource not found by exact name') if action!='create' && !entity
@@ -83,6 +83,10 @@ module SUPipeProbe
         end
         finite_number(o['alpha'],0,1) if o.key?('alpha')
         fail_command('invalid_arguments','visible must be boolean') if o.key?('visible') && o['visible']!=true && o['visible']!=false
+        if o.key?('line_style') && o['line_style']
+          label(o['line_style']);line_style=@model.line_styles[o['line_style']]
+          fail_command('resource_not_found','Line style must exist by exact name') unless line_style
+        end
         if kind=='tags' && entity==@model.layers[0]
           fail_command('protected_resource','Layer0 properties cannot be changed')
         end
@@ -105,6 +109,8 @@ module SUPipeProbe
           entity.color=Sketchup::Color.new(*o['color_rgb']) if o.key?('color_rgb')
           entity.alpha=o['alpha'] if o.key?('alpha')
           entity.visible=o['visible'] if o.key?('visible')
+          entity.line_style=line_style if o.key?('line_style')
+          fail_command('postcondition_failed','Line style did not match') if o.key?('line_style') && entity.line_style!=line_style
           fail_command('postcondition_failed','Resource name changed unexpectedly') unless entity.name==(o['new_name'] || name)
           fail_command('postcondition_failed','Resource color did not match') if o.key?('color_rgb') && [entity.color.red,entity.color.green,entity.color.blue]!=o['color_rgb']
           fail_command('postcondition_failed','Resource transparency did not match') if o.key?('alpha') && (entity.alpha-o['alpha']).abs>1e-6

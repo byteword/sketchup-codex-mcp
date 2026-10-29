@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "format_version": {
+      "const": "sketchup-operations/1"
+    },
+    "units": {
+      "const": "mm"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "arguments": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "method",
+          "arguments"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "format_version",
+    "units",
+    "steps"
+  ],
+  "additionalProperties": false
+}

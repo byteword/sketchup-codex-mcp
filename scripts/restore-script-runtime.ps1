@@ -29,10 +29,11 @@ foreach($dep in $deps) {
 }
 $common=New-Object 'System.Collections.Generic.List[string]'
 $common.Add('/resource:shared\LibraryTools.json,ProbeRuntime.library-tools.json');$common.Add('shared\LibraryCatalog.cs');$common.Add('bridge\library\LibraryJson.cs')
-foreach($name in @('manifest','plan','report','tests','package')) { $common.Add('/resource:docs\library-spec\'+$name+'.schema.json,ProbeRuntime.'+$name+'.schema.json') }
+foreach($name in @('manifest','plan','operations','report','tests','package')) { $common.Add('/resource:docs\library-spec\'+$name+'.schema.json,ProbeRuntime.'+$name+'.schema.json') }
 [IO.File]::WriteAllLines((Join-Path $PWD 'dist/library-common.rsp'),$common)
 foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\solid-panel/'+$name+',ProbeRuntime.example.'+$name) }
 foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\sliding-window/'+$name+',ProbeRuntime.window.'+$name) }
+foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\raw-drawing/'+$name+',ProbeRuntime.raw.'+$name) }
 $gui=@($common)+@($resources)+@(
  '/reference:dist\engine-deps\Jint.dll',
  '/reference:dist\engine-deps\Esprima.dll',

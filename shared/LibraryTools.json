@@ -111,10 +111,12 @@
               "example",
               "manifest_schema",
               "plan_schema",
+                  "operations_schema",
               "report_schema",
               "tests_schema",
               "package_schema",
-              "window_example"
+              "window_example",
+                "operations_example"
             ]
           },
           "maxItems": 7
@@ -410,10 +412,12 @@
                   "example",
                   "manifest_schema",
                   "plan_schema",
+                  "operations_schema",
                   "report_schema",
                   "tests_schema",
                   "package_schema",
-                  "window_example"
+                  "window_example",
+                "operations_example"
                 ]
               }
             }

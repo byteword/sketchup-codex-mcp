@@ -3,7 +3,7 @@ module SUPipeProbe
   module BatchCommands
     # Only commands whose complete model mutation uses operation(). Excludes
     # selection/camera/scenes, self-tests, nested batches, grants and file I/O.
-    METHODS=%w[update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull manage_resource component create_geometry edit_geometry mirror_entities].freeze
+    METHODS=%w[update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull manage_resource component create_geometry edit_geometry mirror_entities draw_geometry entity_attributes annotation edit_annotation solid_operation intersect_faces face_texture component_behavior].freeze
     private
     def batch_clock; Process.clock_gettime(Process::CLOCK_MONOTONIC); end
     def run_batch(args,dry)

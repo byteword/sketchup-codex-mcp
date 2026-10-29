@@ -55,7 +55,7 @@ namespace SketchUpPipeProbe
                     break;
                 case "sketchup_group_entities": case "sketchup_make_unique": case "sketchup_erase_entities": fields["entity_ids"] = Ids(25); break;
                 case "sketchup_push_pull": fields["entity_ids"] = Ids(1); fields["distance_mm"] = new { type = "number", minimum = -1000000, maximum = 1000000 }; break;
-                case "sketchup_run_self_test": fields["suite"] = Choice("core","extended","all"); fields["confirm_test_model"] = new { type = "boolean", @const = true, description = "Explicitly confirm this is a test model. Root context only. Temporary geometry is rolled back. Does not test individual Undo or file switching." }; break;
+                case "sketchup_run_self_test": fields["suite"] = Choice("core","extended","all","features2019"); fields["confirm_test_model"] = new { type = "boolean", @const = true, description = "Explicitly confirm this is a test model. Root context only. Temporary geometry is rolled back. Does not test individual Undo or file switching." }; break;
                 case "sketchup_update_entity_properties":
                     fields["entity_ids"] = Ids(25);
                     fields["properties"] = new { type = "object", minProperties = 1, additionalProperties = false,
@@ -99,7 +99,7 @@ namespace SketchUpPipeProbe
                     case "sketchup_group_entities": detail = "Group explicit current children: groups/components, faces/edges/construction points. Up to25 targets. Raw surfaces require all boundary edges and adjacent faces included; partial connected geometry is rejected. Preserves model-space positions. Returns new parent/child paths; old paths are stale. Requires panel permission, fresh model/context/command ID; one Undo operation, no retries; dry_run supported."; break;
                     case "sketchup_make_unique": detail = "Separate each selected group's/component's outer definition while preserving instance transforms. Inner component definitions can remain shared. " + detail; break;
                     case "sketchup_push_pull": detail = "Extrude a unique single-face group along its normal by signed distance_mm, absolute1..1000000. Requires orthogonal uniform world scale. " + detail; break;
-                    case "sketchup_run_self_test": detail = "Run a fixed fast native geometry/query/edit smoke suite with one local permission grant and one command ID. confirm_test_model=true and expected_context=[] required. Only temporary test geometry is changed, within one operation that is aborted; restores selection/camera. Read data.passed, checks, cleanup_verified, duration_ms. Individual Undo and model lifecycle are not tested. Cooperative4s budget, stops on first failure. No retries; after timeout query command result. dry_run lists checks without running."; break;
+                    case "sketchup_run_self_test": detail = "Run a fixed fast native geometry/query/edit smoke suite (features2019 separately checks raw drawing, dimensions, sections, attributes, metrics and Boolean direction; all retains the previous core+extended suite) with one local permission grant and one command ID. confirm_test_model=true and expected_context=[] required. Only temporary test geometry is changed, within one operation that is aborted; restores selection/camera. Read data.passed, checks, cleanup_verified, duration_ms. Individual Undo and model lifecycle are not tested. Cooperative4s budget, stops on first failure. No retries; after timeout query command result. dry_run lists checks without running."; break;
                 }
                 result.Add(new { name = name, description = name + ": " + detail,
                     inputSchema = new { type = "object", properties = fields, required = required.ToArray(), additionalProperties = false },
@@ -182,7 +182,7 @@ namespace SketchUpPipeProbe
                     case "preset": ValidateChoice(pair.Value, "top", "front", "right", "isometric"); break;
                     case "scope": ValidateChoice(pair.Value, "model", "entities"); break;
                     case "plane": ValidateChoice(pair.Value,"XY","XZ","YZ"); break;
-                    case "suite": ValidateChoice(pair.Value,"core","extended","all"); break;
+                    case "suite": ValidateChoice(pair.Value,"core","extended","all","features2019"); break;
                     case "ui_updates": ValidateChoice(pair.Value,"defer","normal"); break;
                     case "origin_mm": case "delta_mm": case "pivot_mm": Numbers(pair.Value,3,-1000000000,1000000000); break;
                     case "size_mm": Numbers(pair.Value,name == "sketchup_create_rectangle" ? 2 : 3,1,1000000); break;

@@ -53,6 +53,14 @@ module SUPipeProbe
           planned = {'plane'=>args['plane'],'radius_mm'=>radius,'segments'=>count}
         end
       end
+      if drawing_grouping(args)=='none'
+        if kind=='circle'
+          arc=[origin,u,normal,radius,0,2*Math::PI]; raw_points=curve_points(arc,count)
+        else
+          arc=nil; raw_points=kind=='polyline' ? points : local.map { |p| p.zip(origin).map { |a,b| a*25.4+b } }
+        end
+        return raw_geometry(kind,raw_points,arc,count,dry)
+      end
       data = checked('dry_run'=>dry,'undoable'=>!dry,'kind'=>kind,'planned'=>planned.merge('name'=>name,'origin_mm'=>origin,'parent_path'=>context_ids))
       return data if dry
       operation('Draw '+kind) do

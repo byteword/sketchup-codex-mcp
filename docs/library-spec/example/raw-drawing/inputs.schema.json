@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "width_mm": {
+      "type": "number",
+      "minimum": 10,
+      "maximum": 10000,
+      "default": 1200
+    },
+    "height_mm": {
+      "type": "number",
+      "minimum": 10,
+      "maximum": 10000,
+      "default": 900
+    },
+    "annotate": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "additionalProperties": false
+}

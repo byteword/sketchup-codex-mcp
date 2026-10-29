@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(47, len(tools))
-        self.assertEqual(47, len({tool["name"] for tool in tools}))
+        self.assertEqual(59, len(tools))
+        self.assertEqual(59, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
             self.assertEqual("object",tool["inputSchema"]["type"])
@@ -284,7 +284,7 @@ class StdioTests(unittest.TestCase):
         self.send('tools/list',{},2)
         tools={t['name']:t for t in self.response()['result']['tools']}
         schema=tools['sketchup_run_batch']['inputSchema']
-        self.assertEqual(18,len(schema['properties']['steps']['items']['oneOf']))
+        self.assertEqual(26,len(schema['properties']['steps']['items']['oneOf']))
         self.assertNotIn('ui_updates',schema['required'])
         common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[],ui_updates='defer')
         step=dict(method='create_geometry',arguments=dict(kind='polygon',name='polygon',options=dict(origin_mm=[0,0,0],plane='XY',radius_mm=100,sides=6)))
@@ -310,6 +310,26 @@ class StdioTests(unittest.TestCase):
         for index,mode in enumerate(['off',False,None],50):
             self.send('tools/call',dict(name='sketchup_create_box',arguments=dict(common,name='b',origin_mm=[0,0,0],size_mm=[1,2,3],ui_updates=mode)),index)
             self.assertEqual(-32602,self.response()['error']['code'])
+
+    def test_raw_drawing_and_2019_contracts(self):
+        self.initialize()
+        common=dict(session_id=SESSION,model_id=SESSION,command_id=SESSION+':1',expected_context=[])
+        cases=[('draw_geometry',dict(kind='face',grouping='none',options=dict(points_mm=[[0,0,0],[100,0,0],[0,100,0]]))),
+               ('annotation',dict(kind='linear_dimension',options=dict(start_mm=[0,0,0],end_mm=[1200,0,0],offset_mm=[0,100,0]))),
+               ('solid_operation',dict(operation='subtract',target_id='1',tool_id='2')),
+               ('export_view',dict(path='C:/output/new.png',width=1200,height=900)),
+               ('configure_display',dict(rendering=dict(ModelTransparency=True))),
+               ('run_self_test',dict(suite='features2019',confirm_test_model=True))]
+        for index,(name,fields) in enumerate(cases,30):
+            self.send('tools/call',dict(name='sketchup_'+name,arguments=dict(common,**fields)),index)
+            self.assertFalse(self.response()['result']['isError'],name)
+        self.send('tools/call',dict(name='sketchup_model_query',arguments=dict(session_id=SESSION,model_id=SESSION,query='metrics',options=dict(instance_path=['1']))),50)
+        self.assertFalse(self.response()['result']['isError'])
+        for index,method in enumerate(['export_view','texture_resource','configure_display'],60):
+            self.send('tools/call',dict(name='sketchup_run_batch',arguments=dict(common,steps=[dict(method=method,arguments={})])),index)
+            self.assertEqual(-32602,self.response()['error']['code'])
+        self.send('tools/call',dict(name='sketchup_draw_geometry',arguments=dict(common,kind='face',grouping='automatic',options={})),70)
+        self.assertEqual(-32602,self.response()['error']['code'])
 
     def test_protocol_negotiation(self):
         self.assertEqual("2025-11-25", self.initialize("unsupported-future-version")["protocolVersion"])

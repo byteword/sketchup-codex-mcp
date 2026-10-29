@@ -11,7 +11,7 @@ namespace SketchUpPipeProbe
     public sealed partial class LibraryService
     {
         readonly SemaphoreSlim workers=new SemaphoreSlim(2,2);
-        static readonly string[] Capabilities={"group/1","mesh/1","material-existing/1","verify/1","cleanup/1","target-summary/1","target-subtree/1"};
+        static readonly string[] Capabilities={"commands/1","group/1","mesh/1","material-existing/1","verify/1","cleanup/1","target-summary/1","target-subtree/1"};
         void Graph(string id,string rev,Dictionary<string,object> packages,HashSet<string> visiting,int depth=0,bool checkCapabilities=true) {
             string key=id+"@"+rev;
             if(visiting.Contains(key))throw new LibraryFault("dependency_cycle","Cyclic pinned dependency");
@@ -42,8 +42,14 @@ namespace SketchUpPipeProbe
             object result;
             await workers.WaitAsync(token).ConfigureAwait(false);
             try {result=await LibraryWorker.RunAsync(request,token).ConfigureAwait(false);}finally {workers.Release();}
-            LibrarySchema.Validate(LibrarySchema.Bundled(Lib.Str(manifest,"output")=="sketchup-plan/1"?"plan":"report"),result);
+            LibrarySchema.Validate(LibrarySchema.Bundled(Lib.Str(manifest,"output")=="sketchup-plan/1"?"plan":Lib.Str(manifest,"output")=="sketchup-operations/1"?"operations":"report"),result);
             Lib.TextBudget(result,Lib.Int(budget,"max_plan_bytes",48000,1024,48000));
+            if(Lib.Str(manifest,"output")=="sketchup-operations/1") {
+                if(!Lib.Arr(manifest["requires"]).Contains("commands/1"))throw new LibraryFault("manifest_invalid","Declare commands/1 for typed operations");
+                var validation=Lib.Map("session_id","00000000-0000-0000-0000-000000000001","model_id","00000000-0000-0000-0000-000000000002",
+                    "command_id","00000000-0000-0000-0000-000000000001:1","expected_context",new object[0],"steps",Lib.Obj(result)["steps"]);
+                try {BatchCatalog.Validate(validation);}catch(ArgumentException error){throw new LibraryFault("plan_invalid",error.Message);}
+            }
             if(Lib.Str(manifest,"output")=="sketchup-plan/1")ValidatePlan(Lib.Obj(result),manifest);
             return Lib.Map("output",result,"normalized_params",normalized,"dependencies",packages.Keys.ToArray(),"manifest",manifest);
         }
@@ -96,6 +102,7 @@ namespace SketchUpPipeProbe
             foreach(object raw in Lib.Arr(plan["assertions"]))if(!ids.Contains(Lib.Str(Lib.Obj(raw),"node")))throw new LibraryFault("plan_invalid","Assertion node missing");
         }
         object OutputSummary(Dictionary<string,object> output) {
+            if(Lib.Str(output,"format_version")=="sketchup-operations/1")return Lib.Map("operation_count",Lib.Arr(output["steps"]).Count,"methods",Lib.Arr(output["steps"]).Cast<object>().Select(x=>Lib.Str(Lib.Obj(x),"method")).Distinct().ToArray(),"coordinate_space","model_axes");
             if(Lib.Str(output,"format_version")!="sketchup-plan/1")return output;
             return Lib.Map("root",output["root"],"group_count",Lib.Arr(output["nodes"]).Count,"mesh_face_count",Lib.Arr(output["nodes"]).Cast<object>().Select(Lib.Obj).Where(n=>Lib.Str(n,"kind")=="mesh").Sum(n=>Lib.Arr(n["faces"]).Count),"assertions",output["assertions"]);
         }
@@ -196,6 +203,7 @@ namespace SketchUpPipeProbe
                 var computed=await Compute(library,id,rev,parameters,inputs,token).ConfigureAwait(false);
                 var output=Lib.Obj(computed["output"]);
                 if(Lib.Str(output,"format_version")=="probe-report/1"){UpdateJob(jobId,"succeeded","plan","none",Lib.Map("result_type","report_ready","report",output,"technique_ref",Ref(library,id,rev)));return;}
+                if(Lib.Str(output,"format_version")=="sketchup-operations/1" && (bindings.ContainsKey("replace_entity_id") || bindings.ContainsKey("origin_mm") && Vec(bindings["origin_mm"]).Any(x=>x!=0)))throw new LibraryFault("bindings_invalid","Typed operations use explicit model coordinates and explicit target IDs, without implicit placement or replacement");
                 string planId=Guid.NewGuid().ToString();
                 var record=Lib.Map("plan_id",planId,"library_id",library,"technique_id",id,"revision",rev,"normalized_params",computed["normalized_params"],
                     "bindings",bindings,"fingerprints",fingerprints,"dependencies",computed["dependencies"],"plan",output,"created_at",DateTime.UtcNow.ToString("o"),"expires_at",DateTime.UtcNow.AddMinutes(10).ToString("o"));
@@ -255,6 +263,10 @@ namespace SketchUpPipeProbe
                     if(expected.ContainsKey("metrics")) {
                         var metrics=Lib.Obj(output["metrics"]);
                         foreach(var p in Lib.Obj(expected["metrics"]))if(!metrics.ContainsKey(p.Key)||Lib.Json(Lib.Canon(metrics[p.Key]))!=Lib.Json(Lib.Canon(p.Value)))throw new LibraryFault("test_failed","Metric mismatch: "+p.Key);
+                    }
+                    if(Lib.Str(output,"format_version")=="sketchup-operations/1") {
+                        if(expected.ContainsKey("operation_count")&&Lib.Arr(output["steps"]).Count!=Convert.ToInt32(expected["operation_count"]))throw new LibraryFault("test_failed","Operation count mismatch");
+                        plans.Add(output);
                     }
                     if(Lib.Str(output,"format_version")=="sketchup-plan/1") {
                         var nodes=Lib.Arr(output["nodes"]).Cast<object>().Select(Lib.Obj).ToArray();

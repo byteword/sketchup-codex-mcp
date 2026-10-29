@@ -139,6 +139,9 @@ module SUPipeProbe
        'modified'=>@model.modified?,'bounds'=>box.empty? ? nil : [library_point(box.min),library_point(box.max)]}
     end
     def apply_library_plan(args,dry)
+      if args['plans'].is_a?(Array) && !args['plans'].empty? && args['plans'].all? { |p| p.is_a?(Hash) && p['format_version']=='sketchup-operations/1' }
+        return apply_operation_plans(args,dry)
+      end
       editable([]); verify=args.fetch('verify_only',false)
       fail_command('invalid_arguments','verify_only must be boolean') unless verify==true || verify==false
       plans=args['plans'];fail_command('invalid_plan','Provide1..32 plans') unless plans.is_a?(Array) && plans.length.between?(1,32) && JSON.generate(plans).bytesize<=48_000

@@ -1,0 +1,36 @@
+{
+  "format_version": "probe-tests/1",
+  "cases": [
+    {
+      "id": "annotated",
+      "params": {},
+      "expect": {
+        "ok": true,
+        "operation_count": 4
+      }
+    },
+    {
+      "id": "raw-only",
+      "params": {
+        "annotate": false,
+        "width_mm": 900,
+        "height_mm": 1800
+      },
+      "expect": {
+        "ok": true,
+        "operation_count": 1
+      }
+    },
+    {
+      "id": "invalid-width",
+      "params": {
+        "width_mm": 0
+      },
+      "expect": {
+        "ok": false,
+        "code": "input_invalid",
+        "path": "/width_mm"
+      }
+    }
+  ]
+}

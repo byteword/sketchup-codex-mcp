@@ -52,6 +52,7 @@ module SUPipeProbe
         fail_command('invalid_geometry','Curve has short or duplicate segments') if points.each_cons(2).any? { |a,b| norm(sub(a,b))<0.01 }
       end
       if path && path.each_cons(2).any? { |a,b| norm(sub(a,b))<0.01 }; fail_command('invalid_geometry','Path segment too short'); end
+      return raw_geometry(kind,points,arc,count,dry) if drawing_grouping(args,!faces.nil? || kind=='sweep')=='none'
       data=checked('dry_run'=>dry,'undoable'=>!dry,'kind'=>kind,'planned'=>{'point_count'=>points.length,'face_count'=>faces && faces.length,'sampled_points_mm'=>points.length<=128 ? points : nil})
       return data if dry
       edit=invertible(@model.edit_transform); origin=points.first
@@ -111,7 +112,14 @@ module SUPipeProbe
       end
     end
     def edit_geometry(args,dry)
-      group,collection,world=geometry_container(args['container_id'],args.fetch('affect_all_instances',false)); action=args['action']; items=[]; desired=nil; vertices=nil
+      if args.key?('container_id')
+        group,collection,world=geometry_container(args['container_id'],args.fetch('affect_all_instances',false))
+      else
+        editable([]);group=nil;collection=@model.active_entities;world=invertible(@model.edit_transform)
+        fail_command('invalid_arguments','Direct editing cannot override shared ancestor protection') if args.fetch('affect_all_instances',false)!=false
+        fail_command('geometry_too_large','Current drawing context exceeds2048 direct entities') if collection.length>2048
+      end
+      action=args['action']; items=[]; desired=nil; vertices=nil
       case action
       when 'add_points','add_lines','add_face'
         o=options(args,['points_mm']); points=point_list(o['points_mm'],action=='add_points' ? 1 : action=='add_lines' ? 2 : 3,64)
@@ -150,16 +158,19 @@ module SUPipeProbe
         end
       else fail_command('invalid_arguments','Unsupported raw geometry edit')
       end
-      data=checked('dry_run'=>dry,'undoable'=>!dry,'container_id'=>args['container_id'],'action'=>action,'target_ids'=>items.map { |e| e.persistent_id.to_s },'affected_direct_instances'=>group.definition.instances.length)
+      data=checked('dry_run'=>dry,'undoable'=>!dry,'container_id'=>args['container_id'],'action'=>action,'target_ids'=>items.map { |e| e.persistent_id.to_s },'affected_direct_instances'=>group ? group.definition.instances.length : 1)
       return data if dry
       operation('Edit '+action) do
         case action
         when 'add_points','add_lines','add_face'
+          prior=collection.each_with_object({}) { |e,h| h[e.persistent_id]=true }
           local=points.map { |p| Geom::Point3d.new(p.map { |x| x/25.4 }).transform(world.inverse) }
           made=case action; when 'add_points' then local.map { |p| collection.add_cpoint(p) }; when 'add_lines' then local.each_cons(2).map { |a,b| collection.add_line(a,b) }; else [collection.add_face(local)] end
           fail_command('geometry_failed','Could not add raw geometry') unless made.all? { |e| e && e.valid? }
-          made.each { |e| e.layer=@model.layers[0] }
-          data['created_paths']=made.map { |e| context_ids+[group.persistent_id.to_s,e.persistent_id.to_s] }
+          collection.each { |e| e.layer=@model.layers[0] unless prior[e.persistent_id] }
+          prefix=context_ids+(group ? [group.persistent_id.to_s] : [])
+          data['created_paths']=made.map { |e| prefix+[e.persistent_id.to_s] }
+          data['created']=made.map { |e| {'persistent_id'=>e.persistent_id.to_s,'instance_path'=>prefix+[e.persistent_id.to_s],'type'=>e.typename} }
         when 'erase','simplify'
           collection.erase_entities(items); fail_command('postcondition_failed','Raw entities were not erased') if items.any?(&:valid?)
           if action=='simplify'

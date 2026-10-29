@@ -2,6 +2,11 @@
 require 'json'
 require_relative 'creation_commands'
 require_relative 'basic_commands'
+require_relative 'raw_drawing'
+require_relative 'native_queries'
+require_relative 'annotations'
+require_relative 'modeling_commands'
+require_relative 'display_commands'
 require_relative 'extended_geometry'
 require_relative 'resources'
 require_relative 'view_commands'
@@ -9,6 +14,7 @@ require_relative 'ui_update_scope'
 require_relative 'batch_commands'
 require_relative 'sliding_window_commands'
 require_relative 'library_plan'
+require_relative 'library_operations'
 
 module SUPipeProbe
   class CommandError < StandardError
@@ -23,13 +29,19 @@ module SUPipeProbe
   class CommandExecutor
     include CreationCommands
     include BasicCommands
+    include RawDrawing
+    include AttributeCommands
+    include AnnotationCommands
+    include ModelingCommands
+    include DisplayCommands
     include ExtendedGeometry
     include ResourceCommands
     include ViewCommands
     include BatchCommands
     include SlidingWindowCommands
     include LibraryPlanCommands
-    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch create_sliding_window apply_library_plan].freeze
+    include LibraryOperationCommands
+    METHODS = %w[set_selection set_view zoom update_entity_properties move_entities create_box duplicate_entities create_rectangle create_circle create_polyline rotate_entities scale_entities erase_entities group_entities make_unique push_pull run_self_test manage_resource component create_geometry edit_geometry mirror_entities configure_camera scene run_batch create_sliding_window apply_library_plan draw_geometry entity_attributes annotation edit_annotation solid_operation intersect_faces face_texture component_behavior configure_display export_view texture_resource].freeze
     RESULT_LIMIT = 44_000
     MAX_SELECTION = 1000
 
@@ -64,7 +76,7 @@ module SUPipeProbe
       when 'run_batch' then run_batch(args,dry)
       when 'create_sliding_window' then create_sliding_window(args,dry)
       when 'apply_library_plan' then apply_library_plan(args,dry)
-      when 'manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
+      when 'configure_display','export_view','texture_resource','solid_operation','intersect_faces','face_texture','component_behavior','annotation','edit_annotation','entity_attributes','draw_geometry','manage_resource','component','create_geometry','edit_geometry','mirror_entities','configure_camera','scene' then send(method,args,dry)
       end
     end
 

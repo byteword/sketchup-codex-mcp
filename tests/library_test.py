@@ -105,6 +105,45 @@ class LibraryTests(unittest.TestCase):
                               data_base64=base64.b64encode(content[offset:offset+16384]).decode()))
         return data["upload_id"]
 
+    def operations_files(self, method="draw_geometry", arguments=None):
+        files = self.package()
+        m = json.loads(files["manifest.json"])
+        m.update(output="sketchup-operations/1", requires=["commands/1", "verify/1"], material_roles=[])
+        files["manifest.json"] = json.dumps(m)
+        plan = dict(format_version="sketchup-operations/1", units="mm", steps=[dict(method=method,
+            arguments=arguments or dict(kind="polyline", options=dict(points_mm=[[0,0,0],[1200,0,0]])))])
+        files["technique.js"] = "function build(ctx) { return " + json.dumps(plan) + "; };"
+        files["tests.json"] = json.dumps(dict(format_version="probe-tests/1", cases=[dict(id="raw",params={},expect=dict(ok=True,operation_count=1))]))
+        return files
+
+    def test_operations_plan_verified_and_packaged(self):
+        ref = self.ok(self.save(files=self.operations_files()))["technique_ref"]
+        verified = self.verify(ref)
+        self.assertEqual("succeeded", verified["state"], verified)
+        planned = self.wait(self.call("run", request_id=str(uuid.uuid4()), mode="plan", params={}, **ref))
+        self.assertEqual("succeeded", planned["state"], planned)
+        self.assertEqual(1, planned["result"]["summary"]["operation_count"])
+        self.assertIn("draw_geometry", planned["result"]["summary"]["methods"])
+        self.assertTrue(self.export([ref]))
+        schema = self.ok(self.call("get", kind="authoring", sections=["operations_schema"]))["operations_schema"]
+        self.assertIn("steps", schema["properties"])
+
+    def test_bundled_raw_drawing_example(self):
+        files=self.ok(self.call("get",kind="authoring",sections=["operations_example"]))["operations_files"]
+        ref=self.ok(self.save(id="demo.raw-drawing",files=files))["technique_ref"]
+        result=self.verify(ref)
+        self.assertEqual("succeeded",result["state"],result)
+        self.assertEqual(3,len(result["result"]["cases"]))
+
+    def test_operations_reject_non_model_effects_and_transport_override(self):
+        base = None
+        for method, args in [("configure_camera",{}),("eval_ruby",{}),("draw_geometry",dict(kind="points",options=dict(points_mm=[[0,0,0]]),expected_context=[]))]:
+            ref = self.ok(self.save(base=base, files=self.operations_files(method,args)))["technique_ref"]
+            base = ref["revision"]
+            result = self.verify(ref)
+            self.assertEqual("failed",result["state"],result)
+            self.assertEqual("plan_invalid",result["result"]["cases"][0]["diagnostic"]["code"],result)
+
     def test_authoring_bootstrap_with_empty_library(self):
         guide = self.ok(self.call("get", kind="authoring"))
         self.assertEqual("probe-technique/1", guide["format_version"])

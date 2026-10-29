@@ -5,6 +5,7 @@ require_relative 'entity_browser'
 require_relative 'entity_details'
 require_relative 'resources'
 require_relative 'library_plan'
+require_relative 'native_queries'
 
 module SUPipeProbe
   # Called only by Panel's UI timer. No observers, operations, or setters.
@@ -20,6 +21,7 @@ module SUPipeProbe
 
     def call(method, arguments)
       case method
+      when 'model_query' then NativeQueries.new(@model).call(arguments)
       when 'get_model_summary' then summary
       when 'get_selection_info' then selection(arguments)
       when 'get_entity_info' then specific_entity(arguments)

@@ -146,7 +146,9 @@ check(output,0);return JSON.stringify(output);
                     byte[] input=Lib.Utf8.GetBytes(Lib.Json(request));
                     await p.StandardInput.BaseStream.WriteAsync(input,0,input.Length).ConfigureAwait(false);
                     p.StandardInput.BaseStream.Close();
-                    var watch=Stopwatch.StartNew();int limit=Lib.Int(request,"timeout_ms",1000,10,5000)+1500;
+                    // Embedded assembly loading/JIT on a cold Windows process is separate from the
+                    // unchanged Jint execution budget. Allow bounded startup/serialization overhead.
+                    var watch=Stopwatch.StartNew();int limit=Lib.Int(request,"timeout_ms",1000,10,5000)+5000;
                     while(!p.HasExited) {
                         token.ThrowIfCancellationRequested();
                         if(watch.ElapsedMilliseconds>limit||p.PrivateMemorySize64>(Lib.Int(request,"memory_mib",64,16,256)+128L)*1024*1024) {

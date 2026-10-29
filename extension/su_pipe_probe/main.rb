@@ -36,7 +36,7 @@ module SUPipeProbe
       {'pid' => Process.pid, 'model_id' => @model_identity.id_for(model), 'title' => model.title.to_s,
        'path' => model.path.to_s, 'sketchup_version' => Sketchup.version,
        'ruby_version' => RUBY_VERSION, 'extension_version' => VERSION,
-       'library_capabilities' => %w[group/1 mesh/1 material-existing/1 verify/1 cleanup/1 target-summary/1 target-subtree/1], 'pointer_bits' => [0].pack('J').bytesize * 8}
+       'library_capabilities' => %w[commands/1 group/1 mesh/1 material-existing/1 verify/1 cleanup/1 target-summary/1 target-subtree/1], 'pointer_bits' => [0].pack('J').bytesize * 8}
     end
 
     def show

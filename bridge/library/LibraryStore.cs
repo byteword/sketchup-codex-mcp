@@ -126,7 +126,7 @@ namespace SketchUpPipeProbe
             var manifest=Lib.Parse(files["manifest.json"]);
             LibrarySchema.Validate(LibrarySchema.Bundled("manifest"),manifest);
             string kind=Lib.Str(manifest,"kind");
-            if((kind=="generator")!=(Lib.Str(manifest,"output")=="sketchup-plan/1"))throw new LibraryFault("manifest_invalid","Kind/output contract mismatch");
+            if((kind=="generator")!=(Lib.Str(manifest,"output")!="probe-report/1"))throw new LibraryFault("manifest_invalid","Kind/output contract mismatch");
             var inputs=Lib.Parse(files["inputs.schema.json"]);LibrarySchema.CheckInput(inputs);
             var tests=Lib.Parse(files["tests.json"]);LibrarySchema.Validate(LibrarySchema.Bundled("tests"),tests);
             var helperNames=new HashSet<string>();var helperPaths=new HashSet<string>();
@@ -276,17 +276,18 @@ namespace SketchUpPipeProbe
             if(Lib.Str(a,"kind","technique")=="authoring") {
                 var authoringSections=Lib.Arr(Lib.Get(a,"sections",new object[]{"profile","example"})).Cast<string>().ToArray();var data=Lib.Map("format_version","probe-technique/1");
                 if(authoringSections.Contains("profile"))data["profile"]=Lib.Map(
-                    "entrypoint","function build(ctx) returns a closed geometry plan or bounded report",
+                    "entrypoint","function build(ctx) returns sketchup-plan/1, sketchup-operations/1 or probe-report/1",
                     "context",new[]{"ctx.params (normalized/frozen)","ctx.inputs (declared snapshots)","ctx.call(alias, params) (pinned dependencies)","ctx.helper(alias, params)"},
                     "files",new[]{"manifest.json","inputs.schema.json","technique.js","tests.json"},
-                    "units","mm; X width, Y depth, Z height; origin/materials/current model are separate bindings",
+                    "units","mm; mesh plans use origin/material bindings; typed operations use explicit model coordinates/targets and cannot imply origin or replacement",
                     "schema_profile","Closed objects, bounded arrays/text, numeric/boolean types, enums/constants/defaults and nonrecursive local $defs references. No remote schema resolution or unsupported keywords.",
                     "restrictions","Pure synchronous JS, no CLR/files/network/clock/random; one worker budget shared by dependencies. build result checked by Probe and native kernel.",
                     "workflow",new[]{"save with base_revision=null","run verify; optional activate_if_passed + expected_active_revision=null","run plan with pinned revision, params and optional model bindings","run apply with plan_id/hash and fresh command_id; poll library_job"},
                     "capabilities",Capabilities);
                 if(authoringSections.Contains("example"))data["files"]=new[]{"manifest.json","inputs.schema.json","technique.js","tests.json"}.ToDictionary(name=>name,name=>(object)Lib.Resource("example."+name));
                 if(authoringSections.Contains("window_example"))data["window_files"]=new[]{"manifest.json","inputs.schema.json","technique.js","tests.json"}.ToDictionary(name=>name,name=>(object)Lib.Resource("window."+name));
-                foreach(string name in new[]{"manifest","plan","report","tests","package"})if(authoringSections.Contains(name+"_schema"))data[name+"_schema"]=LibrarySchema.Bundled(name);
+                if(authoringSections.Contains("operations_example"))data["operations_files"]=new[]{"manifest.json","inputs.schema.json","technique.js","tests.json"}.ToDictionary(name=>name,name=>(object)Lib.Resource("raw."+name));
+                foreach(string name in new[]{"manifest","plan","operations","report","tests","package"})if(authoringSections.Contains(name+"_schema"))data[name+"_schema"]=LibrarySchema.Bundled(name);
                 Lib.TextBudget(data,32768);return Success(data);
             }
             string library=LibraryId(a),id=TechniqueId(a);var t=Technique(library,id);string rev=PickRevision(a,t);var files=ReadFiles(rev);
