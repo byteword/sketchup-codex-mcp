@@ -1,0 +1,9 @@
+{
+  "model_title": "261023_대지",
+  "site_path": ["56794"],
+  "source_path": ["141691", "192913"],
+  "site_pnus": ["1130510300100530025", "1130510300100530026"],
+  "radius_m": 50,
+  "material": "<auto>",
+  "name_prefix": "VWorld_SITE50m_건물매스"
+}

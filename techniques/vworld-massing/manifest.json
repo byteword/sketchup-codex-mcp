@@ -1,0 +1,63 @@
+{
+  "format_version": "probe-technique/1",
+  "id": "geo.vworld-massing",
+  "title": "VWorld 높이 · 원본 윤곽 수직 매스",
+  "summary": "매칭한 건물 높이로 기존 평면 윤곽을 그대로 수직 압출해 하나의 새 그룹을 만듭니다. 원본은 보존합니다.",
+  "keywords": [
+    "VWorld",
+    "매스",
+    "건물",
+    "높이"
+  ],
+  "kind": "generator",
+  "entrypoint": "technique.js",
+  "input_schema": "inputs.schema.json",
+  "tests": "tests.json",
+  "runtime": "probe-js/1",
+  "output": "sketchup-plan/1",
+  "requires": [
+    "target-subtree/1",
+    "group/1",
+    "mesh/1",
+    "verify/1",
+    "material-existing/1"
+  ],
+  "material_roles": [
+    "mass"
+  ],
+  "dependencies": [],
+  "reads": [
+    {
+      "name": "source0",
+      "binding": "source0",
+      "query": "target-subtree/1",
+      "max_entities": 2048
+    },
+    {
+      "name": "source1",
+      "binding": "source1",
+      "query": "target-subtree/1",
+      "max_entities": 2048
+    },
+    {
+      "name": "source2",
+      "binding": "source2",
+      "query": "target-subtree/1",
+      "max_entities": 2048
+    },
+    {
+      "name": "source3",
+      "binding": "source3",
+      "query": "target-subtree/1",
+      "max_entities": 2048
+    }
+  ],
+  "budgets": {
+    "plan_ms": 5000,
+    "memory_mib": 64,
+    "max_nodes": 64,
+    "max_points": 4096,
+    "max_faces": 2048,
+    "max_plan_bytes": 48000
+  }
+}

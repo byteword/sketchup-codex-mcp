@@ -80,8 +80,8 @@ class StdioTests(unittest.TestCase):
         self.assertEqual({"tools"}, set(result["capabilities"]))
         self.send("tools/list", {}, 2)
         tools = self.response()["result"]["tools"]
-        self.assertEqual(63, len(tools))
-        self.assertEqual(63, len({tool["name"] for tool in tools}))
+        self.assertEqual(65, len(tools))
+        self.assertEqual(65, len({tool["name"] for tool in tools}))
         for tool in tools:
             self.assertFalse(tool["inputSchema"]["additionalProperties"])
             self.assertEqual("object",tool["inputSchema"]["type"])
@@ -90,6 +90,26 @@ class StdioTests(unittest.TestCase):
             tool = next(t for t in tools if t["name"] == name)
             self.assertEqual(["session_id", "model_id"], tool["inputSchema"]["required"])
             self.assertTrue(tool["annotations"]["readOnlyHint"])
+
+    def test_addon_tools_contract(self):
+        self.initialize()
+        self.send('tools/list', {}, 2)
+        tools = {t['name']: t for t in self.response()['result']['tools']}
+        self.assertTrue(tools['sketchup_addon_query']['annotations']['openWorldHint'])
+        self.assertTrue(tools['sketchup_addon_query']['annotations']['readOnlyHint'])
+        for i, (name, args) in enumerate([
+            ('sketchup_addon_list', {}),
+            ('sketchup_addon_query', {'addon_id': 'vworld', 'inputs': {'pnu': '1174011000102450001'}})
+        ], 3):
+            self.send('tools/call', {'name': name, 'arguments': args}, i)
+            self.assertFalse(self.response()['result']['isError'])
+        for i, args in enumerate([
+            {'addon_id': '../vworld', 'inputs': {}},
+            {'addon_id': 'vworld', 'inputs': {}, 'key': 'forbidden'},
+            {'addon_id': 'vworld', 'inputs': []}
+        ], 10):
+            self.send('tools/call', {'name': 'sketchup_addon_query', 'arguments': args}, i)
+            self.assertEqual(-32602, self.response()['error']['code'])
 
     def test_library_tools_accept_model_free_lifecycle_and_reject_mode_mixing(self):
         self.initialize()

@@ -1,0 +1,38 @@
+{
+  "format_version": "probe-technique/1",
+  "id": "geo.footprint-scan",
+  "title": "SITE 주변 건물 윤곽 추출",
+  "summary": "모델 축 mm에서 SITE 경계의 지정 거리 안에 있는 원본 면 윤곽을 읽습니다.",
+  "keywords": [
+    "VWorld",
+    "SITE",
+    "건물"
+  ],
+  "kind": "analyzer",
+  "entrypoint": "technique.js",
+  "input_schema": "inputs.schema.json",
+  "tests": "tests.json",
+  "runtime": "probe-js/1",
+  "output": "probe-report/1",
+  "requires": [
+    "target-subtree/1"
+  ],
+  "material_roles": [],
+  "dependencies": [],
+  "reads": [
+    {
+      "name": "source",
+      "binding": "source",
+      "query": "target-subtree/1",
+      "max_entities": 2048
+    }
+  ],
+  "budgets": {
+    "plan_ms": 5000,
+    "memory_mib": 64,
+    "max_nodes": 64,
+    "max_points": 4096,
+    "max_faces": 2048,
+    "max_plan_bytes": 48000
+  }
+}

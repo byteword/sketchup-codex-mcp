@@ -2,3 +2,5 @@ dist/
 *.log
 *.user
 .vs/
+__pycache__/
+*.py[cod]

@@ -1,0 +1,134 @@
+{
+  "version": "0.14.2",
+  "live_runtime_version": "0.14.1",
+  "new_group": "200562",
+  "created_masses": 18,
+  "native_checks": [
+    {
+      "id": "200563",
+      "height_mm": 10200,
+      "expected_mm": 10200,
+      "solid": true
+    },
+    {
+      "id": "200590",
+      "height_mm": 8800,
+      "expected_mm": 8800,
+      "solid": true
+    },
+    {
+      "id": "200617",
+      "height_mm": 16300,
+      "expected_mm": 16300,
+      "solid": true
+    },
+    {
+      "id": "200644",
+      "height_mm": 9650,
+      "expected_mm": 9650,
+      "solid": true
+    },
+    {
+      "id": "200671",
+      "height_mm": 6700,
+      "expected_mm": 6700,
+      "solid": true
+    },
+    {
+      "id": "200716",
+      "height_mm": 10300,
+      "expected_mm": 10300,
+      "solid": true
+    },
+    {
+      "id": "200743",
+      "height_mm": 7800,
+      "expected_mm": 7800,
+      "solid": true
+    },
+    {
+      "id": "200770",
+      "height_mm": 10300,
+      "expected_mm": 10300,
+      "solid": true
+    },
+    {
+      "id": "200797",
+      "height_mm": 28750,
+      "expected_mm": 28750,
+      "solid": true
+    },
+    {
+      "id": "200860",
+      "height_mm": 12450,
+      "expected_mm": 12450,
+      "solid": true
+    },
+    {
+      "id": "200887",
+      "height_mm": 11800,
+      "expected_mm": 11800,
+      "solid": true
+    },
+    {
+      "id": "200914",
+      "height_mm": 10900,
+      "expected_mm": 10900,
+      "solid": true
+    },
+    {
+      "id": "200941",
+      "height_mm": 7600,
+      "expected_mm": 7600,
+      "solid": true
+    },
+    {
+      "id": "200968",
+      "height_mm": 9100,
+      "expected_mm": 9100,
+      "solid": true
+    },
+    {
+      "id": "200995",
+      "height_mm": 11000,
+      "expected_mm": 11000,
+      "solid": true
+    },
+    {
+      "id": "201022",
+      "height_mm": 9200,
+      "expected_mm": 9200,
+      "solid": true
+    },
+    {
+      "id": "201049",
+      "height_mm": 14100,
+      "expected_mm": 14100,
+      "solid": true
+    },
+    {
+      "id": "201100",
+      "height_mm": 9500,
+      "expected_mm": 9500,
+      "solid": true
+    }
+  ],
+  "site_alignment_rms_mm": 2.50273074473942,
+  "footprints": 59,
+  "skipped_missing_height": 34,
+  "skipped_matching": 7,
+  "addon_tests": 60,
+  "geometry_tests": 8,
+  "technique_cases": 4,
+  "production_tls_authenticated_query": "passed",
+  "workflow_plan_replay": "59 footprints / 18 matched / 41 skipped; no duplicate apply",
+  "runtime_zip_file_count": 5,
+  "rbz_files": 51,
+  "sha256": {
+    "SketchUpMcp.exe": "cedf3e2b9b82b22496c1d4d2cf03149c20eb89319558eb820a9b24c165ffe225",
+    "SketchUpMcp.exe.config": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5",
+    "SketchUpPipeProbe.exe": "bf63d4f122a06dd34eaf7d93e4efe53e1b9fd4c72077857fd30157e705f6d05e",
+    "SketchUpPipeProbe.exe.config": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5",
+    "su_pipe_probe-0.14.2.rbz": "00ee18097296152b34ce18f1dcf0c5b9eddcf4d5ab2cd8e6c9d66ee2d67744f0"
+  }
+}

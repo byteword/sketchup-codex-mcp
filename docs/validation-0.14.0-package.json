@@ -1,0 +1,19 @@
+{
+  "addon_package": "probe-addons-20261030-134222.zip",
+  "runtime_file_count": 5,
+  "addon_source_files": 2,
+  "embedded_addon_worker_without_external_dlls": "passed",
+  "live_vworld_with_user_key": "not_run",
+  "sha256": {
+    "SketchUpMcp.exe": "c51b0e5ab9dd585629886855be0e48e53d277803e37dae3420bb1a9f5fb4029d",
+    "SketchUpPipeProbe.exe.config": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5",
+    "su_pipe_probe-0.14.0.rbz": "c35720e4d236219da0d0ac933419cb3c43747cdc7bd6d5438ed09e2855635fc3",
+    "SketchUpMcp.exe.config": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5",
+    "SketchUpPipeProbe.exe": "f205bfd6397c08dc285c221f63b0df3e3df0596d85e3b940182e1b4f9249a3b0"
+  },
+  "rbz_source_files": 51,
+  "version": "0.14.0",
+  "addon_package_sha256": "884eea3dd096d3c03111c94ccf1fca33a44dc392a8bbc6711000f3d6210d6ccd",
+  "source_bytes_match": true,
+  "native_sketchup_acceptance": "not_run"
+}

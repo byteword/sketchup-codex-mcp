@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VWorld 지형 높이 확인 · Probe AddOn</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f4;color:#172d36;font:14px/1.55 system-ui,sans-serif}
+header{background:#173c41;color:white;padding:18px 24px}h1{font-size:22px;margin:0}header p{margin:4px 0 0;color:#c9dedc}
+main{display:grid;grid-template-columns:330px 1fr;gap:16px;padding:16px;min-height:80vh}.card{background:white;padding:18px;border:1px solid #d5e1e4;border-radius:10px}
+label{display:block;margin:12px 0 4px;font-weight:600}input,button{font:inherit;padding:9px;border:1px solid #aebec3;border-radius:5px}input{width:100%}button{cursor:pointer;background:#126d69;color:white;border:0;margin-top:12px}button:disabled{background:#819395;cursor:default}
+.secondary{background:#e5eeef;color:#173c41}small{color:#536c75;display:block;margin:10px 0}#status{padding:10px;background:#eaf3ef;white-space:pre-wrap;margin:12px 0}iframe{width:100%;height:60vh;min-height:400px;border:1px solid #c4d5d9;border-radius:6px;background:#dfe9ed}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}th,td{text-align:left;border-bottom:1px solid #e0e7e8;padding:7px}a{color:#126d69}.scroll{max-height:250px;overflow:auto}@media(max-width:800px){main{grid-template-columns:1fr}}
+</style>
+<header><h1>지점·작은 범위 지형 높이 조회</h1><p>VWorld 지형 타일에서 좌표별 높이를 보간해 숫자와 CSV로 확인합니다.</p></header>
+<main><section class="card">
+<label for="key">VWorld API 키</label><input id="key" type="password" autocomplete="off" spellcheck="false">
+<label for="domain">키에 등록한 URL (domain)</label><input id="domain" placeholder="등록한 URL 그대로" autocomplete="off">
+<label for="center">시작 위치 · 경도,위도</label><input id="center" value="126.9780,37.5665">
+<button id="load">3D 지도 시작</button> <button class="secondary" id="stop">지도 종료 · 키 지우기</button>
+<label for="location">조회 좌표 / 범위</label><input id="location" value="126.9780,37.5665">
+<small>한 점: 경도,위도<br>범위: 서쪽경도,남쪽위도,동쪽경도,북쪽위도 (각 방향 최대 0.02도)</small>
+<label for="grid">범위의 한 변 지점 수 (2~10)</label><input id="grid" type="number" min="2" max="10" value="3">
+<label for="level">지형 타일 단계 (10~16)</label><input id="level" type="number" min="10" max="16" value="14">
+<button id="query" disabled>좌표 높이 조회</button>
+<small>브라우저 화면에는 키를 별도로 입력합니다. 이 파일은 키를 저장하지 않으며 VWorld 공식 SDK가 메모리에서 사용합니다. Probe의 암호화 저장소를 브라우저에 공개하지 않습니다.</small>
+<div id="status" role="status">3D 지도 API 사용 권한이 있는 키로 시작하세요.</div>
+<small>SDK 반환 높이는 타원체 기준입니다. VWorld 원자료의 수직 기준·변환은 별도 검증 전이므로 확정된 해발 표고로 사용하지 마세요. 건물 지붕과 카메라 고도는 사용하지 않습니다.</small>
+<small>단계 14를 기본으로 사용합니다. 높은 단계가 항상 제공되는 것은 아닙니다. 누락값은 0으로 바꾸지 않습니다. 지도를 클릭하면 그 좌표의 지형 높이를 같은 방식으로 조회합니다.</small>
+<a href="https://github.com/V-world/V-world_API_sample" target="_blank" rel="noopener noreferrer">VWorld 공식 SDK 예제</a>
+</section><section class="card"><iframe id="map" title="VWorld 3D 지도" referrerpolicy="no-referrer"></iframe>
+<button id="download" disabled>측정 지점 CSV 저장</button> <button id="clear" class="secondary">기록 지우기</button>
+<div class="scroll"><table><thead><tr><th>번호</th><th>경도</th><th>위도</th><th>서비스 지형 높이(m)</th></tr></thead><tbody id="rows"></tbody></table></div>
+<small>출처: 국토교통부 VWorld · 지형 타일 보간 · SDK 타원체 기준 높이 (원자료 기준 미검증). 건물 자체 높이는 Probe의 건물 조회에서 확인하세요.</small>
+</section></main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), samples=[];let session='',timer,busy=false;
+function status(s){$('status').textContent=s;}
+function stop(){clearTimeout(timer);session='';busy=false;$('query').disabled=true;$('map').srcdoc='';$('key').value='';$('load').disabled=false;status('지도를 종료하고 이 화면의 키 입력을 지웠습니다.');}
+function reset(){samples.length=0;$('rows').replaceChildren();$('download').disabled=true;}
+function makePoints(value,count) {
+    const a=value.split(',').map(x=>x.trim()===''?NaN:Number(x));
+    if(!a.every(Number.isFinite) || ![2,4].includes(a.length))throw Error('좌표 2개 또는 범위 4개를 입력하세요.');
+    if(Math.abs(a[0])>180 || Math.abs(a[1])>85)throw Error('좌표 범위를 확인하세요.');
+    if(a.length===2)return [a];
+    if(Math.abs(a[2])>180 || Math.abs(a[3])>85 || a[2]<=a[0] || a[3]<=a[1] || a[2]-a[0]>.020000001 || a[3]-a[1]>.020000001 || !Number.isInteger(count) || count<2 || count>10)
+        throw Error('각 방향 0.02도 이하 범위와 2~10 격자를 입력하세요.');
+    const points=[];for(let y=0;y<count;y++)for(let x=0;x<count;x++)points.push([a[0]+(a[2]-a[0])*x/(count-1),a[1]+(a[3]-a[1])*y/(count-1)]);return points;
+}
+// This function is serialized into a parser-loaded iframe. The API key is never persisted in the HTML file.
+function boot(config){
+    function send(type,value){parent.postMessage({probeTerrain:config.session,type:type,value:value},'*');}
+    function fail(){send('error','3D 지도 초기화에 실패했습니다. 키의 3D 권한, 등록 URL, 네트워크/WebGL을 확인하세요.');}
+    try {
+        if(!window.vw || !vw.Map){fail();return;}
+        var map=new vw.Map(),wired=false,running=false;
+        async function sample(points,level) {
+            if(running)return;
+            if(!Array.isArray(points) || points.length<1 || points.length>100 || !Number.isInteger(level) || level<10 || level>16 || points.some(p=>!Array.isArray(p)||p.length!==2||!p.every(Number.isFinite)||Math.abs(p[0])>180||Math.abs(p[1])>85))return;
+            running=true;send('busy','지형 타일 조회 중…');
+            try {
+                var C=window.Cesium,provider=window.ws3d && ws3d.viewer && ws3d.viewer.terrainProvider;
+                if(!C || !C.sampleTerrain || !C.Cartographic || !provider || (C.EllipsoidTerrainProvider && provider instanceof C.EllipsoidTerrainProvider))throw Error('unsupported');
+                var positions=points.map(p=>C.Cartographic.fromDegrees(p[0],p[1]));
+                await C.sampleTerrain(provider,level,positions);
+                send('samples',points.map((p,i)=>({longitude:p[0],latitude:p[1],height:Number.isFinite(positions[i].height)?positions[i].height:null,level:level})));
+            }catch(e){send('error','지형 수치 조회 실패: SDK 지형 제공자·권한·네트워크를 확인하세요. 평면 지구의 0m로 대체하지 않습니다.');}
+            finally{running=false;send('idle','');}
+        }
+        window.addEventListener('message',function(e){var m=e.data;if(e.source===parent && m && m.probeTerrain===config.session && m.type==='query')sample(m.points,m.level);});
+        function wire(){
+            if(wired || !map.onClick || !map.onClick.addEventListener)return;
+            wired=true;
+            map.onClick.addEventListener(function(windowPosition,ecefPosition,cartographic,modelObject){
+                if(!cartographic){send('warning','지형 좌표가 아직 준비되지 않았습니다.');return;}
+                send('pick',{longitude:cartographic.longitudeDD,latitude:cartographic.latitudeDD});
+            });
+            send('ready','좌표 또는 작은 범위를 입력하고 조회하세요. 지도 클릭으로 좌표를 선택할 수도 있습니다.');
+        }
+        vw.ws3dInitCallBack=wire;
+        map.setOption({mapId:'vmap',initPosition:new vw.CameraPosition(new vw.CoordZ(config.lon,config.lat,1200),new vw.Direction(0,-65,0)),logo:true,navigation:true});
+        map.start();
+        var checks=0,wait=setInterval(function(){wire();if(wired || ++checks>120){clearInterval(wait);if(!wired)fail();}},250);
+    }catch(e){fail();}
+}
+$('load').addEventListener('click',()=>{
+    const key=$('key').value.trim(),domain=$('domain').value.trim(),parts=$('center').value.split(',');
+    const xy=parts.map(x=>x.trim()===''?NaN:Number(x));
+    if(!key || key.length>2048 || domain.length>2048 || xy.length!==2 || !xy.every(Number.isFinite) || Math.abs(xy[0])>180 || Math.abs(xy[1])>85){status('키와 경도,위도를 확인하세요.');return;}
+    stop();reset();session=crypto.getRandomValues(new Uint32Array(4)).join('-');
+    const cfg={session:session,lon:xy[0],lat:xy[1]};
+    const url='https://map.vworld.kr/js/webglMapInit.js.do?version=3.0&apiKey='+encodeURIComponent(key)+(domain?'&domain='+encodeURIComponent(domain):'');
+    const code='('+boot.toString()+')('+JSON.stringify(cfg).replace(/</g,'\\u003c')+');';
+    $('map').srcdoc='<!doctype html><html><meta charset="utf-8"><style>html,body,#vmap{margin:0;width:100%;height:100%;overflow:hidden}</style><script src="'+url+'"><\/script><body><div id="vmap"></div><script>'+code+'<\/script></body></html>';
+    $('load').disabled=true;status('VWorld 3D 지도 로딩 중…');
+    timer=setTimeout(()=>status('지도가 준비되지 않았습니다. 키의 3D API 권한·등록 URL 또는 WebGL 지원을 확인하세요.'),35000);
+});
+window.addEventListener('message',event=>{
+    const m=event.data;
+    if(event.source!==$('map').contentWindow || !session || !m || m.probeTerrain!==session)return;
+    if(m.type==='idle'){busy=false;$('query').disabled=false;return;}
+    if(m.type==='busy'){busy=true;$('query').disabled=true;status(String(m.value));return;}
+    if(['ready','error','warning'].includes(m.type)){clearTimeout(timer);if(m.type==='ready')$('query').disabled=false;status(String(m.value).slice(0,400));return;}
+    if(m.type==='pick' && m.value && [m.value.longitude,m.value.latitude].every(Number.isFinite)){$('location').value=m.value.longitude+','+m.value.latitude;query();return;}
+    if(m.type!=='samples' || !Array.isArray(m.value) || m.value.length>100)return;
+    let missing=0;
+    for(const v of m.value) {
+    if(![v.longitude,v.latitude].every(x=>typeof x==='number' && Number.isFinite(x)) || Math.abs(v.longitude)>180 || Math.abs(v.latitude)>85 || (v.height!==null && (!Number.isFinite(v.height) || v.height<-12000 || v.height>10000)))continue;
+    if(samples.length>=500){status('최대 500지점입니다. 기록을 저장하고 지우세요.');return;}
+    if(v.height===null)missing++;
+    samples.push({longitude:v.longitude,latitude:v.latitude,height:v.height,level:v.level,time:new Date().toISOString()});
+    const tr=document.createElement('tr');[samples.length,v.longitude.toFixed(7),v.latitude.toFixed(7),v.height===null?'미제공':v.height.toFixed(3)].forEach(x=>{const td=document.createElement('td');td.textContent=x;tr.append(td);});$('rows').append(tr);
+    }
+    $('download').disabled=samples.length===0;status('조회 완료 · '+m.value.length+'지점 중 미제공 '+missing+'개 · 누적 '+samples.length+'지점');
+});
+function query(){if(busy || !session || $('query').disabled)return;try{const points=makePoints($('location').value,Number($('grid').value)),level=Number($('level').value);if(!Number.isInteger(level)||level<10||level>16)throw Error('단계는 10~16 정수입니다.');if(samples.length+points.length>500)throw Error('최대 500지점입니다. 기록을 저장하고 지우세요.');busy=true;$('query').disabled=true;status('지형 조회 요청 중… (멈추면 지도 종료 후 다시 시작하세요.)');$('map').contentWindow.postMessage({probeTerrain:session,type:'query',points:points,level:level},'*');}catch(e){status(e.message);}}
+$('query').addEventListener('click',query);
+$('stop').addEventListener('click',stop);$('clear').addEventListener('click',reset);
+$('download').addEventListener('click',()=>{
+    const lines=['longitude,latitude,service_terrain_height_m,status,tile_level,vertical_datum,source,captured_at'];
+    samples.forEach(p=>lines.push([p.longitude,p.latitude,p.height===null?'':p.height,p.height===null?'unavailable':'available',p.level,'SDK_ellipsoid_source_unverified','VWorld',p.time].join(',')));
+    const url=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+    const a=document.createElement('a');a.href=url;a.download='vworld-terrain-points.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+window.addEventListener('pagehide',stop);
+</script></html>

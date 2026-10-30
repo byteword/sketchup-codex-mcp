@@ -1,0 +1,43 @@
+{
+  "api_version": "probe-addon/2",
+  "id": "vworld",
+  "name": "VWorld 지형 · 건물 · 지적도",
+  "version": "0.2.0",
+  "endpoint": "https://api.vworld.kr/ned/wfs/getBldgisSpceWFS",
+  "endpoints": {
+    "buildings":"https://api.vworld.kr/ned/wfs/getBldgisSpceWFS",
+    "parcels":"https://api.vworld.kr/ned/wfs/getCtnlgsSpceWFS",
+    "address":"https://api.vworld.kr/req/address"
+  },
+  "viewer_file":"terrain.html",
+  "viewer_label":"지형 높이 · 지점/격자 조회 열기",
+  "public_query": {"domain": "domain"},
+  "secret_query": {"key": "api_key"},
+  "settings": [
+    {"key":"api_key","label":"VWorld 인증키 (빈칸은 기존 키 유지)","secret":true,"required":true},
+    {"key":"domain","label":"키 발급 시 등록한 URL / domain","secret":false,"required":false}
+  ],
+  "inputs": [
+    {"key":"pnu","label":"필지고유번호 PNU 19자리 (범위 입력과 택일)","default":""},
+    {"key":"bbox","label":"범위: 서쪽경도,남쪽위도,동쪽경도,북쪽위도 (최대 0.02도)","default":""},
+    {"key":"limit","label":"최대 건물 수 (1~100)","default":"20"}
+  ],
+  "operations": {
+    "buildings":{"label":"건물 높이 · 윤곽","inputs":[
+      {"key":"pnu","label":"PNU 19자리 (범위/중심점과 택일)","default":""},
+      {"key":"bbox","label":"범위: 서쪽경도,남쪽위도,동쪽경도,북쪽위도","default":""},
+      {"key":"point","label":"중심점: 경도,위도 (주변 후보 조회)","default":""},
+      {"key":"limit","label":"최대 건물 수 (1~100)","default":"20"}
+    ]},
+    "parcels":{"label":"지적도 · 필지 경계","inputs":[
+      {"key":"pnu","label":"PNU 19자리 (범위/중심점과 택일)","default":""},
+      {"key":"bbox","label":"범위: 서쪽경도,남쪽위도,동쪽경도,북쪽위도","default":""},
+      {"key":"point","label":"중심점: 경도,위도 (주변 후보 조회)","default":""},
+      {"key":"limit","label":"최대 필지 수 (1~100)","default":"20"}
+    ]},
+    "address":{"label":"주소 → 좌표 검색","inputs":[
+      {"key":"address","label":"찾을 주소","default":""},
+      {"key":"address_type","label":"주소 유형: road (도로명) / parcel (지번)","default":"road"}
+    ]}
+  }
+}

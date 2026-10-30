@@ -45,11 +45,13 @@ namespace SketchUpPipeProbe
             result.AddRange(ToolkitCatalog.List());
             result.AddRange(BatchCatalog.List());
             result.AddRange(LibraryCatalog.List());
+            result.AddRange(AddOnCatalog.List());
             return result.ToArray();
         }
 
         public static void Validate(string name, Dictionary<string, object> args)
         {
+            if(AddOnCatalog.Contains(name)){AddOnCatalog.Validate(name,args);return;}
             if (LibraryCatalog.Contains(name)) { LibraryCatalog.Validate(name,args); return; }
             if (CommandCatalog.Contains(name)) { CommandCatalog.Validate(name, args); return; }
             if (DiscoveryCatalog.Contains(name)) { DiscoveryCatalog.Validate(name, args); return; }

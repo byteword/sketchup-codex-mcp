@@ -1,0 +1,67 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "default": "VWorld SITE 주변 높이 매스"
+    },
+    "buildings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 32,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 19
+            }
+          },
+          "expected_ring_mm": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": -1000000000,
+                "maximum": 1000000000
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "minItems": 3,
+            "maxItems": 64
+          },
+          "height_mm": {
+            "type": "number",
+            "minimum": 100,
+            "maximum": 500000
+          },
+          "pnu": {
+            "type": "string",
+            "minLength": 19,
+            "maxLength": 19
+          }
+        },
+        "required": [
+          "path",
+          "expected_ring_mm",
+          "height_mm",
+          "pnu"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 63
+    }
+  },
+  "required": [
+    "buildings"
+  ],
+  "additionalProperties": false
+}

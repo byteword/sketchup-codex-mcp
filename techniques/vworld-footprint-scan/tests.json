@@ -1,0 +1,41 @@
+{
+  "format_version": "probe-tests/1",
+  "cases": [
+    {
+      "id": "empty",
+      "params": {
+        "site_mm": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            10,
+            0,
+            0
+          ],
+          [
+            10,
+            10,
+            0
+          ],
+          [
+            0,
+            10,
+            0
+          ]
+        ]
+      },
+      "inputs": {
+        "source": {
+          "entities": []
+        }
+      },
+      "expect": {
+        "ok": true,
+        "metrics": {"faces_examined":0,"footprints":[]}
+      }
+    }
+  ]
+}

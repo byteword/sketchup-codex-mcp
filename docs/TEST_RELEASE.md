@@ -1,4 +1,28 @@
-# 0.13.0 시험 배포 — 2026-10-29
+# 0.14.2 시험 배포 — 2026-10-30
+
+최신 런타임은 `dist/sketchup-codex-mcp-0.14.2-test.zip` (5파일)이다. .NET 기본TLS가 VWorld에 연결하지 못하는 문제를 TLS1.2로 수정했다. VWorld 소스 애드온은 기존0.2.0을 그대로 사용한다. 실행 중인 사용자 설치 앱은 자동 교체하지 않았다.
+
+`dist/vworld-massing-workflow.zip`은 별도 선택 소스 패키지이며, `dist/vworld-massing.probe-techpack`은 두 등록 기법의 공유 패키지다. [이번 실제18동 생성 결과·반복 실행법·제약](VWORLD_MASSING.md), [0.14.2 검사 기록](validation-0.14.2-vworld.json). 반복 스크립트는현재0.14.1 설치본에서도 TLS helper로 동작하며 기본은 plan-only, -Apply 지정시 새그룹 생성이다.
+
+## 0.14.1 시험 배포 이력
+
+최신 기본 런타임: `dist/sketchup-codex-mcp-0.14.1-test.zip` (5파일). 선택 VWorld 애드온: `dist/probe-addons-vworld-0.2.0.zip` (3소스). 기본 ZIP 안의 `dist` 폴더에 애드온 ZIP을 풀어 `SketchUpPipeProbe.exe`와 `AddOns` 폴더가 나란히 오게 한다. 작업본 `dist/AddOns/vworld`에도 같은 소스를 준비했다.
+
+건물 높이·윤곽, 지적도 경계·지번, 주소→좌표 검색, 벡터 미리보기/GeoJSON 저장을 추가했다. 별도 브라우저의 지형 도구는 지점 또는 최대 10×10 격자 수치를 CSV로 내보낸다. VWorld 0.2.0의 manifest는 `probe-addon/2`이며 0.14.1 이상 호스트가 필요하다. 업데이트 후 소스 활성 체크를 다시 저장한다. [사용법과 데이터 기준](ADDONS.md).
+
+지형은 SDK 타원체 기준 높이이며 VWorld 원자료 기준·변환·실측 정확도는 미검증이다. 사용자 인증키로 실서비스 건물/지적도/주소/지형 조회를 아직 하지 않았다. 브라우저 도구는 키를 별도 입력하며 Probe DPAPI 키를 파일로 넘기지 않는다. 로컬 파일의 도메인 인증 허용 여부도 실제 키 정책에 따라 확인해야 한다.
+
+기본 ZIP 5파일·RBZ 51파일·애드온 3파일의 원본 바이트 일치와 추출 폴더에서 외부 DLL 없는 worker 실행을 검증했다. [패키지 검사](validation-0.14.1-package.json). 실제 설치 앱 교체·커밋·푸시는 하지 않았다.
+
+## 0.14.0 시험 배포 이력
+
+`dist/sketchup-codex-mcp-0.14.0-test.zip`은 기존처럼 EXE 2개·설정 2개·RBZ 1개만 담는다. VWorld 소스 애드온은 `dist/probe-addons-20261030-134222.zip`으로 따로 제공한다. **기본 ZIP을 푼 뒤 그 안의 `dist` 폴더에 애드온 ZIP을 풀어** `SketchUpPipeProbe.exe` 바로 옆에 `AddOns/vworld`가 오게 한다. 개발 작업본의 `dist/AddOns`에도 같은 애드온을 배치했다.
+
+Probe의 **AddOns 설정 / 조회**에서 인증키·등록 URL을 입력하고 활성 체크와 설정 저장을 누른다. 기본값은 비활성이며 실제 키는 배포본에 없다. MCP를 새 EXE로 재시작하면 65개 도구를 불러온다. 키 없이 조회 성공으로 판정하지 않았으며 실제 VWorld 응답은 등록 후 확인해야 한다. [사용법](ADDONS.md), [패키지 검사](validation-0.14.0-package.json).
+
+기본 ZIP 5파일, RBZ 51파일의 소스 바이트 일치, 선택 애드온 ZIP 2소스 일치와 추출 폴더에서 외부 DLL 없이 애드온 worker 실행을 확인했다. 실제 설치/실행 앱 교체·원격 배포는 하지 않았다. 아래는 0.13.0 이력이다.
+
+## 0.13.0 시험 배포 — 2026-10-29
 
 실제2020 검사 후 **아이콘 색 전환 실패**, **3D DXF/DWG의 Audit report.txt 부속 로그 거부**가 확인됐다. 정보창 닫기 후 연결/허가 유지와 고정69개·기법 native18케이스는 통과했다. 긴급 정지 취소와 도킹/재시작은 미확정이다. [실기 결과](MANUAL_RESULTS_0.13.0.md). 이 기록 추가로 EXE/RBZ를 다시 빌드하거나 교체하지 않았다.
 

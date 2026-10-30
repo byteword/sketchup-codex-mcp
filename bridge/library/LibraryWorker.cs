@@ -52,6 +52,7 @@ namespace SketchUpPipeProbe
         // Resolver must be installed before the JIT loads Jint signatures.
         [MethodImpl(MethodImplOptions.NoInlining)]
         static object Execute(Dictionary<string,object> request) {
+            if(Lib.Str(request,"kind")=="addon")return AddOnScript.Execute(request);
             int ms=Lib.Int(request,"timeout_ms",1000,10,5000);
             int memory=Lib.Int(request,"memory_mib",64,16,256);
             var engine=new Jint.Engine(options=>options.Strict().LimitRecursion(64).LimitMemory(memory*1024L*1024L)

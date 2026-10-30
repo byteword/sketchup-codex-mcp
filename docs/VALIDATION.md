@@ -1,5 +1,37 @@
 # 검증 범위
 
+## 0.14.2 VWorld 실제 SITE 매스 — 2026-10-30
+
+수유동 두 필지·주변 건물 API 인증 조회, 정합/면적 매칭, 실제 SketchUp2019에18동 새그룹 생성까지 수행했다.18개 모두 솔리드·높이 일치 재조회, 화면PNG 확인. 원본은 보존했다. [상세 기록과 한계](VWORLD_MASSING.md), [수치/패키지 검사](validation-0.14.2-vworld.json).
+
+이번 변경 검사는 AddOns60개, 순수 매칭기하Python8개, 기법 오프라인4케이스와 실제18동/121면이다. 자동 반복 스크립트의실조회→계획도 동일59/18/41로 재현했으며 두 번째 적용은 하지 않았다. 0.14.2서비스 자체로 실제 인증 주소 API 성공. 기존0.14.1 전체463개 검사를이번 전체 재실행으로 계산하지 않는다.실제 연결된 앱은0.14.1이고TLShelper를 사용했으며0.14.2설치/재시작은 하지 않았다.
+
+## 0.14.1 VWorld 지형·건물·지적도 — 2026-10-30
+
+전체 Windows 자동 검사 **463개 통과**: Ruby 303개/2251 assertions, Python 86개, 애드온 60개, 지형 브라우저 로직 14개. [stdout](validation-0.14.1.txt), [Python stderr](validation-0.14.1-stderr.txt). 전체 검사 후 추가한 manifest `/2` 호환성 분기는 최종 소스의 [애드온 60개 재검사](validation-0.14.1-addons-final.txt)와 빌드로 확인했다. 동일 검사 재실행은 합계에 중복 산입하지 않았다.
+
+새 검사 범위: 건물/지적도 endpoint 선택과 미선언 endpoint 거부, 위경도 BBOX, 주변 후보 조회, Polygon 내측 링 보존·닫히지 않은 경계 거부, 주소 좌표·후속 필지 조회·null/빈 좌표 거부, 실제 DPAPI 저장/복호화, prepare/parse worker에 인증키 비전달, HTML 해시 변경 후 비활성·키 없는 뷰어 사본, WinForms 기능 전환·벡터 경계 렌더링. 지형 검사는 배포 HTML을 Node VM에서 실행해 지점/격자 제한·SDK adapter 정상/누락·평면 지구 fallback 거부·예외 정보 비노출을 확인했다.
+
+기본 ZIP 5파일·RBZ 51파일·선택 애드온 ZIP 3파일의 원본 바이트 일치와 추출 폴더에서 외부 DLL 없는 애드온 worker 실행을 확인했다. [패키지 보고서](validation-0.14.1-package.json). 실제 OneDrive 경로의 production EXE를 로드한 설정/조회 화면 렌더링도 확인했다.
+
+**사용자 키로 VWorld 실서비스 조회, WebGL 지형 제공자 호환성·높이의 수직 기준/정확도, 실제 SketchUp 실기는 미실행이다.** 자동화 브라우저는 file URL을 정책상 차단했고 우회하지 않았다. 따라서 Node 검사를 실제 브라우저/인증 서비스 통과로 보지 않는다. 지형 조회는 SDK 타원체 기준 수치를 내보내며 확정된 해발 표고라고 주장하지 않는다.
+
+검사 환경 조정: 초기 애드온 테스트가 비동기 작업 중 WinForms 컨트롤을 만들어 메시지 루프 없이 대기했다. 테스트 UI 렌더링을 STA 메인으로 이동해 재검사했다. 전체 검사 첫 시도의 PowerShell `*>` 로그 수집은 정상 Python stderr를 NativeCommandError로 처리했으므로 별도 stdout/stderr 프로세스 수집으로 바꿨다. Minitest 임시 경로를 보완한 최종 전체 실행은 exit 0이다. OneDrive의 기존 SHA256SUMS 직접 쓰기가 거부되어 같은 5파일 allowlist로 ZIP/체크섬을 생성하고 소스 일치와 최종 SHA를 검증했다. 임시 추출은 sandbox의 디렉터리 생성 제한 때문에 일반 Windows 권한의 별도 시험 폴더에서 수행했다.
+
+이전 0.13.0 아이콘/CAD 부속파일/실제 긴급정지 문제는 그대로 별도 후속 항목이다.
+
+## 0.14.0 소스 AddOns 기반 — 2026-10-30
+
+최종 표준 Windows 검사 **431개 통과**, 실패/오류/생략 0. Ruby 303개/2251 assertions, Python 86개(라이브러리21·텍스처7·지형6·STDIO32·runner6·Win32연동14), 애드온42개. [최종 로그](validation-0.14.0.txt), [패키지 검사](validation-0.14.0-package.json).
+
+애드온 검사는 실제 DPAPI 저장/복호화·키 삭제/유지·키 비노출, 별도 Jint의 제한/CLR 접근 거부, 입력 검증·위경도 순서·높이 m/mm와 결측 구분·PNU 일치·한도 표시, HTTP200 오류 본문을 실패로 전파, 조회 취소·소스 해시 변경과 재활성화·MCP 스키마·설정 컨트롤 재생성을 검증한다. HTTP 응답은 모의 데이터이며 **사용자 키를 사용하는 VWorld 조회는 미실행**이다. SketchUp 모델 변경도 하지 않았다.
+
+기본 ZIP 5파일/RBZ 51소스 바이트 일치, 선택 애드온 ZIP 2소스 일치, 외부 DLL 없는 추출 폴더의 애드온 worker 실행이 통과했다. 실제 OneDrive 경로의 production EXE를 로드해 WinForms 설정창을 렌더링 확인했다. 처음에는 모든 reparse point를 막아 OneDrive에서 로드가 거부됐고, 이름을 리디렉션하는 reparse point만 거부하도록 수정 후 확인했다.
+
+이 PC에는 Python이 없어 공식 Python 3.13.9 임베디드 ZIP을 개발용 dist에만 준비하고 Python Software Foundation의 유효한 Authenticode 서명을 확인했다. Ruby는 설치된 SketchUp2019의 2.5 DLL과 기존 검사 호스트·Minitest를 사용했다. 한글 경로를 피한 임시 ASCII 소스 복사본에서 시험 전용 파이프로 실행했다. 최초 복사에서 skills 도우미를 누락해 runner6개가 실패한 [초기 로그](validation-0.14.0-initial.txt)를 보존했고, 누락 파일을 보충한 전체 재실행이 통과했다. 샌드박스의 임시 파일 rename 거부로 중단된 첫 DPAPI 검사도 일반 Windows 권한의 격리 시험 폴더에서 재검사했다.
+
+0.13.0의 동적 아이콘/CAD 부속 로그/실제 긴급정지 검증 문제는 이번 범위에서 해결한 것으로 보지 않는다.
+
 ## 0.13.0 실제 SketchUp 후속 검사 — 2026-10-29
 
 실제2020/0.13.0에서 고정69개와 기법 native18케이스가 통과했고, 모델은 modified=false를 포함해 시작 상태로 복구됐다. 정보창 열기/X닫기 후 연결·권한 유지도 사용자 확인과 fresh 조회로 검증했다.4개 기법의 작업 상태 전달과 완료 후 제거를 확인했다. 별도 창 오프라인 검증8개(40케이스)도 정상 종료했다.

@@ -100,6 +100,12 @@ namespace SketchUpPipeProbe
                 catch (Exception error) { Log("설정 복사 오류: " + error.Message); }
             };
             actions.Controls.Add(config);
+            var addOns=new Button {Text="AddOns 설정 / 조회",AutoSize=true,Height=32};
+            addOns.Click+=delegate {
+                try {using(var dialog=new AddOnForm(control.AddOns))dialog.ShowDialog(this);}
+                catch {MessageBox.Show(this,"애드온 또는 설정을 읽지 못했습니다. AddOns 파일과 사용자 설정을 확인하세요.","AddOns");}
+            };
+            actions.Controls.Add(addOns);
             var libraryFolder=new Button {Text="기법 라이브러리 폴더",AutoSize=true,Height=32};
             libraryFolder.Click+=delegate {
                 try {System.Diagnostics.Process.Start("explorer.exe", "\""+control.LibraryDirectory+"\"");}

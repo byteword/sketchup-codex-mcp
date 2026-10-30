@@ -29,6 +29,7 @@ namespace SketchUpPipeProbe
         readonly ConcurrentDictionary<string, NamedPipeServerStream> streams = new ConcurrentDictionary<string, NamedPipeServerStream>();
         readonly PipeHub hub;
         readonly LibraryService library = new LibraryService();
+        public readonly AddOnService AddOns = new AddOnService();
         public string LibraryDirectory {get {return library.DirectoryPath;}}
         readonly Action<string> log;
         readonly object sync = new object();
@@ -204,6 +205,11 @@ namespace SketchUpPipeProbe
         {
             ToolCatalog.Validate(name, args);
             token.ThrowIfCancellationRequested();
+            if(name=="sketchup_addon_list")return ToolCatalog.Result(new {addons=AddOns.List()});
+            if(name=="sketchup_addon_query") {
+                var result=Lib.Obj(await AddOns.QueryAsync(Lib.Str(args,"addon_id"),Lib.Obj(args["inputs"]),token).ConfigureAwait(false));
+                return ToolCatalog.Result(result,!Lib.Bool(result,"ok"));
+            }
             if (name == "sketchup_bridge_status")
                 return ToolCatalog.Result(new { version = BuildInfo.Version, sketchup_listener = hub.Status, mcp_listener = Status,
                     instances = hub.Peers.Count, clients = Clients.Values.Select(c => new { name = c.Name, version = c.Version, pid = c.Pid, protocol = c.Protocol }).ToArray(), last_error = LastError });

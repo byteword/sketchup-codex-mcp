@@ -1,12 +1,17 @@
 param(
     [string]$Python = 'python',
     [string]$Ruby = 'ruby',
+    [string]$Node = 'node',
     [string[]]$RubyArguments = @()
 )
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path $PSScriptRoot -Parent)
 & .\build.cmd
 if ($LASTEXITCODE -ne 0) { throw 'GUI build failed' }
+& "$PSScriptRoot\addon-tests.ps1" -SkipBuild
+if ($LASTEXITCODE -ne 0) { throw 'Add-on tests failed' }
+& $Node tests/vworld-terrain-test.cjs
+if ($LASTEXITCODE -ne 0) { throw 'VWorld terrain browser adapter tests failed' }
 $probeCompiler = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
 & $probeCompiler /nologo /target:exe /platform:x64 /warnaserror /codepage:65001 /define:PROBE_TEST /out:dist\HeadlessHub.exe /reference:System.dll /reference:System.Core.dll /reference:System.Web.Extensions.dll shared\BuildInfo.cs shared\CommandCatalog.cs shared\ToolkitCatalog.cs shared\DiscoveryCatalog.cs shared\JsonLines.cs shared\ToolCatalog.cs bridge\PipeHub.cs bridge\ControlHub.cs tests\HeadlessHub.cs @dist\library-gui.rsp
 if ($LASTEXITCODE -ne 0) { throw 'Headless hub build failed' }
@@ -26,6 +31,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Library/worker/package tests failed' }
 if ($LASTEXITCODE -ne 0) { throw "Texture technique math tests failed" }
 & $Python tests/terrain_math_test.py (Join-Path $PWD "dist\LibraryHarness.exe")
 if ($LASTEXITCODE -ne 0) { throw "Terrain technique math tests failed" }
+& $Python tests/vworld_massing_test.py
+if ($LASTEXITCODE -ne 0) { throw "VWorld massing geometry tests failed" }
 & $Python tests/mcp_stdio_test.py dist/McpHarness.exe
 if ($LASTEXITCODE -ne 0) { throw 'MCP stdio tests failed' }
 & $Python tests/native_runner_test.py

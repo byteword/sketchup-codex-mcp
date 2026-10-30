@@ -28,6 +28,7 @@ foreach($dep in $deps) {
  }finally{$zip.Dispose()}
 }
 $common=New-Object 'System.Collections.Generic.List[string]'
+$common.Add('shared\AddOnCatalog.cs')
 $common.Add('/resource:shared\LibraryTools.json,ProbeRuntime.library-tools.json');$common.Add('shared\LibraryCatalog.cs');$common.Add('bridge\library\LibraryJson.cs')
 foreach($name in @('manifest','plan','operations','report','tests','package')) { $common.Add('/resource:docs\library-spec\'+$name+'.schema.json,ProbeRuntime.'+$name+'.schema.json') }
 [IO.File]::WriteAllLines((Join-Path $PWD 'dist/library-common.rsp'),$common)
@@ -37,6 +38,8 @@ foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.js
 foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\face-texture/'+$name+',ProbeRuntime.texture.'+$name) }
 foreach($name in @('manifest.json','inputs.schema.json','technique.js','tests.json')) { $resources.Add('/resource:docs\library-spec\example\terrain-grid/'+$name+',ProbeRuntime.terrain.'+$name) }
 $gui=@($common)+@($resources)+@(
+ '/reference:System.Security.dll',
+ 'bridge\addons\AddOnService.cs','bridge\addons\AddOnScript.cs',
  '/reference:dist\engine-deps\Jint.dll',
  '/reference:dist\engine-deps\Esprima.dll',
  '/reference:System.Numerics.dll',

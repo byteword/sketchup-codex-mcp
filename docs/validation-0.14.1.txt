@@ -1,0 +1,277 @@
+Built: dist\SketchUpPipeProbe.exe and dist\SketchUpMcp.exe
+PASS source discovery
+PASS disabled by default
+PASS disabled query denied
+PASS official endpoint parameters
+PASS source cannot see API key
+PASS building endpoint alias
+PASS source cannot choose undeclared endpoint
+PASS parcel official endpoint and layer
+PASS point converted to neighborhood bbox
+PASS parcel holes preserved
+PASS parcel label mapped
+PASS unclosed polygon rejected
+PASS geocoding endpoint
+PASS address followup uses parcel neighborhood
+PASS missing address does not become zero coordinate
+PASS blank or null address coordinates do not become zero
+PASS official latitude-first BBOX
+PASS invalid input {}
+PASS invalid input {"pnu":"123"}
+PASS invalid input {"pnu":"1174011000102450001","bbox":"1,2,3,4"}
+PASS invalid input {"bbox":"127,37,128,38"}
+PASS invalid input {"bbox":"127,37,,38"}
+PASS invalid input {"pnu":"1174011000102450001","limit":101}
+PASS invalid input {"pnu":"1174011000102450001","api_key":"forbidden"}
+PASS invalid input {"pnu":1234567890123456789}
+PASS invalid input {"pnu":"1174011000102450001","limit":0}
+PASS height m to mm
+PASS zero missing negative malformed heights are not guessed
+PASS zero retains unavailable distinction
+PASS raw source height preserved
+PASS full page marked incomplete
+PASS HTTP 200 error body rejected
+PASS HTTP 200 error body rejected
+PASS HTTP 200 error body rejected
+PASS DPAPI storage contains no plaintext key
+PASS listing exposes status only
+PASS viewer snapshot contains source and no credential
+PASS host decrypts key only for HTTPS request
+PASS parse worker never receives injected credentials
+PASS parcel request routes through credential host
+PASS blank key preserves credential
+PASS URL-bearing network errors do not leak keys
+PASS reflected credential redacted before parser
+PASS service error sets outer failure
+PASS mismatched response PNU rejected
+PASS cancellation terminates query
+PASS changed viewer requires local activation
+PASS unapproved viewer not launched
+PASS changed source requires local activation
+PASS changed source denied before HTTP
+PASS stale settings dialog cannot approve changed code
+PASS credential delete
+PASS path traversal denied
+PASS generic MCP tool catalog
+PASS MCP secret argument rejected
+PASS script execution budget
+PASS no CLR IO in source
+PASS polygon preview renders
+PASS all operation controls available
+PASS settings controls can reload repeatedly
+Add-on tests: 60 passed
+PASS single coordinate preserves lon lat
+PASS grid includes edges and center
+PASS grid limited to 100 points
+PASS reject coordinates 127,,37
+PASS reject coordinates 127,37,128,38
+PASS reject coordinates 127,38,127.001,37
+PASS reject coordinates 181,37
+PASS reject coordinates 127,90
+PASS reject coordinates NaN,37
+PASS reject unbounded grid
+PASS SDK samples terrain at requested tile level
+PASS height and missing sample remain distinct
+PASS flat ellipsoid fallback is refused
+PASS SDK errors hide sensitive exception text and release busy state
+Terrain browser tests: 14 passed
+Run options: --seed 63405
+
+# Running:
+
+...................
+
+Finished in 0.011660s, 1629.4607 runs/s, 7203.9313 assertions/s.
+
+19 runs, 84 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 4741
+
+# Running:
+
+.............
+
+Finished in 0.027778s, 467.9946 runs/s, 3275.9620 assertions/s.
+
+13 runs, 91 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 10629
+
+# Running:
+
+............
+
+Finished in 0.034883s, 344.0061 runs/s, 1576.6947 assertions/s.
+
+12 runs, 55 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 37394
+
+# Running:
+
+................
+
+Finished in 0.022324s, 716.7142 runs/s, 5151.3835 assertions/s.
+
+16 runs, 115 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 61321
+
+# Running:
+
+..................
+
+Finished in 0.012423s, 1448.9021 runs/s, 8049.4559 assertions/s.
+
+18 runs, 100 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 21147
+
+# Running:
+
+................
+
+Finished in 0.018575s, 861.3775 runs/s, 7913.9053 assertions/s.
+
+16 runs, 147 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 43212
+
+# Running:
+
+.......................
+
+Finished in 0.480774s, 47.8395 runs/s, 282.8770 assertions/s.
+
+23 runs, 136 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 1879
+
+# Running:
+
+........
+
+Finished in 0.031322s, 255.4123 runs/s, 7662.3704 assertions/s.
+
+8 runs, 240 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 14295
+
+# Running:
+
+...........................
+
+Finished in 1.448204s, 18.6438 runs/s, 93.2189 assertions/s.
+
+27 runs, 135 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 3233
+
+# Running:
+
+...........
+
+Finished in 0.065708s, 167.4063 runs/s, 806.5940 assertions/s.
+
+11 runs, 53 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 14772
+
+# Running:
+
+.........
+
+Finished in 0.013400s, 671.6418 runs/s, 2985.0746 assertions/s.
+
+9 runs, 40 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 35778
+
+# Running:
+
+...............
+
+Finished in 0.042242s, 355.0968 runs/s, 1799.1572 assertions/s.
+
+15 runs, 76 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 54687
+
+# Running:
+
+.............
+
+Finished in 0.055545s, 234.0462 runs/s, 1206.2379 assertions/s.
+
+13 runs, 67 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 14127
+
+# Running:
+
+...................
+
+Finished in 0.112895s, 168.2984 runs/s, 1266.6671 assertions/s.
+
+19 runs, 143 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 16116
+
+# Running:
+
+.................
+
+Finished in 0.350283s, 48.5322 runs/s, 334.0157 assertions/s.
+
+17 runs, 117 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 14470
+
+# Running:
+
+.............
+
+Finished in 1.136351s, 11.4401 runs/s, 241.1227 assertions/s.
+
+13 runs, 274 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 20971
+
+# Running:
+
+..................
+
+Finished in 0.170683s, 105.4585 runs/s, 931.5498 assertions/s.
+
+18 runs, 159 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 10487
+
+# Running:
+
+..........
+
+Finished in 0.052251s, 191.3846 runs/s, 995.2001 assertions/s.
+
+10 runs, 52 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 13468
+
+# Running:
+
+................
+
+Finished in 0.017429s, 918.0260 runs/s, 5336.0262 assertions/s.
+
+16 runs, 93 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 34873
+
+# Running:
+
+..
+
+Finished in 0.001827s, 1094.5110 runs/s, 2189.0221 assertions/s.
+
+2 runs, 4 assertions, 0 failures, 0 errors, 0 skips
+Run options: --seed 58584
+
+# Running:
+
+.....
+
+Finished in 0.005872s, 851.4986 runs/s, 4257.4932 assertions/s.
+
+5 runs, 25 assertions, 0 failures, 0 errors, 0 skips
+TEST_HUB_READY
+Run options: --seed 34726
+
+# Running:
+
+...
+
+Finished in 1.249021s, 2.4019 runs/s, 36.0282 assertions/s.
+
+3 runs, 45 assertions, 0 failures, 0 errors, 0 skips
+0.14.1 full validation complete

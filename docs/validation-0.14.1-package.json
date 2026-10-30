@@ -1,0 +1,21 @@
+{
+  "version": "0.14.1",
+  "addon_package": "probe-addons-vworld-0.2.0.zip",
+  "runtime_file_count": 5,
+  "rbz_source_files": 51,
+  "addon_source_files": 3,
+  "source_bytes_match": true,
+  "embedded_addon_worker_without_external_dlls": "passed",
+  "sha256": {
+    "SketchUpMcp.exe": "37aca39be83996349b0b30e109b0be9f8388e00ce78cd713fd6ad10563569a06",
+    "SketchUpMcp.exe.config": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5",
+    "SketchUpPipeProbe.exe": "a61e39563c1772d95b10ccf46cf2f2c20fb761dd089224598b01e7757c32a93d",
+    "SketchUpPipeProbe.exe.config": "f7d392e55d67293ca77b32c6e7750f253dc893b8db04ecfada88d34274ef76d5",
+    "su_pipe_probe-0.14.1.rbz": "cf1c370a5a8e836117bc66dcfbc7c7f0ff49ca214bcdb4f623da13b6b0059be9"
+  },
+  "addon_package_sha256": "387f85334d18460e8cd95a14378ef3c26e70093c1a730ffeda018da9a616d216",
+  "live_vworld_with_user_key": "not_run",
+  "native_sketchup_acceptance": "not_run",
+  "browser_file_navigation": "blocked_by_browser_url_policy",
+  "extracted_folder": "C:\\Users\\bytew\\AppData\\Local\\Temp\\probe-package-0141-9bcskdvw"
+}
